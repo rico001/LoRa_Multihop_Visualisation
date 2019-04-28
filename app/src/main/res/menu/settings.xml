@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:title="LORA Konfiguration (Vorschlag1)"
+        android:id="@+id/item_LoraKonfig"
+        android:icon="@mipmap/ic_launcher_round"
+        android:orderInCategory="100" />
+    <item
+        android:title="LORA Konfiguration (Vorschlag2)"
+        android:id="@+id/item_LoraKonfig2"
+        android:icon="@mipmap/ic_launcher_round"
+        android:orderInCategory="100" />
+    <item
+        android:title="Bluetooth"
+        android:id="@+id/item_bluetooth"
+        android:icon="@mipmap/ic_launcher_round"
+        android:orderInCategory="100" />
+</menu>

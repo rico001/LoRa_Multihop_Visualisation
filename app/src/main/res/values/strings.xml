@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">LoRa_Multihop_Visualisation</string>
+    <string name="google_maps_key">AIzaSyDZ4lhkCpBFjpG5fJj3IT66pfJPJH6ZetQ</string>
+    <string name="title_activity_settings">Settings</string>
 </resources>
