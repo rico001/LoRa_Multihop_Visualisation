@@ -1,13 +1,18 @@
 package de.htwberlin.lora_multihop_visualisation;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -20,7 +25,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    private final static int sendColor= Color.BLUE;
+
     private GoogleMap mMap;
+    private EditText editText_messages;
+    private LinearLayout linearLayout_messages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +37,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_main);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
+
+        editText_messages= (EditText) findViewById(R.id.editText_messages);
+        linearLayout_messages= (LinearLayout) findViewById(R.id.linearLayout_messages);
     }
 
     @Override
@@ -71,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         if (id == R.id.item_LoraKonfig2) {
-            Toast.makeText(this, "Vorschlag 2 geklickt!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Vorschlag 2 mit Selectboxes geklickt!", Toast.LENGTH_LONG).show();
             //startAnotherActivity(LoraSettingsActivity.class);
             return true;
         }
@@ -87,11 +101,37 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void buttonHandling(View v){
         Button b = (Button) v;
-        Toast.makeText(this, b.getText()+" geklickt!", Toast.LENGTH_LONG).show();
+
+        if(v.getId()==R.id.bttn_sendMessage){
+            String message= editText_messages.getText().toString();
+            if(update_LinearLayout_messages(sendColor,message)){
+
+            }else{
+                Toast.makeText(this, "Eingaben überprüfen", Toast.LENGTH_LONG).show();
+            }
+        }else{
+            Toast.makeText(this, b.getText()+" AT-Routine", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     private void startAnotherActivity(Class c){
         Intent intent = new Intent(this, c);
         startActivity(intent);
     }
+
+    private boolean update_LinearLayout_messages(int color, String message){
+        if(message.equals("")){
+            return false;
+        }
+        TextView textView_newMessage= new TextView(this);
+        textView_newMessage.setText("\n>> "+message);
+        textView_newMessage.setTextColor(color);
+
+        linearLayout_messages.addView(textView_newMessage);
+        //TODO auto. scrolling nach unten bei update
+        return true;
+    }
+
+
 }
