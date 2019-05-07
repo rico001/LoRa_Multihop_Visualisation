@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (id == R.id.item_bluetooth) {
             Toast.makeText(this, "Bluetooth geklickt", Toast.LENGTH_LONG).show();
-            //startAnotherActivity(LoraSettingsActivity.class);
+            startAnotherActivity(SelectDeviceActivity.class);
             return true;
         }
 
