@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.htwberlin.lora_multihop_visualisation">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -18,8 +22,19 @@
         </activity>
 
         <activity
-            android:name=".LoraSettingsActivity"
-            android:label="@string/title_activity_settings"
+        android:name=".LoraSettingsActivity"
+        android:label="@string/title_activity_settings"
+        android:parentActivityName=".MainActivity">
+
+        <!-- The meta-data tag is required if you support API level 15 and lower -->
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".SelectDeviceActivity"
+            android:label="@string/title_select_bluetooth_device"
             android:parentActivityName=".MainActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
