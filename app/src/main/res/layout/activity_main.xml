@@ -37,23 +37,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Reset"
-            android:onClick="buttonHandling"/>
+            android:onClick="buttonHandling"
+            android:text="Reset" />
 
         <Button
-            android:onClick="buttonHandling"
             android:id="@+id/bttn_c"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="buttonHandling"
             android:text="Button C" />
 
         <Button
-            android:onClick="buttonHandling"
             android:id="@+id/bttn_d"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="buttonHandling"
             android:text="Button D" />
 
     </LinearLayout>
@@ -127,9 +127,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:onClick="buttonHandling"
                 android:text="send"
-                android:visibility="visible"
-                android:onClick="buttonHandling" />
+                android:visibility="visible" />
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 
