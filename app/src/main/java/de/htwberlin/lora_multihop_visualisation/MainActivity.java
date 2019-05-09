@@ -79,23 +79,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.item_LoraKonfig) {
-            Toast.makeText(this, "Vorschlag 1 geklickt!", Toast.LENGTH_LONG).show();
             startAnotherActivity(LoraSettingsActivity.class);
             return true;
         }
-
-        if (id == R.id.item_LoraKonfig2) {
-            Toast.makeText(this, "Vorschlag 2 mit Selectboxes geklickt!", Toast.LENGTH_LONG).show();
-            //startAnotherActivity(LoraSettingsActivity.class);
-            return true;
-        }
-
         if (id == R.id.item_bluetooth) {
-            Toast.makeText(this, "Bluetooth geklickt", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Bluetooth geklickt", Toast.LENGTH_LONG).show();
             startAnotherActivity(SelectDeviceActivity.class);
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

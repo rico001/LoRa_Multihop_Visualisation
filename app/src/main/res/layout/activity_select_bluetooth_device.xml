@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -8,8 +9,17 @@
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible"></ListView>
+        android:layout_height="457dp"
+        android:visibility="visible">
+
+    </ListView>
+
+    <ProgressBar
+        android:id="@+id/progressBar_scanForDevices"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:visibility="gone" />
 
 </LinearLayout>
 

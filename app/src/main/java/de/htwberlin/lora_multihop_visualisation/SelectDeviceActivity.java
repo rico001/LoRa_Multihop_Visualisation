@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,10 +37,12 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
 
     private BluetoothAdapter bluetoothAdapter;
     private ConnectThread tryConnect; //TODO: later handle exceptions and success
-
     private ArrayList<BluetoothDevice> bluetoothDevices = new ArrayList<>();    //contains alls currently accessable devices and fills listadapter
+
+    //layout
     private ArrayAdapter<BluetoothDevice> listAdapter = null;       //fills listView
     ListView listView;
+    ProgressBar progressBar;
 
     /**
      * sucht nach verfügbaren neuen Geräten und fügt sie zu den bluetoothDevices hinzu->listadapter for listview wird geupdatet
@@ -66,6 +69,8 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_bluetooth_device);
 
+        progressBar = (ProgressBar) findViewById(R.id.progressBar_scanForDevices);
+
         //contains all accessable devices for s possible connection
         listView= (ListView) findViewById(R.id.listView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -73,7 +78,7 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 bluetoothAdapter.cancelDiscovery();
                 tryConnect= new ConnectThread(bluetoothDevices.get(position));
-                tryConnect.run();   //starts the BT connection
+                //tryConnect.run();   //starts the BT connection
             }
         });
 
@@ -142,11 +147,12 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.scanForNewDevices) {
-            Toast.makeText(this, "scan for new Devices", Toast.LENGTH_LONG).show();
+            progressBar.setVisibility(View.VISIBLE);
             scanForNewDevices();
             return true;
         }
         if (id == R.id.showPairedDevices) {
+            progressBar.setVisibility(View.GONE);
             showPairedDevices();
             return true;
         }
