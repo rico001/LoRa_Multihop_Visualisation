@@ -8,9 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -49,9 +51,11 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
                 // Discovery has found a device. Get the BluetoothDevice
                 // object and its info from the Intent.
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);//neues bluetooth device erkannt
-                bluetoothDevices.add(device);//neues device hinzufügen
-                listAdapter.notifyDataSetChanged(); //listadapter über neues device benachrichtigen um folglich auch listview zu updaten
 
+                if(!isInBluetoothDevices(device.getAddress())){
+                    bluetoothDevices.add(device);//neues device hinzufügen wenn nicht bereits vorhanden
+                    listAdapter.notifyDataSetChanged(); //listadapter über neues device benachrichtigen um folglich auch listview zu updaten
+                }
             }
         }
 
@@ -81,11 +85,19 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
                 if (convertView == null)
                     convertView = getLayoutInflater().inflate(R.layout.device_item, parent, false);
 
-                TextView devicename = convertView.findViewById(R.id.device);
-                TextView macAddr = convertView.findViewById(R.id.deviceMac);
+                TextView textView_devicename = convertView.findViewById(R.id.device);
+                TextView textView_macAddr = convertView.findViewById(R.id.deviceMac);
 
-                devicename.setText(device.getName());
-                macAddr.setText(device.getAddress());
+                String deviceName= device.getName();
+                String mac= device.getAddress();
+
+                if (deviceName != null && !deviceName.isEmpty()) {
+                    textView_devicename.setText(deviceName);
+                }else{
+                    textView_devicename.setText("Unknown");
+                }
+
+                textView_macAddr.setText(mac);
 
                 return convertView;
             }
@@ -114,6 +126,7 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
         if (!bluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE); //Anfrage ob verbinden falls nicht aktiverit
             startActivityForResult(enableBtIntent,3);
+
         }
     }
 
@@ -141,6 +154,7 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
     }
 
     public void scanForNewDevices(){
+        bluetoothAdapter.cancelDiscovery();
         bluetoothDevices.clear();
         listAdapter.notifyDataSetChanged();
         bluetoothAdapter.startDiscovery();
@@ -162,5 +176,24 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
             }
         }
         listAdapter.notifyDataSetChanged();
+    }
+
+    private boolean isInBluetoothDevices(String adress){
+        for (BluetoothDevice device : bluetoothDevices) {
+
+            if(adress.equals(device.getAddress())){
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+    void logBluetooth(String msg){
+        Log.d("blue",msg);
+    }
+
+    void logBluetooth(boolean b){
+        Log.d("blue",b+"");
     }
 }
