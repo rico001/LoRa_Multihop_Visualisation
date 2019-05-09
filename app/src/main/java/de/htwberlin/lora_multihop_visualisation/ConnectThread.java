@@ -61,6 +61,7 @@ public class ConnectThread extends Thread {
 
         // The connection attempt succeeded. Perform work associated with
         // the connection in a separate thread.
+
         //manageMyConnectedSocket(mmSocket);
     }
 
@@ -71,6 +72,7 @@ public class ConnectThread extends Thread {
         } catch (IOException e) {
             Log.d("blue", "Could not close the client socket", e);
         }
+
     }
 }
 
