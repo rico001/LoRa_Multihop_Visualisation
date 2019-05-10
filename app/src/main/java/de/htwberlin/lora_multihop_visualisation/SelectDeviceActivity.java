@@ -6,8 +6,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -30,6 +32,8 @@ import java.util.Set;
  */
 public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
 
+    private int selectedDeviceColor = Color.YELLOW;
+
     private BluetoothAdapter bluetoothAdapter;
     private ArrayList<BluetoothDevice> bluetoothDevices = new ArrayList<>();    //contains alls currently accessable devices and fills listadapter
 
@@ -37,6 +41,7 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
     private ArrayAdapter<BluetoothDevice> listAdapter = null;       //fills listView
     ListView listView;
     ProgressBar progressBar;
+
 
     /**
      * sucht nach verfügbaren neuen Geräten und fügt sie zu den bluetoothDevices hinzu->listadapter for listview wird geupdatet
@@ -72,8 +77,8 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 bluetoothAdapter.cancelDiscovery();
                 SingletonDevice.setBluetoothDevice(bluetoothDevices.get(position));  //a device is accessable for mainactivity
-                //tryConnect= new ConnectThread(bluetoothDevices.get(position));
-                //tryConnect.run();   //starts the BT connection
+                view.setBackgroundColor(selectedDeviceColor);
+                //TODO only one selected device pssible
             }
         });
 

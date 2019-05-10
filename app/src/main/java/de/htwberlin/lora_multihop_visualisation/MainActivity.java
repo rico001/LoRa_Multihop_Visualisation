@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         public void handleMessage(Message msg){
             switch (msg.what){
                 case MessageConstants.STATE_CONNECTING:
-                    update_LinearLayout_messages(readColor,"Verbindung wird aufgebaut",true);
+                    update_LinearLayout_messages(readColor,"Verbindung mit "+SingletonDevice.getBluetoothDevice().getName()+" wird aufgebaut",true);
                     break;
                 case MessageConstants.STATE_CONNECTED:
                     update_LinearLayout_messages(readColor,"Verbindung ist aufgebaut",true);
@@ -142,10 +142,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Button b = (Button) v;
 
         if(v.getId()==R.id.bttn_sendMessage){
-            String messageString = editText_messages.getText().toString();
-            byte[] messageByte = (messageString+AT_POSTFIX).getBytes();
-            btService.write(messageByte);
-        }else{
+
+            try{
+                if(btService.isConnected()){
+                    String messageString = editText_messages.getText().toString();
+                    byte[] messageByte = (messageString+AT_POSTFIX).getBytes();
+                    btService.write(messageByte);
+                }
+
+            }catch(NullPointerException e){
+                update_LinearLayout_messages(sendColor,"Wählen Sie ein Device in den Settings", true);
+            }
+        }
+        else{
             Toast.makeText(this, b.getText()+" AT-Routine", Toast.LENGTH_LONG).show();
         }
 
