@@ -16,7 +16,7 @@ import java.util.UUID;
 
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 
-public class MyBluetoothService {
+public class MyBluetoothService implements MessageConstants{
     private static final String TAG = "blue";
     private Handler handler; // handler that gets info from Bluetooth service
     private BluetoothAdapter adapter;
@@ -50,7 +50,7 @@ public class MyBluetoothService {
         // Create temporary object
         if(isConnected()){
             connectThread.write(out);
-            Message writtenMsg = handler.obtainMessage(MessageConstants.MESSAGE_WRITE, -1, -1, out);
+            Message writtenMsg = handler.obtainMessage(MESSAGE_WRITE, -1, -1, out);
             writtenMsg.sendToTarget();
         }
     }
@@ -64,7 +64,7 @@ public class MyBluetoothService {
         private UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
         public AcceptThread(BluetoothDevice device) {
-            Message readMsg = handler.obtainMessage(MessageConstants.STATE_CONNECTING);
+            Message readMsg = handler.obtainMessage(STATE_CONNECTING);
             readMsg.sendToTarget();
 
             BluetoothSocket tmp = null;
@@ -101,7 +101,7 @@ public class MyBluetoothService {
                 // Connect to the remote device through the socket. This call blocks
                 // until it succeeds or throws an exception.
                 mmSocket.connect();
-                Message readMsg = handler.obtainMessage(MessageConstants.STATE_CONNECTED);
+                Message readMsg = handler.obtainMessage(STATE_CONNECTED);
                 readMsg.sendToTarget();
             } catch (IOException connectException) {
                 // Unable to connect; close the socket and return.
@@ -176,7 +176,7 @@ public class MyBluetoothService {
                     // Read from the InputStream.
                     numBytes = mmInStream.read(mmBuffer);//TODO is reading too fast
                     // Send the obtained bytes to the UI activity.
-                    Message readMsg = handler.obtainMessage(MessageConstants.MESSAGE_READ, numBytes, -1, mmBuffer);
+                    Message readMsg = handler.obtainMessage(MESSAGE_READ, numBytes, -1, mmBuffer);
                     readMsg.sendToTarget();
                 } catch (IOException e) {
                     Log.d(TAG, "Input stream was disconnected", e);
@@ -192,14 +192,14 @@ public class MyBluetoothService {
             try {
                 mmOutStream.write(bytes);
                 // Share the sent message with the UI activity.
-                Message writtenMsg = handler.obtainMessage(MessageConstants.MESSAGE_WRITE, -1, -1, mmBuffer);
+                Message writtenMsg = handler.obtainMessage(MESSAGE_WRITE, -1, -1, mmBuffer);
                 writtenMsg.sendToTarget();
             } catch (IOException e) {
                 Log.e(TAG, "Error occurred when sending data", e);
 
                 // Send a failure message back to the activity.
                 Message writeErrorMsg =
-                        handler.obtainMessage(MessageConstants.MESSAGE_TOAST);
+                        handler.obtainMessage(MESSAGE_TOAST);
                 Bundle bundle = new Bundle();
                 bundle.putString("toast",
                         "Couldn't send data to the other device");
