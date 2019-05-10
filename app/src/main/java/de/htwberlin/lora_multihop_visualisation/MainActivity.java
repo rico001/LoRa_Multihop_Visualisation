@@ -2,8 +2,10 @@ package de.htwberlin.lora_multihop_visualisation;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,13 +25,51 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
+
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    private final static String AT_POSTFIX= "\r\n";
     private final static int sendColor= Color.BLUE;
-
+    private final static int readColor= Color.RED;
+    private MyBluetoothService btService = null;
     private GoogleMap mMap;
     private EditText editText_messages;
     private LinearLayout linearLayout_messages;
+
+    private final Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg){
+            switch (msg.what){
+                case MessageConstants.STATE_CONNECTING:
+                    update_LinearLayout_messages(readColor,"Verbindung wird aufgebaut",true);
+                    break;
+                case MessageConstants.STATE_CONNECTED:
+                    update_LinearLayout_messages(readColor,"Verbindung ist aufgebaut",true);
+                    break;
+                case MessageConstants.MESSAGE_WRITE:
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    Log.d("blue","send:     "+writeMessage);
+                    update_LinearLayout_messages(readColor,writeMessage,false);
+                    break;
+                case MessageConstants.MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    Log.d("blue","read:     "+readMessage);
+                    update_LinearLayout_messages(sendColor,readMessage,true);
+                    break;
+                case MessageConstants.MESSAGE_ERROR:
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,12 +77,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_main);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-
-
         editText_messages= (EditText) findViewById(R.id.editText_messages);
         linearLayout_messages= (LinearLayout) findViewById(R.id.linearLayout_messages);
+
+        try{
+            btService = new MyBluetoothService(this,mHandler,SingletonDevice.getBluetoothDevice());
+            btService.connectWithBluetoothDevice();
+        }catch(NullPointerException e){
+            update_LinearLayout_messages(sendColor,"Wählen Sie ein Device in den Settings", true);
+        }
+
+
     }
+
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -94,12 +142,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Button b = (Button) v;
 
         if(v.getId()==R.id.bttn_sendMessage){
-            String message= editText_messages.getText().toString();
-            if(update_LinearLayout_messages(sendColor,message)){
-
-            }else{
-                Toast.makeText(this, "Eingaben überprüfen", Toast.LENGTH_LONG).show();
-            }
+            String messageString = editText_messages.getText().toString();
+            byte[] messageByte = (messageString+AT_POSTFIX).getBytes();
+            btService.write(messageByte);
         }else{
             Toast.makeText(this, b.getText()+" AT-Routine", Toast.LENGTH_LONG).show();
         }
@@ -111,17 +156,31 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         startActivity(intent);
     }
 
-    private boolean update_LinearLayout_messages(int color, String message){
-        if(message.equals("")){
-            return false;
-        }
-        TextView textView_newMessage= new TextView(this);
-        textView_newMessage.setText("\n>> "+message);
-        textView_newMessage.setTextColor(color);
+    private boolean update_LinearLayout_messages(int color, String message, boolean isSendMessage){
 
-        linearLayout_messages.addView(textView_newMessage);
+        String symbols="<<";
+        String time=getCurrentTime()+"Uhr:  ";
+
+        if(isSendMessage){
+            symbols=">>";
+        }
+
+        TextView textView= new TextView(this);
+        textView.setText(time+symbols+message);
+        textView.setTextColor(color);
+
+        linearLayout_messages.addView(textView);
+
         //TODO auto. scrolling nach unten bei update
         return true;
+    }
+
+    private String getCurrentTime() {
+        Date date = new Date();
+        String strDateFormat = "hh:mm:ss";
+        DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+        String formattedDate= dateFormat.format(date);
+        return formattedDate;
     }
 
 

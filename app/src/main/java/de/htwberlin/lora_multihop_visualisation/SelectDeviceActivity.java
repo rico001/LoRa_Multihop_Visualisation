@@ -1,6 +1,5 @@
 package de.htwberlin.lora_multihop_visualisation;
 
-import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -8,9 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -23,9 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -36,7 +31,6 @@ import java.util.Set;
 public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
 
     private BluetoothAdapter bluetoothAdapter;
-    private ConnectThread tryConnect; //TODO: later handle exceptions and success
     private ArrayList<BluetoothDevice> bluetoothDevices = new ArrayList<>();    //contains alls currently accessable devices and fills listadapter
 
     //layout
@@ -77,7 +71,8 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 bluetoothAdapter.cancelDiscovery();
-                tryConnect= new ConnectThread(bluetoothDevices.get(position));
+                SingletonDevice.setBluetoothDevice(bluetoothDevices.get(position));  //a device is accessable for mainactivity
+                //tryConnect= new ConnectThread(bluetoothDevices.get(position));
                 //tryConnect.run();   //starts the BT connection
             }
         });

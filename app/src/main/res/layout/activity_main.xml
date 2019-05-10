@@ -76,26 +76,6 @@
             android:visibility="visible"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollY="100dp"
-                android:scrollbarStyle="insideOverlay"
-                android:scrollbars="vertical"
-                android:text='>> "33-80-21-ae-5d-7e" ist beigetreten'
-                android:textColor="@android:color/holo_orange_dark"
-                android:visibility="visible" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollY="100dp"
-                android:scrollbarStyle="insideOverlay"
-                android:scrollbars="vertical"
-                android:text='>> "23-80-41-ae-fd-7e" ist beigetreten'
-                android:textColor="@android:color/holo_red_light"
-                android:visibility="visible" />
         </LinearLayout>
 
     </ScrollView>
