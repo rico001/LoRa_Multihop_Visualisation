@@ -31,7 +31,7 @@ import java.util.Date;
 
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,MessageConstants {
 
     private final static String AT_POSTFIX= "\r\n";
     private final static int sendColor= Color.BLUE;
@@ -45,27 +45,27 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public void handleMessage(Message msg){
             switch (msg.what){
-                case MessageConstants.STATE_CONNECTING:
+                case STATE_CONNECTING:
                     update_LinearLayout_messages(readColor,"Verbindung mit "+SingletonDevice.getBluetoothDevice().getName()+" wird aufgebaut",true);
                     break;
-                case MessageConstants.STATE_CONNECTED:
+                case STATE_CONNECTED:
                     update_LinearLayout_messages(readColor,"Verbindung ist aufgebaut",true);
                     break;
-                case MessageConstants.MESSAGE_WRITE:
+                case MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
                     Log.d("blue","send:     "+writeMessage);
                     update_LinearLayout_messages(readColor,writeMessage,false);
                     break;
-                case MessageConstants.MESSAGE_READ:
+                case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     Log.d("blue","read:     "+readMessage);
                     update_LinearLayout_messages(sendColor,readMessage,true);
                     break;
-                case MessageConstants.MESSAGE_ERROR:
+                case MESSAGE_ERROR:
                     break;
             }
         }
