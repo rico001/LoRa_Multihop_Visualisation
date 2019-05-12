@@ -12,7 +12,7 @@
         android:id="@+id/map"
         class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="300dp" />
+        android:layout_height="660dp" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -57,61 +57,6 @@
             android:text="Button D" />
 
     </LinearLayout>
-
-    <ScrollView
-        style="@android:style/Widget.Material.ScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:fillViewport="true"
-        android:scrollbarStyle="insideOverlay"
-        android:visibility="visible">
-
-        <LinearLayout
-            android:id="@+id/linearLayout_messages"
-            android:layout_width="match_parent"
-            android:layout_height="92dp"
-            android:layout_marginTop="8dp"
-            android:orientation="vertical"
-            android:showDividers="end"
-            android:visibility="visible"
-            app:layout_constraintTop_toTopOf="parent">
-
-        </LinearLayout>
-
-    </ScrollView>
-
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:id="@+id/linearLayout3"
-            android:layout_width="match_parent"
-            android:layout_height="51dp"
-            android:layout_marginBottom="8dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:targetApi="@android:color/holo_blue_light">
-
-            <EditText
-                android:id="@+id/editText_messages"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="Broadcast-Message"
-                android:inputType="textPersonName" />
-
-            <Button
-                android:id="@+id/bttn_sendMessage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="buttonHandling"
-                android:text="send"
-                android:visibility="visible" />
-        </LinearLayout>
-    </android.support.constraint.ConstraintLayout>
 
 
 </LinearLayout>

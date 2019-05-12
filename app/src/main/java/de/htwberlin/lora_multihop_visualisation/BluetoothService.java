@@ -16,7 +16,7 @@ import java.util.UUID;
 
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 
-public class MyBluetoothService implements MessageConstants{
+public class BluetoothService implements MessageConstants{
     private static final String TAG = "blue";
     private Handler handler; // handler that gets info from Bluetooth service
     private BluetoothAdapter adapter;
@@ -26,7 +26,7 @@ public class MyBluetoothService implements MessageConstants{
 
     private boolean connected=false;
 
-    public MyBluetoothService(Context context, Handler handler, BluetoothDevice device) {
+    public BluetoothService(Context context, Handler handler, BluetoothDevice device) {
         adapter = BluetoothAdapter.getDefaultAdapter();
         this.handler = handler;
         bluetoothDevive=device;
