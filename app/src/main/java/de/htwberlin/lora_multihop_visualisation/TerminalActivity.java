@@ -30,9 +30,11 @@ public class TerminalActivity extends AppCompatActivity implements MessageConsta
     private LinearLayout terminalMessages;
     private EditText terminalInput;
 
+    private static final String TAG = "term";
+
     private final Handler mHandler = new Handler() {
         @Override
-        public void handleMessage(Message msg) {
+        public synchronized void handleMessage(Message msg) {
             switch (msg.what) {
                 case STATE_CONNECTING:
                     updateTerminalMessages(readColor, "Verbindung mit " + SingletonDevice.getBluetoothDevice().getName() + " wird aufgebaut", true);
@@ -40,19 +42,11 @@ public class TerminalActivity extends AppCompatActivity implements MessageConsta
                 case STATE_CONNECTED:
                     updateTerminalMessages(readColor, "Verbindung ist aufgebaut", true);
                     break;
-                case MESSAGE_WRITE:
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
-                    String writeMessage = new String(writeBuf);
-                    Log.d("blue", "send:     " + writeMessage);
-                    updateTerminalMessages(readColor, writeMessage, false);
-                    break;
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    Log.d("blue", "read:     " + readMessage);
-                    updateTerminalMessages(sendColor, readMessage, true);
+                    String readMessage = new String(readBuf);
+                    updateTerminalMessages(readColor, readMessage.trim(), false);
                     break;
                 case MESSAGE_ERROR:
                     break;
@@ -85,6 +79,7 @@ public class TerminalActivity extends AppCompatActivity implements MessageConsta
                     String messageString = terminalInput.getText().toString();
                     byte[] messageByte = (messageString + AT_POSTFIX).getBytes();
                     btService.write(messageByte);
+                    updateTerminalMessages(sendColor, terminalInput.getText().toString(), true);
                 }
 
             } catch (NullPointerException e) {
@@ -123,4 +118,13 @@ public class TerminalActivity extends AppCompatActivity implements MessageConsta
         return formattedDate;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(btService==null){
+            return;
+        }else{
+            btService.diconnect();
+        }
+    }
 }
