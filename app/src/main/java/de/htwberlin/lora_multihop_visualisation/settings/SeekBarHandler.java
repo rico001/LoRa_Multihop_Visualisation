@@ -87,10 +87,11 @@ public class SeekBarHandler {
     public class SeekBarChangeHandler implements SeekBar.OnSeekBarChangeListener {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            int value = progressToValue(progress);
-            syncLabel(value);
-
-            setter.accept(value);
+            if (fromUser) {
+                int value = progressToValue(progress);
+                syncLabel(value);
+                setter.accept(value);
+            }
         }
 
         @Override
