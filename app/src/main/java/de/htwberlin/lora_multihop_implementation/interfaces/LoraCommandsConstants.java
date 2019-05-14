@@ -1,7 +1,7 @@
 package de.htwberlin.lora_multihop_implementation.interfaces;
 
 public interface LoraCommandsConstants {
-	
+
 	/**
 	 * LORA COMMANDS FOR EXECUTION AS CONSTANTS IN STRING FORMAT
 	 */
