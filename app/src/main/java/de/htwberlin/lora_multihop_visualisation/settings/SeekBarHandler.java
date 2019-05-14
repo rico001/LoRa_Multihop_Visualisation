@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-// todo: it crashes on moving to the end of the bar, probably some issue with out of bound index
 public class SeekBarHandler {
     private SeekBar input;
     private TextView textView;
@@ -105,6 +104,4 @@ public class SeekBarHandler {
 
         }
     }
-
-
 }
