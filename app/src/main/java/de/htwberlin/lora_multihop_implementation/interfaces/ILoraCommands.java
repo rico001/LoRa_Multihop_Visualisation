@@ -132,7 +132,7 @@ public interface ILoraCommands {
 	/**
 	 *	SET TARGET ADDRESS
 	 *
-	 *	cmd format				AT+DEST=XXXX\r\
+	 *	cmd format				AT+DEST=XXXX\r\n
 	 *	reply data format		AT,OK\r\n
 	 *
 	 *	XXXX					HEX representation of address (0000 - FFFF)
