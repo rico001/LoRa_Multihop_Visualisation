@@ -30,10 +30,8 @@ public interface ILoraCommands {
 	 *
 	 *	cmd format				AT+VER\r\n
 	 *	reply data format		AT,V0.3,OK\r\n
-	 *
-	 *	@return					version
 	 */
-	String getVersion();
+	void getVersion();
 
 	/**
 	 *	ENTER IDLE MODE
@@ -100,10 +98,8 @@ public interface ILoraCommands {
 	 *
 	 *	-XXX					HEX representation
 	 *							-63dB -> response "AT,-063,OK\r\n"
-	 *
-	 * @return					RSSI value
 	 */
-	String getRssiValue();
+	void getRssiValue();
 
 	/**
 	 *	SET MODULE ADDRESS
@@ -114,7 +110,7 @@ public interface ILoraCommands {
 	 *	XXXX					HEX representation of address (0000 - FFFF)
 	 *							FFFF : broadcast (value : 0xffff)
 	 */
-	void setAddress();
+	void setAddress(String addr);
 
 	/**
 	 *	GET MODULE ADDRESS
@@ -124,10 +120,8 @@ public interface ILoraCommands {
 	 *
 	 *	XXXX					HEX representation of address (0000 - FFFF)
 	 *							FFFF : broadcast (value : 0xffff)
-	 *
-	 * @return					module address
 	 */
-	String getAddress();
+	void getAddress();
 
 	/**
 	 *	SET TARGET ADDRESS
@@ -138,7 +132,7 @@ public interface ILoraCommands {
 	 *	XXXX					HEX representation of address (0000 - FFFF)
 	 *							FFFF : broadcast (value : 0xffff)
 	 */
-	void setTargetAddress();
+	void setTargetAddress(String addr);
 
 	/**
 	 *	GET TARGET ADDRESS
@@ -148,10 +142,8 @@ public interface ILoraCommands {
 	 *
 	 *	XXXX					HEX representation of address (0000 - FFFF)
 	 *							FFFF : broadcast (value : 0xffff)
-	 *
-	 * @return					target adress
 	 */
-	String getTargetAddress();
+	void getTargetAddress();
 
 	/**
 	 *	SET ADDRESS FILTER
@@ -176,10 +168,8 @@ public interface ILoraCommands {
 	 *	X						int value
 	 *							enabled: 1
 	 *							disabled: 0 (default)
-	 *
-	 * @return					true -> active | false -> inactive
 	 */
-	boolean getAddressFilter();
+	void getAddressFilter();
 
 	/**
 	 *	CONFIGURE MODULE
@@ -253,6 +243,21 @@ public interface ILoraCommands {
 
 	/**
 	 *	SEND DATA
+	 *	usage: initialize sending -> AT,OK\r\n
+	 *
+	 *	cmd format				AT+SEND=XX\r\n
+	 *	reply data format		AT,OK\r\n			->	ready for receiving data
+	 *							AT,SENDING\r\n		->	module receives data from serial
+	 *							AT,SENDED\r\n		->	send finished
+	 *
+	 *	XX						HEX byte send-data length (01 - FB = 1 - 250)
+	 *							more data than specified gets abandoned
+	 */
+	void send();
+
+	/**
+	 *	SEND DATA
+	 *	usage: send bytes to module -> AT,SENDING\r\n ... finished ... AT,SENDED\r\n
 	 *
 	 *	cmd format				AT+SEND=XX\r\n
 	 *	reply data format		AT,OK\r\n			->	ready for receiving data
@@ -284,16 +289,4 @@ public interface ILoraCommands {
 	 *													cause: still sending data
 	 */
 	void exitDirectTransmission(String data);
-
-	/**
-	 * @param data				string to calc the length for
-	 * @return					byte length of string
-	 */
-	int calculateByteLength(String data);
-
-	/**
-	 * @param data				string to convert to hex representation
-	 * @return					hex representation of string
-	 */
-	String convertToHex(String data);
 }
