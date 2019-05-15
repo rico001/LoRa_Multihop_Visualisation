@@ -173,7 +173,7 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
         return super.onOptionsItemSelected(item);
     }
 
-    public void scanForNewDevices(){
+    private void scanForNewDevices(){
         bluetoothAdapter.cancelDiscovery();
         bluetoothDevices.clear();
         listAdapter.notifyDataSetChanged();
