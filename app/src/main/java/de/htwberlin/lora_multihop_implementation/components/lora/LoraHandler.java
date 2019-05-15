@@ -13,7 +13,7 @@ public class LoraHandler extends AppCompatActivity implements MessageConstants {
 	private BluetoothService btService;
 	private ILoraCommands loraCommandsExecutor;
 
-	private final Handler msgHandler = new Handler() {
+	private final Handler responseHandler = new Handler() {
 		@Override
 		public synchronized void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -44,7 +44,7 @@ public class LoraHandler extends AppCompatActivity implements MessageConstants {
 
 	private void initBluetoothService()	{
 		try {
-			btService = new BluetoothService(this, msgHandler, SingletonDevice.getBluetoothDevice());
+			btService = new BluetoothService(this, responseHandler, SingletonDevice.getBluetoothDevice());
 			btService.connectWithBluetoothDevice();
 		} catch (NullPointerException e) {
 			System.out.println("BT issue --- " + e.getStackTrace());
@@ -63,7 +63,7 @@ public class LoraHandler extends AppCompatActivity implements MessageConstants {
 		return loraCommandsExecutor;
 	}
 
-	public Handler getMsgHandler() {
-		return msgHandler;
+	public Handler getResponseHandler() {
+		return responseHandler;
 	}
 }
