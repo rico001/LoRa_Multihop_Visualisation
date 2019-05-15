@@ -5,7 +5,8 @@ import de.htwberlin.lora_multihop_implementation.interfaces.LoraCommandsConstant
 import de.htwberlin.lora_multihop_visualisation.BluetoothService;
 
 /**
- * TODO ---
+ * Implementiert das ILoraCommands Interface
+ * 	*	BluetoothService als Abhängigkeit: Senden der Commands zum LoRa-Modul via Bluetooth-Modul (verbunden auf Breadboard)
  */
 public class LoraCommandsExecutor implements ILoraCommands {
 
