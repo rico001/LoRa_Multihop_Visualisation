@@ -12,7 +12,6 @@ public class LoraHandler extends AppCompatActivity implements MessageConstants {
 
 	private BluetoothService btService;
 	private ILoraCommands loraCommandsExecutor;
-
 	private final Handler responseHandler = new Handler() {
 		@Override
 		public synchronized void handleMessage(Message msg) {
