@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -39,7 +41,6 @@ public class BluetoothService implements MessageConstants{
     }
 
     public boolean isConnected() {
-        Log.d(TAG,"conncted");
         return connected;
     }
 
@@ -121,7 +122,6 @@ public class BluetoothService implements MessageConstants{
                 return;
             }
 
-            setConnected(true);
             connectThread = new ConnectedThread(mmSocket);
             connectThread.start();
 
@@ -144,8 +144,11 @@ public class BluetoothService implements MessageConstants{
      */
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
+
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
+
+        private final DataInputStream dataInStream;
         private byte[] mmBuffer; // mmBuffer store for the stream
 
         public ConnectedThread(BluetoothSocket socket) {
@@ -168,26 +171,28 @@ public class BluetoothService implements MessageConstants{
 
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
+            dataInStream = new DataInputStream(tmpIn);
         }
 
         public void run() {
+            setConnected(true);
+
             Log.d(TAG, "connected thread start");
 
-            mmBuffer = new byte[32];
+            mmBuffer = new byte[512];
             int numBytes; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs.
             while (true) {
                 try {
                     // Read from the InputStream.
-                    numBytes = mmInStream.read(mmBuffer);
-                    // Send the obtained bytes to the UI activity.
-                    handler.obtainMessage(MESSAGE_READ, numBytes, -1, mmBuffer).sendToTarget();
+                        numBytes = dataInStream.read(mmBuffer);
+                        String readMessage = new String(mmBuffer, 0, numBytes)
+                                .replace(System.lineSeparator(),"");
 
-                    String msg=new String(mmBuffer);
-                    Log.d(TAG,msg.trim());
-
-
+                        Log.d(TAG,readMessage);
+                        handler.obtainMessage(MESSAGE_READ, numBytes, -1, readMessage).sendToTarget();
+                        //TODO is reading to fast und interpretiert "\r\n"
                 } catch (IOException e) {
                     Log.d(TAG, "Input stream was disconnected", e);
                     break;
@@ -221,6 +226,7 @@ public class BluetoothService implements MessageConstants{
         public void cancel() {
             try {
                 mmSocket.close();
+                setConnected(false);
             } catch (IOException e) {
                 Log.e(TAG, "Could not close the connect socket", e);
             }

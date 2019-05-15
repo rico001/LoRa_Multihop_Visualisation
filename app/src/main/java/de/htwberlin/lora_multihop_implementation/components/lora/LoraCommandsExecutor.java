@@ -7,8 +7,9 @@ import de.htwberlin.lora_multihop_visualisation.BluetoothService;
 /**
  * TODO ---
  */
-public class LoraCommandsExecutor implements ILoraCommands {
+public class LoraCommandsExecutor implements ILoraCommands, LoraCommandsConstants {
 
+	private final static String AT_POSTFIX = "\r\n";
 	private BluetoothService btService;
 
 	public LoraCommandsExecutor(BluetoothService btService)	{
@@ -18,7 +19,7 @@ public class LoraCommandsExecutor implements ILoraCommands {
 	@Override
 	public void test() {
 		if(btService.isConnected()) {
-			btService.write(LoraCommandsConstants.TEST_CMD_MSG.getBytes());
+			btService.write((TEST_CMD_MSG+AT_POSTFIX).getBytes());
 		}
 	}
 
@@ -32,7 +33,7 @@ public class LoraCommandsExecutor implements ILoraCommands {
 	@Override
 	public void getVersion() {
 		if(btService.isConnected())	{
-			btService.write(LoraCommandsConstants.GET_VERSION_CMD_MSG.getBytes());
+			btService.write((GET_VERSION_CMD_MSG+AT_POSTFIX).getBytes());
 		}
 	}
 
@@ -87,17 +88,17 @@ public class LoraCommandsExecutor implements ILoraCommands {
 
 	@Override
 	public void setAddress(String addr) {
-		String completeCommand = LoraCommandsConstants.SET_ADDRESS_CMD_MSG.replace("XXXX", addr);
+		String completeCommand = SET_ADDRESS_CMD_MSG.replace("XXXX", addr);
 
 		if(btService.isConnected())	{
-			btService.write(completeCommand.getBytes());
+			btService.write((completeCommand+AT_POSTFIX).getBytes());
 		}
 	}
 
 	@Override
 	public void getAddress() {
 		if(btService.isConnected())	{
-			btService.write(LoraCommandsConstants.GET_ADDRESS_CMD_MSG.getBytes());
+			btService.write((GET_ADDRESS_CMD_MSG+AT_POSTFIX).getBytes());
 		}
 	}
 

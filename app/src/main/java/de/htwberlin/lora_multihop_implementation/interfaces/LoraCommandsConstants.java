@@ -5,11 +5,11 @@ public interface LoraCommandsConstants {
 	/**
 	 * LORA COMMANDS FOR EXECUTION AS CONSTANTS IN STRING FORMAT
 	 */
-	String TEST_CMD_MSG = "AT\\r\\n";
+	String TEST_CMD_MSG = "AT";
 
 	String RESET_CMD_MSG = "AT+RST\\r\\n";
 
-	String GET_VERSION_CMD_MSG = "AT+VER\\r\\n";
+	String GET_VERSION_CMD_MSG = "AT+VER";
 
 	String ENTER_IDLE_MODE_CMD_MSG = "AT+IDLE\\r\\n";
 	String ENTER_SLEEP_MODE_CMD_MSG = "AT+SLEEP=1\\r\\n";
@@ -17,8 +17,8 @@ public interface LoraCommandsConstants {
 
 	String GET_RSSI_VALUE_CMD_MSG = "AT+RSSI?\\r\\n";
 
-	String SET_ADDRESS_CMD_MSG = "AT+ADDR=XXXX\\r";
-	String GET_ADDRESS_CMD_MSG = "AT+ADDR?\\r\\n";
+	String SET_ADDRESS_CMD_MSG = "AT+ADDR=XXXX";
+	String GET_ADDRESS_CMD_MSG = "AT+ADDR?";
 
 	String SET_TARGET_ADDRESS_CMD_MSG = "AT+DEST=XXXX\\r\\n";
 	String GET_TARGET_ADDRESS_CMD_MSG = "AT+DEST?\\r\\n";

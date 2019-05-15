@@ -29,39 +29,82 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import de.htwberlin.lora_multihop_implementation.components.lora.LoraCommandsExecutor;
+import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+/**
+ * Es werden ausschließlich AT-Routinen verschickt (einzelne CMDs werden vor User versteckt)
+ */
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, MessageConstants {
 
     private GoogleMap mMap;
+
+    private final static int sendColor = Color.RED;
+    private final static int readColor = Color.BLUE;
+
+    private LinearLayout terminalMessages;
+
+    private ILoraCommands loraCommandsExecutor;
+    private BluetoothService btService = null;
+    private final Handler msgHandler = new Handler() {
+        @Override
+        public synchronized void handleMessage(Message msg) {
+            switch (msg.what) {
+                case STATE_CONNECTING:
+                    updateTerminalMessages(readColor, "Verbindung mit " + SingletonDevice.getBluetoothDevice().getName() + " wird aufgebaut", false);
+                    break;
+                case STATE_CONNECTED:
+                    updateTerminalMessages(readColor, "Verbindung ist aufgebaut", false);
+                    break;
+                case MESSAGE_READ:
+                    String message = (String) msg.obj;
+                    updateTerminalMessages(readColor, message, false);
+                    break;
+                case MESSAGE_ERROR:
+                    System.out.println("MSG ERROR");
+                    break;
+            }
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initMap();
+        initWidgets();
+        initBluetoothService();
+        loraCommandsExecutor = new LoraCommandsExecutor(btService);
+    }
+
+    private void initMap(){
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+    private void initWidgets(){
+        terminalMessages = (LinearLayout) findViewById(R.id.linearLayout_feedback);
+    }
+
+    private void initBluetoothService()	{
+        try {
+            btService = new BluetoothService(this, msgHandler, SingletonDevice.getBluetoothDevice());
+            btService.connectWithBluetoothDevice();
+        } catch (NullPointerException e) {
+            updateTerminalMessages(readColor, "Wählen Sie ein Device in den Settings", false);
+        }
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         // Add a marker in Sydney, Australia, and move the camera.
-        LatLng brln1 = new LatLng(52.5001, 13.5002);
-        mMap.addMarker(new MarkerOptions()
-                .position(brln1).title("A: 00-80-41-ae-fd-7e"))
-                .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-
-        LatLng brln2 = new LatLng(52.501, 13.5002);
-        mMap.addMarker(new MarkerOptions()
-                .position(brln2).title("B: 23-80-41-ae-fd-7e"))
-                .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-
         LatLng brln3 = new LatLng(52.5004, 13.5001);
         mMap.addMarker(new MarkerOptions()
                 .position(brln3).title("C: 24-33-55-aa-fd-7e"))
                 .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(brln3));
         mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
@@ -94,10 +137,75 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         return super.onOptionsItemSelected(item);
     }
+    //je nach Button werden hier die Routinen durchlaufen(connect, showNodes etc)
+    public void buttonHandling(View v) {
+        Button button = (Button) v;
+        int id=v.getId();
+
+        try {
+
+            switch(id){
+                case R.id.bttn_test:
+                    //TODO @Gruppe Rountinen mit kurzem warten zwischen einzelnen Befehle sonst "ERR:BUSY" ggf Warten auf Response/CMD (Queue?)
+                    loraCommandsExecutor.test();//just a test
+                    //BSP:
+                    //loraCommandsExecutor.setAddress("EEEE");
+                    //kurz Warten (ggf. response verarbeiten, wenn notwendig!)
+                    //loraCommandsExecutor.getAddress();
+                    break;
+                case R.id.bttn_setAddr:
+                    loraCommandsExecutor.getVersion();//just a test
+                    break;
+                default:
+                    Toast.makeText(this, button.getText() + " AT-Routine", Toast.LENGTH_LONG).show();
+            }
+        } catch (NullPointerException e) {
+            updateTerminalMessages(readColor, "Wählen Sie ein Device in den Settings", false);
+        }
+
+    }
 
     private void startAnotherActivity(Class c){
         Intent intent = new Intent(this, c);
         startActivity(intent);
+    }
+
+    private synchronized boolean updateTerminalMessages(int color, String message, boolean isSendMessage) {
+
+        String symbols = "<< ";
+        String time = getCurrentTime() + " ";
+
+        if (isSendMessage) {
+            symbols = ">> ";
+        }
+
+        TextView textView = new TextView(this);
+        textView.setText(time + symbols + message);
+        textView.setTextColor(color);
+
+        terminalMessages.addView(textView);
+
+        //TODO auto. scrolling nach unten bei update
+        return true;
+    }
+
+    private String getCurrentTime() {
+        Date date = new Date();
+        String strDateFormat = "hh:mm:ss";
+        DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+        String formattedDate = dateFormat.format(date);
+        return formattedDate;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(btService==null){
+            return;
+        }else{
+            btService.diconnect();
+        }
     }
 
 }

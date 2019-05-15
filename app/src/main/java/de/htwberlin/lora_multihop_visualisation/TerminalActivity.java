@@ -75,13 +75,7 @@ public class TerminalActivity extends AppCompatActivity implements MessageConsta
         if (v.getId() == R.id.terminal_send_button) {
 
             try {
-                if (btService.isConnected()) {
-                    String messageString = terminalInput.getText().toString();
-                    byte[] messageByte = (messageString + AT_POSTFIX).getBytes();
-                    btService.write(messageByte);
                     updateTerminalMessages(sendColor, terminalInput.getText().toString(), true);
-                }
-
             } catch (NullPointerException e) {
                 updateTerminalMessages(sendColor, "Wählen Sie ein Device in den Settings", true);
             }

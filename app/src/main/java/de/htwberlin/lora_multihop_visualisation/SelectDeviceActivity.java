@@ -135,7 +135,6 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
         }
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
