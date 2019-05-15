@@ -43,10 +43,8 @@ public class TerminalActivity extends AppCompatActivity implements MessageConsta
                     updateTerminalMessages(readColor, "Verbindung ist aufgebaut", true);
                     break;
                 case MESSAGE_READ:
-                    byte[] readBuf = (byte[]) msg.obj;
-                    // construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf);
-                    updateTerminalMessages(readColor, readMessage.trim(), false);
+                    String message = (String) msg.obj;
+                    updateTerminalMessages(readColor, message, false);
                     break;
                 case MESSAGE_ERROR:
                     break;
@@ -74,7 +72,7 @@ public class TerminalActivity extends AppCompatActivity implements MessageConsta
 
         if (v.getId() == R.id.terminal_send_button) {
 
-            try {
+            try {   btService.write((terminalInput.getText().toString()+AT_POSTFIX).getBytes());
                     updateTerminalMessages(sendColor, terminalInput.getText().toString(), true);
             } catch (NullPointerException e) {
                 updateTerminalMessages(sendColor, "Wählen Sie ein Device in den Settings", true);

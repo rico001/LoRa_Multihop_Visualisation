@@ -193,12 +193,4 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
         }
         return false;
     }
-
-    void logBluetooth(String msg){
-        Log.d("blue",msg);
-    }
-
-    void logBluetooth(boolean b){
-        Log.d("blue",b+"");
-    }
 }

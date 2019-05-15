@@ -188,10 +188,13 @@ public class BluetoothService implements MessageConstants{
                     // Read from the InputStream.
                         numBytes = dataInStream.read(mmBuffer);
                         String readMessage = new String(mmBuffer, 0, numBytes)
-                                .replace(System.lineSeparator(),"");
+                                .replace(System.lineSeparator(),"!");
 
                         Log.d(TAG,readMessage);
-                        handler.obtainMessage(MESSAGE_READ, numBytes, -1, readMessage).sendToTarget();
+
+                        if(!readMessage.isEmpty())
+                            handler.obtainMessage(MESSAGE_READ, numBytes, -1, readMessage)
+                                    .sendToTarget();
                         //TODO is reading to fast und interpretiert "\r\n"
                 } catch (IOException e) {
                     Log.d(TAG, "Input stream was disconnected", e);
