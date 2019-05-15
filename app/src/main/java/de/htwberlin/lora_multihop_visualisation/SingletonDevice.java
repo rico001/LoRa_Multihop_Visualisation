@@ -2,7 +2,9 @@ package de.htwberlin.lora_multihop_visualisation;
 
 import android.bluetooth.BluetoothDevice;
 
-
+/**
+ * unique Access to device for BTcommunication
+ */
 public class SingletonDevice {
     private static BluetoothDevice device =null;
 

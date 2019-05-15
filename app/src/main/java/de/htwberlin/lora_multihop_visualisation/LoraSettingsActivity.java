@@ -7,6 +7,9 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
+/**
+ * configuration for some AT CMDS (e.g. CONFIGURE_CMD).
+ */
 public class LoraSettingsActivity extends AppCompatActivity {
 
     private static String defaultMhzValue="433";

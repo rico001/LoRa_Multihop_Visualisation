@@ -34,19 +34,28 @@ import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 
 /**
- * Es werden ausschließlich AT-Routinen verschickt (einzelne CMDs werden vor User versteckt)
+ * Visualisation and building a multihop wireless network
  */
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, MessageConstants {
 
+    /**
+     * shows nodes of ouer Multihop network
+     */
     private GoogleMap mMap;
 
     private final static int sendColor = Color.RED;
     private final static int readColor = Color.BLUE;
 
+    /**
+     * Terminal for Feedback of succes LoraCMD Routines
+     */
     private LinearLayout terminalMessages;
 
     private ILoraCommands loraCommandsExecutor;
     private BluetoothService btService = null;
+    /**
+     * handler updates terminal
+     */
     private final Handler msgHandler = new Handler() {
         @Override
         public synchronized void handleMessage(Message msg) {
@@ -68,7 +77,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     };
 
-
+    /**
+     * init elements of this Class -> https://developer.android.com/guide/components/activities/activity-lifecycle
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,6 +122,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
     }
 
+    /**
+     * create a menu on actionbar
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -117,6 +134,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * handle buttonclick on actionbar
+     * @param item of menu
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -137,7 +159,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         return super.onOptionsItemSelected(item);
     }
-    //je nach Button werden hier die Routinen durchlaufen(connect, showNodes etc)
+
+    /**
+     * Handling of all Button in mainactivity (onClickHandler
+     * is init in mainactivity.xml file/ android:onClick="buttonHandling")
+     * @param v as button
+     */
     public void buttonHandling(View v) {
         Button button = (Button) v;
         int id=v.getId();
@@ -165,11 +192,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    /**
+     * starts a new Activity
+     * @param c is Class of this Activity
+     */
     private void startAnotherActivity(Class c){
         Intent intent = new Intent(this, c);
         startActivity(intent);
     }
 
+    /**
+     * put new Massages into Terminal
+     * @param color of text
+     * @param message
+     * @param isSendMessage
+     * @return
+     */
     private synchronized boolean updateTerminalMessages(int color, String message, boolean isSendMessage) {
 
         String symbols = "<< ";
