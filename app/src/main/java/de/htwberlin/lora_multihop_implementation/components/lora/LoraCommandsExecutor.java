@@ -20,35 +20,35 @@ public class LoraCommandsExecutor implements ILoraCommands, LoraCommandsConstant
 	@Override
 	public void test() {
 		if(btService.isConnected()) {
-			btService.write((TEST_CMD_MSG+AT_POSTFIX).getBytes());
+			btService.write((TEST_CMD_MSG + AT_POSTFIX).getBytes());
 		}
 	}
 
 	@Override
 	public void reset() {
 		if(btService.isConnected())	{
-			btService.write(LoraCommandsConstants.RESET_CMD_MSG.getBytes());
+			btService.write((RESET_CMD_MSG + AT_POSTFIX).getBytes());
 		}
 	}
 
 	@Override
 	public void getVersion() {
 		if(btService.isConnected())	{
-			btService.write((GET_VERSION_CMD_MSG+AT_POSTFIX).getBytes());
+			btService.write((GET_VERSION_CMD_MSG + AT_POSTFIX).getBytes());
 		}
 	}
 
 	@Override
 	public void enterIdleMode() {
 		if(btService.isConnected())	{
-			btService.write(LoraCommandsConstants.ENTER_IDLE_MODE_CMD_MSG.getBytes());
+			btService.write((ENTER_IDLE_MODE_CMD_MSG + AT_POSTFIX).getBytes());
 		}
 	}
 
 	@Override
 	public void enterSleepMode() {
 		if(btService.isConnected())	{
-			btService.write(LoraCommandsConstants.ENTER_SLEEP_MODE_CMD_MSG.getBytes());
+			btService.write((ENTER_SLEEP_MODE_CMD_MSG + AT_POSTFIX).getBytes());
 		}
 	}
 
@@ -62,7 +62,7 @@ public class LoraCommandsExecutor implements ILoraCommands, LoraCommandsConstant
 	@Override
 	public void enterReceiveMode() {
 		if(btService.isConnected())	{
-			btService.write(LoraCommandsConstants.ENTER_RECEIVE_MODE_CMD_MSG.getBytes());
+			btService.write((ENTER_RECEIVE_MODE_CMD_MSG + AT_POSTFIX).getBytes());
 		}
 	}
 
@@ -83,7 +83,7 @@ public class LoraCommandsExecutor implements ILoraCommands, LoraCommandsConstant
 	@Override
 	public void getRssiValue() {
 		if(btService.isConnected())	{
-			btService.write(LoraCommandsConstants.GET_RSSI_VALUE_CMD_MSG.getBytes());
+			btService.write((GET_RSSI_VALUE_CMD_MSG + AT_POSTFIX).getBytes());
 		}
 	}
 
@@ -92,52 +92,52 @@ public class LoraCommandsExecutor implements ILoraCommands, LoraCommandsConstant
 		String completeCommand = SET_ADDRESS_CMD_MSG.replace("XXXX", addr);
 
 		if(btService.isConnected())	{
-			btService.write((completeCommand+AT_POSTFIX).getBytes());
+			btService.write((completeCommand + AT_POSTFIX).getBytes());
 		}
 	}
 
 	@Override
 	public void getAddress() {
 		if(btService.isConnected())	{
-			btService.write((GET_ADDRESS_CMD_MSG+AT_POSTFIX).getBytes());
+			btService.write((GET_ADDRESS_CMD_MSG + AT_POSTFIX).getBytes());
 		}
 	}
 
 	@Override
 	public void setTargetAddress(String addr) {
-		String completeCommand = LoraCommandsConstants.SET_TARGET_ADDRESS_CMD_MSG.replace("XXXX", addr);
+		String completeCommand = SET_TARGET_ADDRESS_CMD_MSG.replace("XXXX", addr);
 
 		if(btService.isConnected())	{
-			btService.write(completeCommand.getBytes());
+			btService.write((completeCommand + AT_POSTFIX).getBytes());
 		}
 	}
 
 	@Override
 	public void getTargetAddress() {
 		if(btService.isConnected())	{
-			btService.write(LoraCommandsConstants.GET_TARGET_ADDRESS_CMD_MSG.getBytes());
+			btService.write((GET_TARGET_ADDRESS_CMD_MSG + AT_POSTFIX).getBytes());
 		}
 	}
 
 	@Override
 	public void setAddressFilter(int enable) {
-		String completeCommand = LoraCommandsConstants.SET_ADDRESS_FILTER_CMD_MSG.replace("X", Integer.toString(enable));
+		String completeCommand = SET_ADDRESS_FILTER_CMD_MSG.replace("X", Integer.toString(enable));
 
 		if(btService.isConnected())	{
-			btService.write(completeCommand.getBytes());
+			btService.write((completeCommand + AT_POSTFIX).getBytes());
 		}
 	}
 
 	@Override
 	public void getAddressFilter() {
 		if(btService.isConnected())	{
-			btService.write(LoraCommandsConstants.GET_ADDRESS_FILTER_CMD_MSG.getBytes());
+			btService.write((GET_ADDRESS_FILTER_CMD_MSG + AT_POSTFIX).getBytes());
 		}
 	}
 
 	@Override
 	public void configure(int frequency, int power, int signalBw, int spreadingFactor, int errorCoding, int crc, int implicitHeaderOn, int rxSingleOn, int frequencyHopOn, int hopPeriod, int rxPacketTimeout, int payloadLength, int preambleLength) {
-		String completeCommand = LoraCommandsConstants.CONFIGURE_CMD_MSG;
+		String completeCommand = CONFIGURE_CMD_MSG;
 		completeCommand.replace("frequency", Integer.toString(frequency));
 		completeCommand.replace("power", Integer.toString(power));
 		completeCommand.replace("signalBw", Integer.toString(signalBw));
@@ -153,21 +153,21 @@ public class LoraCommandsExecutor implements ILoraCommands, LoraCommandsConstant
 		completeCommand.replace("preambleLength", Integer.toString(preambleLength));
 
 		if(btService.isConnected())	{
-			btService.write(completeCommand.getBytes());
+			btService.write((completeCommand + AT_POSTFIX).getBytes());
 		}
 	}
 
 	@Override
 	public void save() {
 		if(btService.isConnected())	{
-			btService.write(LoraCommandsConstants.SAVE_CMD_MSG.getBytes());
+			btService.write((SAVE_CMD_MSG + AT_POSTFIX).getBytes());
 		}
 	}
 
 	@Override
 	public void send() {
 		if(btService.isConnected())	{
-			btService.write(LoraCommandsConstants.SEND_CMD_MSG.getBytes());
+			btService.write((SEND_CMD_MSG + AT_POSTFIX).getBytes());
 		}
 	}
 
@@ -181,14 +181,14 @@ public class LoraCommandsExecutor implements ILoraCommands, LoraCommandsConstant
 	@Override
 	public void enterDirectTransmission(String data) {
 		if(btService.isConnected())	{
-			btService.write(LoraCommandsConstants.ENTER_DIRECT_TRANSMISSION_CMD_MSG.getBytes());
+			btService.write((ENTER_DIRECT_TRANSMISSION_CMD_MSG + AT_POSTFIX).getBytes());
 		}
 	}
 
 	@Override
 	public void exitDirectTransmission(String data) {
 		if(btService.isConnected())	{
-			btService.write(LoraCommandsConstants.EXIT_DIRECT_TRANSMISSION_CMD_MSG.getBytes());
+			btService.write((EXIT_DIRECT_TRANSMISSION_CMD_MSG + AT_POSTFIX).getBytes());
 		}
 	}
 }
