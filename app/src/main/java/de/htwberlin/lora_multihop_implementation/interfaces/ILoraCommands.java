@@ -1,5 +1,7 @@
 package de.htwberlin.lora_multihop_implementation.interfaces;
 
+import de.htwberlin.lora_multihop_implementation.Configurator;
+
 /**
  *
  *	ILoraCommands.java
@@ -172,66 +174,13 @@ public interface ILoraCommands {
 	void getAddressFilter();
 
 	/**
-	 *	CONFIGURE MODULE
+	 * CONFIGURE MODULE
 	 *
-	 *	cmd format				AT+CFG=	frequency,
-	 *									power,
-	 *									signalBw,
-	 *									spreadingFactor,
-	 *									errorCoding,
-	 *									crc,
-	 *									implicitHeaderOn,
-	 *									rxSingleOn,
-	 *									frequencyHopOn,
-	 *									hopPeriod,
-	 *									rxPacketTimeout,
-	 *									payloadLength,
-	 *									preambleLength
-	 *									\r\n
-	 *	reply data format		AT,OK\r\n
-	 *
-	 *
-	 *							allowed	values					example value
-	 *
-	 * @param frequency			int		[410MHz-470MHz]			433000000
-	 * @param power				int		[5dBm-20dBm]			20
-	 * @param signalBw			int		[0: 7.8KHz]				6
-	 *									[1: 10.4KHz]
-	 *									[2: 15.6KHz]
-	 *									[3: 20.8KHz]
-	 *									[4: 31.2KHz]
-	 *									[5: 41.6KHz]
-	 *									[6: 62.5KHz]
-	 *									[7: 125KHz]
-	 *									[8: 250KHz]
-	 *									[9: 500KHz]
-	 * @param spreadingFactor	int		[6: 64]					10
-	 *									[7: 128]
-	 *									[8: 256]
-	 *									[9: 512]
-	 *									[10: 1024]
-	 *									[11: 2048]
-	 *									[12: 4096]
-	 * @param errorCoding		int		[1: 4/5]				1
-	 *									[2: 4/6]
-	 *									[3: 4/7]
-	 *									[4: 4/8]
-	 * @param crc				int		[0: close]				1
-	 *									[1: open]
-	 * @param implicitHeaderOn	int		[0: explicit]			0
-	 *									[1: implicit]
-	 * @param rxSingleOn		int		[0: continue]			0
-	 * 	 *								[1: single]
-	 * @param frequencyHopOn	int		[0: no support]			0
-	 * 	 *								[1: support]
-	 * @param hopPeriod			int		[0: reverse]			0
-	 * @param rxPacketTimeout	int		[1-65535]				3000
-	 * @param payloadLength		int		[5-255]					8
-	 * @param preambleLength	int		[4-65535]				4
+	 * AT+CFG=config string\r\n
+	 * reply data format		AT,OK\r\n
 	 */
-	void configure(	int frequency, int power, int signalBw, int spreadingFactor, int errorCoding,
-				   	int crc, int implicitHeaderOn, int rxSingleOn, int frequencyHopOn,
-					int hopPeriod, int rxPacketTimeout, int payloadLength, int preambleLength);
+	void configure(Configurator configurator);
+
 
 	/**
 	 *	SAVE CONFIG, OWN ADDRESS & TARGET ADDRESS

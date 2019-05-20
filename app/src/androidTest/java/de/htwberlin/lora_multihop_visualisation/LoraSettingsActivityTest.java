@@ -29,6 +29,8 @@ public class LoraSettingsActivityTest {
     public void frequencyChange() {
         // todo: test that changing the frequency changes the generated config string
         // also validate the min-max range
+
+        Context appContext = InstrumentationRegistry.getTargetContext();
     }
 
     @Test
