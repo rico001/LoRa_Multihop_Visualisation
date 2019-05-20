@@ -1,6 +1,5 @@
 package de.htwberlin.lora_multihop_implementation.components.lora;
 
-import de.htwberlin.lora_multihop_implementation.Configurator;
 import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_implementation.interfaces.LoraCommandsConstants;
 import de.htwberlin.lora_multihop_visualisation.BluetoothService;
@@ -137,8 +136,8 @@ public class LoraCommandsExecutor implements ILoraCommands, LoraCommandsConstant
 	}
 
 	@Override
-	public void configure(Configurator configurator){
-		String completeCommand = CONFIGURE_CMD_MSG.replace("XX", configurator.toString());
+	public void configure(LoRaConfig config){
+		String completeCommand = CONFIGURE_CMD_MSG.replace("XX", config.toString());
 
 		if(btService.isConnected())	{
 			btService.write((completeCommand + AT_POSTFIX).getBytes());
