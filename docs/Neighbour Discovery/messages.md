@@ -20,13 +20,13 @@ A message consists of the following:
 | MOVE  | source address, latitude, longitude | Unicast | Update entrys position values n NS | 
 | ACK  | source address | Unicast | confirmation needed to apply changes in NS| 
 
-## Messag Dataflow
+## Messaga Flow
 ### JOIN
 ```
     |---------->|   [A] => JOIN(B)(address(A),latitude(a),longitude(a))
-    |               |
+    |           |
     |<----------|   [B] => JOIN_REPLY(A)(address(B), latitiude(b), longitude(b))
-    |               |
+    |           |
     |---------->|   [A] => ACK(B)(address(A))
 Node A      Node B
 ```
