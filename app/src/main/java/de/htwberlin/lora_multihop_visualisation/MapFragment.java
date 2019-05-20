@@ -1,5 +1,6 @@
 package de.htwberlin.lora_multihop_visualisation;
 
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -53,6 +54,8 @@ public class MapFragment extends Fragment implements IMapFragmentListener, OnMap
             @Override
             public void onClick(View v) {
                 ((MainActivity)getActivity()).setViewPager(EFragments.TERMINAL_FRAGMENT.get());
+                //just a test
+                addMarker(location,BitmapDescriptorFactory.HUE_YELLOW);
             }
         });
 
@@ -65,18 +68,12 @@ public class MapFragment extends Fragment implements IMapFragmentListener, OnMap
         // mMap.setMyLocationEnabled(true);
         // Add a marker in Sydney, Australia, and move the camera.
         LatLng brln3 = new LatLng(52.5004, 13.5001);
-        mMap.addMarker(new MarkerOptions()
-                .position(brln3).title("C: 24-33-55-aa-fd-7e"))
-                .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(brln3));
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
         getDeviceLocation();
     }
 
     public void getDeviceLocation() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
-
+        Log.d("MapFragment", "Getting the location");
         try {
             final Task location = fusedLocationProviderClient.getLastLocation();
 
@@ -90,7 +87,7 @@ public class MapFragment extends Fragment implements IMapFragmentListener, OnMap
                 }
             });
         } catch (SecurityException e) {
-            Log.e("MapFragment", "Getting the location failed");
+            Log.d("MapFragment", "Getting the location failed");
         }
     }
 
@@ -112,6 +109,16 @@ public class MapFragment extends Fragment implements IMapFragmentListener, OnMap
     public void onResume() {
         mapView.onResume();
         super.onResume();
+    }
+
+    public void addMarker(LatLng location, float color){
+        mMap.addMarker(new MarkerOptions()
+                .position(location).title("Icke"))
+                .setIcon(BitmapDescriptorFactory.defaultMarker(color));
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+
     }
 
     @Override
