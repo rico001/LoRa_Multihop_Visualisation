@@ -1,4 +1,8 @@
-package de.htwberlin.lora_multihop_implementation;
+package de.htwberlin.lora_multihop_implementation.components.lora;
+
+import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
@@ -13,7 +17,7 @@ import java.util.Map;
  *
  * todo: validation
  */
-public class Configurator {
+public class LoRaConfig {
     public static final Map<Integer, String> bandwidthMap = ImmutableMap.<Integer, String>builder()
             .put(0, "7.8KHz")
             .put(1, "10.4KHz")
@@ -41,6 +45,7 @@ public class Configurator {
             .put(3, "4/7")
             .put(4, "4/8")
             .build();
+
 
     /**
      * In MHz, must be converted to HZ before sending to the module: 433000000.

@@ -1,6 +1,6 @@
 package de.htwberlin.lora_multihop_implementation.interfaces;
 
-import de.htwberlin.lora_multihop_implementation.Configurator;
+import de.htwberlin.lora_multihop_implementation.components.lora.LoRaConfig;
 
 /**
  *
@@ -179,7 +179,7 @@ public interface ILoraCommands {
 	 * AT+CFG=config string\r\n
 	 * reply data format		AT,OK\r\n
 	 */
-	void configure(Configurator configurator);
+	void configure(LoRaConfig config);
 
 
 	/**
