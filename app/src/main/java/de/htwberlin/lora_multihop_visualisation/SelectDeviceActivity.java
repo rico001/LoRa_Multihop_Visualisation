@@ -135,7 +135,6 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
         }
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -193,13 +192,5 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
 
         }
         return false;
-    }
-
-    void logBluetooth(String msg){
-        Log.d("blue",msg);
-    }
-
-    void logBluetooth(boolean b){
-        Log.d("blue",b+"");
     }
 }

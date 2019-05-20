@@ -5,7 +5,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#c2c2c2"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:visibility="visible">
 
 
     <fragment
@@ -25,20 +26,23 @@
 
         <Button
 
-            android:id="@+id/bttn_connect"
+            android:id="@+id/bttn_test"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="buttonHandling"
-            android:text="Connect"
+            android:text="Test"
+            android:textSize="12sp"
             android:visibility="visible" />
 
         <Button
-            android:id="@+id/bttn_reset"
+            android:id="@+id/bttn_setAddr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="buttonHandling"
-            android:text="Reset" />
+            android:text="version"
+            android:textSize="12sp"
+            android:visibility="visible" />
 
         <Button
             android:id="@+id/bttn_c"
@@ -46,7 +50,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="buttonHandling"
-            android:text="Button C" />
+            android:text="Button C"
+            android:textSize="12sp"
+            android:visibility="visible" />
 
         <Button
             android:id="@+id/bttn_d"
@@ -54,64 +60,34 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="buttonHandling"
-            android:text="Button D" />
+            android:text="Button D"
+            android:textSize="12sp"
+            android:visibility="visible" />
 
     </LinearLayout>
 
     <ScrollView
-        style="@android:style/Widget.Material.ScrollView"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:fillViewport="true"
-        android:scrollbarStyle="insideOverlay"
+        android:layout_height="match_parent"
         android:visibility="visible">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
 
         <LinearLayout
-            android:id="@+id/linearLayout_messages"
+            android:id="@+id/linearLayout_feedback"
             android:layout_width="match_parent"
-            android:layout_height="92dp"
-            android:layout_marginTop="8dp"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:showDividers="end"
-            android:visibility="visible"
-            app:layout_constraintTop_toTopOf="parent">
-
-        </LinearLayout>
-
+            android:visibility="visible"></LinearLayout>
     </ScrollView>
-
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:id="@+id/linearLayout3"
-            android:layout_width="match_parent"
-            android:layout_height="51dp"
-            android:layout_marginBottom="8dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:targetApi="@android:color/holo_blue_light">
-
-            <EditText
-                android:id="@+id/editText_messages"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="Broadcast-Message"
-                android:inputType="textPersonName" />
-
-            <Button
-                android:id="@+id/bttn_sendMessage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="buttonHandling"
-                android:text="send"
-                android:visibility="visible" />
-        </LinearLayout>
-    </android.support.constraint.ConstraintLayout>
 
 
 </LinearLayout>

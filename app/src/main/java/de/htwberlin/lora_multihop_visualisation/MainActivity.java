@@ -29,88 +29,82 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import de.htwberlin.lora_multihop_implementation.components.lora.LoraCommandsExecutor;
+import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,MessageConstants {
+/**
+ * Es werden ausschließlich AT-Routinen verschickt (einzelne CMDs werden vor User versteckt)
+ */
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, MessageConstants {
 
-    private final static String AT_POSTFIX= "\r\n";
-    private final static int sendColor= Color.BLUE;
-    private final static int readColor= Color.RED;
-    private MyBluetoothService btService = null;
     private GoogleMap mMap;
-    private EditText editText_messages;
-    private LinearLayout linearLayout_messages;
 
-    private final Handler mHandler = new Handler(){
+    private final static int sendColor = Color.RED;
+    private final static int readColor = Color.BLUE;
+
+    private LinearLayout terminalMessages;
+
+    private ILoraCommands loraCommandsExecutor;
+    private BluetoothService btService = null;
+    private final Handler msgHandler = new Handler() {
         @Override
-        public void handleMessage(Message msg){
-            switch (msg.what){
+        public synchronized void handleMessage(Message msg) {
+            switch (msg.what) {
                 case STATE_CONNECTING:
-                    update_LinearLayout_messages(readColor,"Verbindung mit "+SingletonDevice.getBluetoothDevice().getName()+" wird aufgebaut",true);
+                    updateTerminalMessages(readColor, "Verbindung mit " + SingletonDevice.getBluetoothDevice().getName() + " wird aufgebaut", false);
                     break;
                 case STATE_CONNECTED:
-                    update_LinearLayout_messages(readColor,"Verbindung ist aufgebaut",true);
-                    break;
-                case MESSAGE_WRITE:
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
-                    String writeMessage = new String(writeBuf);
-                    Log.d("blue","send:     "+writeMessage);
-                    update_LinearLayout_messages(readColor,writeMessage,false);
+                    updateTerminalMessages(readColor, "Verbindung ist aufgebaut", false);
                     break;
                 case MESSAGE_READ:
-                    byte[] readBuf = (byte[]) msg.obj;
-                    // construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    Log.d("blue","read:     "+readMessage);
-                    update_LinearLayout_messages(sendColor,readMessage,true);
+                    String message = (String) msg.obj;
+                    updateTerminalMessages(readColor, message, false);
                     break;
                 case MESSAGE_ERROR:
+                    System.out.println("MSG ERROR");
                     break;
             }
         }
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        editText_messages= (EditText) findViewById(R.id.editText_messages);
-        linearLayout_messages= (LinearLayout) findViewById(R.id.linearLayout_messages);
-
-        try{
-            btService = new MyBluetoothService(this,mHandler,SingletonDevice.getBluetoothDevice());
-            btService.connectWithBluetoothDevice();
-        }catch(NullPointerException e){
-            update_LinearLayout_messages(sendColor,"Wählen Sie ein Device in den Settings", true);
-        }
-
-
+        initMap();
+        initWidgets();
+        initBluetoothService();
+        loraCommandsExecutor = new LoraCommandsExecutor(btService);
     }
 
+    private void initMap(){
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+    }
 
+    private void initWidgets(){
+        terminalMessages = (LinearLayout) findViewById(R.id.linearLayout_feedback);
+    }
+
+    private void initBluetoothService()	{
+        try {
+            btService = new BluetoothService(this, msgHandler, SingletonDevice.getBluetoothDevice());
+            btService.connectWithBluetoothDevice();
+        } catch (NullPointerException e) {
+            updateTerminalMessages(readColor, "Wählen Sie ein Device in den Settings", false);
+        }
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         // Add a marker in Sydney, Australia, and move the camera.
-        LatLng brln1 = new LatLng(52.5001, 13.5002);
-        mMap.addMarker(new MarkerOptions()
-                .position(brln1).title("A: 00-80-41-ae-fd-7e"))
-                .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-
-        LatLng brln2 = new LatLng(52.501, 13.5002);
-        mMap.addMarker(new MarkerOptions()
-                .position(brln2).title("B: 23-80-41-ae-fd-7e"))
-                .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-
         LatLng brln3 = new LatLng(52.5004, 13.5001);
         mMap.addMarker(new MarkerOptions()
                 .position(brln3).title("C: 24-33-55-aa-fd-7e"))
                 .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(brln3));
         mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
@@ -126,6 +120,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+
+        if (id == R.id.item_terminal) {
+            startAnotherActivity(TerminalActivity.class);
+            return true;
+        }
+
         if (id == R.id.item_LoraKonfig) {
             startAnotherActivity(LoraSettingsActivity.class);
             return true;
@@ -137,25 +137,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         return super.onOptionsItemSelected(item);
     }
+    //je nach Button werden hier die Routinen durchlaufen(connect, showNodes etc)
+    public void buttonHandling(View v) {
+        Button button = (Button) v;
+        int id=v.getId();
 
-    public void buttonHandling(View v){
-        Button b = (Button) v;
+        try {
 
-        if(v.getId()==R.id.bttn_sendMessage){
-
-            try{
-                if(btService.isConnected()){
-                    String messageString = editText_messages.getText().toString();
-                    byte[] messageByte = (messageString+AT_POSTFIX).getBytes();
-                    btService.write(messageByte);
-                }
-
-            }catch(NullPointerException e){
-                update_LinearLayout_messages(sendColor,"Wählen Sie ein Device in den Settings", true);
+            switch(id){
+                case R.id.bttn_test:
+                    //TODO @Gruppe Rountinen mit kurzem warten zwischen einzelnen Befehle sonst "ERR:BUSY" ggf Warten auf Response/CMD (Queue?)
+                    loraCommandsExecutor.test();//just a test
+                    //BSP:
+                    //loraCommandsExecutor.setAddress("EEEE");
+                    //kurz Warten (ggf. response verarbeiten, wenn notwendig!)
+                    //loraCommandsExecutor.getAddress();
+                    break;
+                case R.id.bttn_setAddr:
+                    loraCommandsExecutor.getVersion();//just a test
+                    break;
+                default:
+                    Toast.makeText(this, button.getText() + " AT-Routine", Toast.LENGTH_LONG).show();
             }
-        }
-        else{
-            Toast.makeText(this, b.getText()+" AT-Routine", Toast.LENGTH_LONG).show();
+        } catch (NullPointerException e) {
+            updateTerminalMessages(readColor, "Wählen Sie ein Device in den Settings", false);
         }
 
     }
@@ -165,20 +170,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         startActivity(intent);
     }
 
-    private boolean update_LinearLayout_messages(int color, String message, boolean isSendMessage){
+    private synchronized boolean updateTerminalMessages(int color, String message, boolean isSendMessage) {
 
-        String symbols="<<";
-        String time=getCurrentTime()+"Uhr:  ";
+        String symbols = "<< ";
+        String time = getCurrentTime() + " ";
 
-        if(isSendMessage){
-            symbols=">>";
+        if (isSendMessage) {
+            symbols = ">> ";
         }
 
-        TextView textView= new TextView(this);
-        textView.setText(time+symbols+message);
+        TextView textView = new TextView(this);
+        textView.setText(time + symbols + message);
         textView.setTextColor(color);
 
-        linearLayout_messages.addView(textView);
+        terminalMessages.addView(textView);
 
         //TODO auto. scrolling nach unten bei update
         return true;
@@ -188,9 +193,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Date date = new Date();
         String strDateFormat = "hh:mm:ss";
         DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
-        String formattedDate= dateFormat.format(date);
+        String formattedDate = dateFormat.format(date);
         return formattedDate;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(btService==null){
+            return;
+        }else{
+            btService.diconnect();
+        }
+    }
 
 }
