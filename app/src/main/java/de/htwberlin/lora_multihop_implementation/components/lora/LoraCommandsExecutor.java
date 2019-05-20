@@ -1,5 +1,6 @@
 package de.htwberlin.lora_multihop_implementation.components.lora;
 
+import de.htwberlin.lora_multihop_implementation.Configurator;
 import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_implementation.interfaces.LoraCommandsConstants;
 import de.htwberlin.lora_multihop_visualisation.BluetoothService;
@@ -136,21 +137,8 @@ public class LoraCommandsExecutor implements ILoraCommands, LoraCommandsConstant
 	}
 
 	@Override
-	public void configure(int frequency, int power, int signalBw, int spreadingFactor, int errorCoding, int crc, int implicitHeaderOn, int rxSingleOn, int frequencyHopOn, int hopPeriod, int rxPacketTimeout, int payloadLength, int preambleLength) {
-		String completeCommand = CONFIGURE_CMD_MSG;
-		completeCommand.replace("frequency", Integer.toString(frequency));
-		completeCommand.replace("power", Integer.toString(power));
-		completeCommand.replace("signalBw", Integer.toString(signalBw));
-		completeCommand.replace("spreadingFactor", Integer.toString(spreadingFactor));
-		completeCommand.replace("errorCoding", Integer.toString(errorCoding));
-		completeCommand.replace("crc", Integer.toString(crc));
-		completeCommand.replace("implicitHeaderOn", Integer.toString(implicitHeaderOn));
-		completeCommand.replace("rxSingleOn", Integer.toString(rxSingleOn));
-		completeCommand.replace("frequencyHopOn", Integer.toString(frequencyHopOn));
-		completeCommand.replace("hopPeriod", Integer.toString(hopPeriod));
-		completeCommand.replace("rxPacketTimeout", Integer.toString(rxPacketTimeout));
-		completeCommand.replace("payloadLength", Integer.toString(payloadLength));
-		completeCommand.replace("preambleLength", Integer.toString(preambleLength));
+	public void configure(Configurator configurator){
+		String completeCommand = CONFIGURE_CMD_MSG.replace("XX", configurator.toString());
 
 		if(btService.isConnected())	{
 			btService.write((completeCommand + AT_POSTFIX).getBytes());

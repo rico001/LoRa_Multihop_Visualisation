@@ -1,19 +1,22 @@
 package de.htwberlin.lora_multihop_visualisation;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import de.htwberlin.lora_multihop_implementation.Configurator;
 import de.htwberlin.lora_multihop_visualisation.settings.SeekBarHandler;
 
 public class LoraSettingsActivity extends AppCompatActivity {
-
-    private static String defaultMhzValue = "433";
-
     Configurator configurator;
 
     //SeekBars
@@ -34,19 +37,37 @@ public class LoraSettingsActivity extends AppCompatActivity {
     //Switches
     Switch switch_crc;
 
+    Button button_saveSettings;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
 
-        // todo: we need to persist changes
-        configurator = new Configurator();
+        SharedPreferences prefs = this.getPreferences(Context.MODE_PRIVATE);
+
+        if (configurator == null) {
+            if (prefs.getString("config", null) != null) {
+                configurator = new Gson().fromJson(prefs.getString("config", null), Configurator.class);
+            } else {
+                configurator = new Configurator();
+            }
+        }
 
         initTextViews();
         initSeekBars();
         initSwitches();
         syncTextViewsAndSwitches();
-        setDefaultOptions();  //later options will loadet
+
+        button_saveSettings = findViewById(R.id.button_saveSettings);
+
+        button_saveSettings.setOnClickListener(v -> {
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("config", new Gson().toJson(configurator));
+            if (editor.commit()) {
+                Toast.makeText(this, "Settings saved", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void initTextViews() {
@@ -93,12 +114,4 @@ public class LoraSettingsActivity extends AppCompatActivity {
             }
         });
     }
-
-    private void setDefaultOptions() {
-        seekBar_transmitPower.setProgress(3);
-        seekBar_frequency.setProgress(0);
-        seekBar_bandwidth.setProgress(2);
-        switch_crc.setChecked(true);
-    }
-
 }

@@ -26,7 +26,7 @@ public interface LoraCommandsConstants {
 	String SET_ADDRESS_FILTER_CMD_MSG = "AT+ADDREN=X";
 	String GET_ADDRESS_FILTER_CMD_MSG = "AT+ADDREN?";
 
-	String CONFIGURE_CMD_MSG = "AT+CFG=frequency,power,signalBw,spreadingFactor,errorCoding,crc,implicitHeaderOn,rxSingleOn,frequencyHopOn,hopPeriod,rxPacketTimeout,payloadLength,preambleLength";
+	String CONFIGURE_CMD_MSG = "AT+CFG=XX";
 	String SAVE_CMD_MSG = "AT+SAVE";
 
 	String SEND_CMD_MSG = "AT+SEND=XX";
