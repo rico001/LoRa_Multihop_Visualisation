@@ -1,24 +1,26 @@
 package de.htwberlin.lora_multihop_implementation.components.messages;
 
+import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
+
 /**
  * @author morelly_t1
  */
 
 public class Message {
 
-    private EnumMessageType type;
+    private EMessageType type;
     private String sourceAddress;
 
-    public Message(EnumMessageType type, String sourceAddress) {
+    public Message(EMessageType type, String sourceAddress) {
         this.type = type;
         this.sourceAddress = sourceAddress;
     }
 
-    public EnumMessageType getType() {
+    public EMessageType getType() {
         return type;
     }
 
-    public void setType(EnumMessageType type) {
+    public void setType(EMessageType type) {
         this.type = type;
     }
 
