@@ -18,6 +18,9 @@ import java.util.UUID;
 
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 
+/**
+ * Allows communication building and Access to Inputstream and Outputstream of BTsocket
+ */
 public class BluetoothService implements MessageConstants{
     private static final String TAG = "blue";
     private Handler handler; // handler that gets info from Bluetooth service
@@ -225,7 +228,9 @@ public class BluetoothService implements MessageConstants{
 
         }
 
-        // Call this method from the main activity to shut down the connection.
+        /**
+         * cancel BTconnection
+         */
         public void cancel() {
             try {
                 mmSocket.close();

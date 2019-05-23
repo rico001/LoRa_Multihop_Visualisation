@@ -34,12 +34,27 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
 
     private int selectedDeviceColor = Color.YELLOW;
 
+    /**
+     * Access to to paired and new bt devices
+     */
     private BluetoothAdapter bluetoothAdapter;
+    /**
+     * contains all devices
+     */
     private ArrayList<BluetoothDevice> bluetoothDevices = new ArrayList<>();    //contains alls currently accessable devices and fills listadapter
 
-    //layout
+    /**
+     *
+     */
     private ArrayAdapter<BluetoothDevice> listAdapter = null;       //fills listView
+    /**
+     * contains all accessable devices for s possible connection (on Itemclick set SingleDevice)
+     */
     ListView listView;
+
+    /**
+     * feedback for device scanning on Userinterface
+     */
     ProgressBar progressBar;
 
 
@@ -158,7 +173,7 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
         return super.onOptionsItemSelected(item);
     }
 
-    public void scanForNewDevices(){
+    private void scanForNewDevices(){
         bluetoothAdapter.cancelDiscovery();
         bluetoothDevices.clear();
         listAdapter.notifyDataSetChanged();

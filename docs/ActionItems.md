@@ -25,16 +25,17 @@ Folgendlich werden mögliche Methoden sowie deren Implementierungen dokumentiert
 - Informationen über den aktuellen Verbindungsstatus
 - mögliche return-codes:
 
-
-    -1  =>  NO_CONNECTION
+```
+-1  =>  NO_CONNECTION
     
-    0   =>  CONNECTED
+0   =>  CONNECTED
     
-    1   =>  ATTEMPTING_CONNECTION
+1   =>  ATTEMPTING_CONNECTION
     
-    2   => CONNECTION_LOST
+2   => CONNECTION_LOST
     
-    tba ...
+tba ...
+```
     
 - die Return Codes können in einer Enum Deklariert werden oder als Konstanten, dann bspw:
     -> `BluetoothStatus getBluetoothConnectionStatus()`
