@@ -6,6 +6,7 @@ import de.htwberlin.lora_multihop_implementation.enums.ELoraNodeState;
 import java.sql.Timestamp;
 
 public class NeighbourSet {
+
 	// unique
 	// [ 0 - 9999 ]
 	private int uid;
