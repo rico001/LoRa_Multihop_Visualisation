@@ -1,31 +1,42 @@
 package de.htwberlin.lora_multihop_implementation.components.model;
 
 import android.location.Location;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 import de.htwberlin.lora_multihop_implementation.enums.ELoraNodeState;
 
 import java.sql.Timestamp;
 
+@Entity
 public class NeighbourSet {
 
 	// unique
 	// [ 0 - 9999 ]
+	@PrimaryKey
+	@ColumnInfo(name = "uid")
 	private int uid;
 
 	// 4 digit hex [ 0 - FFFE ]	(no FFFF -> broadcast)
+	@ColumnInfo(name = "address")
 	private String address;
 
 	// directly attached hop
 	// 4 digit hex [ 0 - FFFE ]	(no FFFF -> broadcast)
+	@ColumnInfo(name = "dah")
 	private String dah;
 
 	// longitude & latitude
 	// range [ 0 - 179,999 ]
+	@ColumnInfo(name = "location")
 	private Location location;
 
 	// possible: up, down, pending & unknown
+	@ColumnInfo(name = "state")
 	private ELoraNodeState state;
 
 	// unix format
+	@ColumnInfo(name = "timestamp")
 	private Timestamp timestamp;
 
 	public NeighbourSet(int uid, String address, String dah, Location location, ELoraNodeState state, Timestamp timestamp)	{
