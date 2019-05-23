@@ -26,12 +26,12 @@ The following information are stored in the neighbour set:
 ### Address
 * represents the address of single hop
 * is a 4 digit hexadecimal value
-* range: ```[ 0 - FFE ] ```
+* range: ```[ 0 - FFFE ] ```
 
 ### DAH
 * **directly attached hop**
 * is a 4 digit hexadecimal value
-* range: ```[ 0 - FFE ] ```
+* range: ```[ 0 - FFFE ] ```
 
 ### Latitude/ Longitude 
 * represents the position of a single hop
