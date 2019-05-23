@@ -33,7 +33,8 @@ The following information are stored in the neighbour set:
 * is a 4 digit hexadecimal value
 * range: ```[ 0 - FFFE ] ```
 
-### Latitude/ Longitude 
+### Latitude/ Longitude
+* use google implementation of Location.class
 * represents the position of a single hop
 * has 3 digits and 3 digits after decimal point ( = float, double)
 * range: ```[ 0 - 179,999 ] ```
