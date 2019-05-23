@@ -36,6 +36,14 @@ dependencies {
     implementation 'com.google.guava:guava:24.1-jre'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
+
+    /**
+     *  Import dependencies for room (sqlite abstraction layer lib)
+     */
+    def room_version = "2.1.0-alpha07"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version" // For Kotlin use kapt instead of annotationProcessor
+    testImplementation "androidx.room:room-testing:$room_version"   // Test helpers
 }
 
 repositories {
