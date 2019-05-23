@@ -47,17 +47,6 @@
                 android:value=".MainActivity" />
         </activity>
 
-        <!--<activity
-            android:name=".TerminalActivity"
-            android:label="@string/title_activity_terminal"
-            android:parentActivityName=".MainActivity"
-            android:windowSoftInputMode="stateHidden">
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>-->
-
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />

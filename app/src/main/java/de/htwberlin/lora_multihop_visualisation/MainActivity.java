@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
         this.mapListener = listener;
     }
 
+
     /**
      * Sets the fragment container and adds the map and terminal fragments
      * @param viewPager
@@ -152,14 +153,15 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
 
         MapFragment mapFragment = new MapFragment();
         TerminalFragment terminalFragment = new TerminalFragment();
+        ProtocolFragment logicFragment = new ProtocolFragment();
 
         // The order in which the fragments are added is very important!
         adapter.addFragment(mapFragment, "MapFragment");
         adapter.addFragment(terminalFragment, "TerminalFragment");
+        adapter.addFragment(logicFragment, "LogicFragment");
 
         setMapListener(mapFragment);
         setTerminalListener(terminalFragment);
-
         viewPager.setAdapter(adapter);
     }
 
@@ -204,11 +206,6 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        /*if (id == R.id.item_terminal) {
-            startAnotherActivity(TerminalActivity.class);
-            return true;
-        }*/
 
         if (id == R.id.item_LoraKonfig) {
             startAnotherActivity(LoraSettingsActivity.class);
