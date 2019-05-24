@@ -44,6 +44,8 @@ public class NeighbourSet {
 	@ColumnInfo(name = "timestamp")
 	private long timestamp;
 
+	public NeighbourSet()	{}
+
 	public NeighbourSet(int uid, String address, String dah, Location location, ELoraNodeState state, Timestamp timestamp)	{
 		if(uid < 0 || uid > 9999)
 			throw new IllegalArgumentException("invalid UID for neighbour set");
