@@ -2,6 +2,8 @@ package de.htwberlin.lora_multihop_implementation.components.queue;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import de.htwberlin.lora_multihop_implementation.components.messages.Message;
+
 /**
  * @author morelly_t1
  */
@@ -12,7 +14,7 @@ public class NeighbourDiscoveryProtocolQueue extends ConcurrentLinkedQueue {
     }
 
     @Override
-    public boolean add(Object o) {
+    public boolean add(Message o) {
         return super.add(o);
     }
 
