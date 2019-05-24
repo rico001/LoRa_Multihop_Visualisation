@@ -15,11 +15,11 @@ public interface NeighbourSetDAO {
 	List<NeighbourSet> getAllNeighbourSets();
 
 	@Insert
-	void saveNeighbourSet(NeighbourSet song);
+	void saveNeighbourSet(NeighbourSet neighbourSet);
 
 	@Update
-	boolean updateNeighbourSet(NeighbourSet song);
+	void updateNeighbourSet(NeighbourSet neighbourSet);
 
 	@Delete
-	void deleteNeighbourSet(int uid);
+	void deleteNeighbourSet(NeighbourSet neighbourSet);
 }
