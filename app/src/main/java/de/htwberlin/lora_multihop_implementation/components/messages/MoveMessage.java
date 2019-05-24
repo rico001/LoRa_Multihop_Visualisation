@@ -4,7 +4,7 @@ import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
 
 public class MoveMessage extends Message {
 
-    public MoveMessage(EMessageType type) {
-        super(type);
+    public MoveMessage(EMessageType type, String sourceAddress) {
+        super(type, sourceAddress);
     }
 }

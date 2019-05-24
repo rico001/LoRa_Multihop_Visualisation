@@ -1,12 +1,13 @@
 package de.htwberlin.lora_multihop_visualisation;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import de.htwberlin.lora_multihop_implementation.components.lora.LoRaConfig;
 import de.htwberlin.lora_multihop_visualisation.settings.SeekBarHandler;
