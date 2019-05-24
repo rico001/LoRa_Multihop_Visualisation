@@ -26,14 +26,19 @@ public class NeighbourSet {
 	@ColumnInfo(name = "dah")
 	private String dah;
 
-	// longitude & latitude
+	// longitude
 	// range [ 0 - 179,999 ]
-	@ColumnInfo(name = "location")
-	private Location location;
+	@ColumnInfo(name = "longitude")
+	private double longitude;
+
+	// latitude
+	// range [ 0 - 179,999 ]
+	@ColumnInfo(name = "latitude")
+	private double latitude;
 
 	// possible: up, down, pending & unknown
 	@ColumnInfo(name = "state")
-	private ELoraNodeState state;
+	private String state;
 
 	// unix format
 	@ColumnInfo(name = "timestamp")
@@ -50,8 +55,9 @@ public class NeighbourSet {
 		this.uid = uid;
 		this.address = address;
 		this.dah = dah;
-		this.location = location;
-		this.state = state;
+		this.longitude = location.getLongitude();
+		this.latitude = location.getLatitude();
+		this.state = state.name();
 		this.timestamp = timestamp;
 	}
 
@@ -79,19 +85,27 @@ public class NeighbourSet {
 		this.dah = dah;
 	}
 
-	public Location getLocation() {
-		return location;
+	public double getLongitude() {
+		return longitude;
 	}
 
-	public void setLocation(Location location) {
-		this.location = location;
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 
-	public ELoraNodeState getState() {
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+	public String getState() {
 		return state;
 	}
 
-	public void setState(ELoraNodeState state) {
+	public void setState(String state) {
 		this.state = state;
 	}
 
@@ -103,13 +117,25 @@ public class NeighbourSet {
 		this.timestamp = timestamp;
 	}
 
+	public Location getLocation()	{
+		Location gps = new Location("");
+		gps.setLongitude(this.longitude);
+		gps.setLatitude(this.latitude);
+		return gps;
+	}
+
+	public ELoraNodeState getEnumLoraNodeState()	{
+		return ELoraNodeState.valueOf(this.state);
+	}
+
 	@Override
 	public String toString() {
 		return "NeighbourSet{" +
 				"uid=" + uid +
 				", address='" + address + '\'' +
 				", dah='" + dah + '\'' +
-				", location=" + location +
+				", longitude='" + longitude + '\'' +
+				", latitude='" + latitude + '\'' +
 				", state=" + state +
 				", timestamp=" + timestamp +
 				'}';
