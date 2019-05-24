@@ -42,7 +42,7 @@ public class NeighbourSet {
 
 	// unix format
 	@ColumnInfo(name = "timestamp")
-	private Timestamp timestamp;
+	private long timestamp;
 
 	public NeighbourSet(int uid, String address, String dah, Location location, ELoraNodeState state, Timestamp timestamp)	{
 		if(uid < 0 || uid > 9999)
@@ -58,7 +58,7 @@ public class NeighbourSet {
 		this.longitude = location.getLongitude();
 		this.latitude = location.getLatitude();
 		this.state = state.name();
-		this.timestamp = timestamp;
+		this.timestamp = timestamp.getTime();
 	}
 
 	public int getUid() {
@@ -109,11 +109,11 @@ public class NeighbourSet {
 		this.state = state;
 	}
 
-	public Timestamp getTimestamp() {
+	public long getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(Timestamp timestamp) {
+	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
 
@@ -126,6 +126,10 @@ public class NeighbourSet {
 
 	public ELoraNodeState getEnumLoraNodeState()	{
 		return ELoraNodeState.valueOf(this.state);
+	}
+
+	public Timestamp getTimestampFormat()	{
+		return new Timestamp(this.timestamp);
 	}
 
 	@Override
