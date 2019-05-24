@@ -14,8 +14,12 @@ public class NeighbourDiscoveryProtocolQueue extends ConcurrentLinkedQueue {
     }
 
     @Override
-    public boolean add(Message o) {
+    public boolean add(Object o) {
         return super.add(o);
+    }
+
+    public boolean add(Message m) {
+        return super.add(m);
     }
 
     @Override
