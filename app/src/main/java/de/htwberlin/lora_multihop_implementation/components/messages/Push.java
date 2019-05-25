@@ -69,6 +69,16 @@ public class Push extends Message {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
+
+    @Override
+    public String toString() {
+        return "Push{" +
+                "sourceAddressOfHop='" + sourceAddressOfHop + '\'' +
+                ", directAttachedHop='" + directAttachedHop + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
+    }
 }
 
 

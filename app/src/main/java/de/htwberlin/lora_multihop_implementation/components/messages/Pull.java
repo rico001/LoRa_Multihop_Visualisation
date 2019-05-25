@@ -36,4 +36,11 @@ public class Pull extends Message {
     public void setChecksum(String checksum) {
         this.checksum = checksum;
     }
+
+    @Override
+    public String toString() {
+        return "Pull{" +
+                "checksum='" + checksum + '\'' +
+                '}';
+    }
 }

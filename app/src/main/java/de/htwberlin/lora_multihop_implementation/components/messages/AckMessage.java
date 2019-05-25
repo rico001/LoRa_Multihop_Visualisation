@@ -14,6 +14,7 @@ import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
  * Communication Type = UNICAST
  *
  * Use Case: Used to confirm received messages
+ * Results in updating an NS entry or adding an NS entry
  *
  * @author morelly_t1
  */
@@ -25,4 +26,5 @@ public class AckMessage extends Message {
     public AckMessage(String sourceAddress) {
         super(sourceAddress);
     }
+
 }

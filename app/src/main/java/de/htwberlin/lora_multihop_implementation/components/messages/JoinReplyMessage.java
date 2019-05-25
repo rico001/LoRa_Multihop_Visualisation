@@ -28,4 +28,5 @@ public class JoinReplyMessage extends JoinMessage {
         super(sourceAddress, longitude, latitude);
     }
 
+
 }

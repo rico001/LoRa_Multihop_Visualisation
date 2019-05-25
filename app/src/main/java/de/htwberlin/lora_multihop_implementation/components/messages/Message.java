@@ -40,4 +40,16 @@ public abstract class Message {
     public void setAnswerMessage(EMessageType replyMessage) {
         this.replyMessage = replyMessage;
     }
+
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "type=" + type +
+                ", sourceAddress='" + sourceAddress + '\'' +
+                ", replyMessage=" + replyMessage +
+                '}';
+    }
+
+
 }

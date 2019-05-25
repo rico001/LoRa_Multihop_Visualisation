@@ -46,4 +46,13 @@ public class JoinMessage extends Message {
     public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
+
+    @Override
+    public String toString() {
+        return "JoinMessage{" +
+                "longitude=" + longitude +
+                ", latitude=" + latitude +
+                '}';
+    }
+
 }

@@ -1,6 +1,7 @@
 package de.htwberlin.lora_multihop_implementation.components.messages;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
 
@@ -50,5 +51,13 @@ public class FetchReplyMessage extends  FetchMessage {
 
     public void setChecksums(String[] checksums) {
         this.checksums = checksums;
+    }
+
+    @Override
+    public String toString() {
+        return "FetchReplyMessage{" +
+                "entries=" + entries +
+                ", checksums=" + Arrays.toString(checksums) +
+                '}';
     }
 }

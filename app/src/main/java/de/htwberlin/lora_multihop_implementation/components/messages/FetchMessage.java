@@ -21,7 +21,7 @@ public class FetchMessage extends Message {
     private  static final boolean UNICAST = Boolean.TRUE;
 
     public FetchMessage(String sourceAddress) {
-        super( sourceAddress);
+        super(sourceAddress);
     }
 
 
