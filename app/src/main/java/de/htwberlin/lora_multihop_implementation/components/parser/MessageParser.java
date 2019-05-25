@@ -33,7 +33,7 @@ public class MessageParser {
         String[] inputParts = inputString.split(";");
         Message message;
 
-        //TODO: template pattern maybe can be used here ... 
+        //TODO: template pattern maybe can be used here ...
         try {
             switch(inputParts[0]){
                 case "JOIN":

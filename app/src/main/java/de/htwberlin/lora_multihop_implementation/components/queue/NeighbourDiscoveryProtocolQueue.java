@@ -45,7 +45,7 @@ public class NeighbourDiscoveryProtocolQueue extends ConcurrentLinkedQueue {
         return super.isEmpty();
     }
 
-    public NeighbourDiscoveryProtocolQueue getInstance(){
+    public static NeighbourDiscoveryProtocolQueue getInstance(){
         if (queue == null) queue = new NeighbourDiscoveryProtocolQueue();
         return queue;
     }

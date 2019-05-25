@@ -21,7 +21,7 @@ import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
  * @author morelly_t1
  */
 
-public class Push extends Message {
+public class PushMessage extends Message {
 
     private  static final EMessageType replyMessage = EMessageType.ACK;
     private  static final boolean UNICAST = Boolean.TRUE;
@@ -30,7 +30,7 @@ public class Push extends Message {
     private String directAttachedHop;
     private double latitude, longitude;
 
-    public Push(String sourceAddress, String sourceAddressOfHop, String directAttachedHop, double latitude, double longitude) {
+    public PushMessage(String sourceAddress, String sourceAddressOfHop, String directAttachedHop, double latitude, double longitude) {
         super(sourceAddress);
         this.sourceAddressOfHop = sourceAddressOfHop;
         this.directAttachedHop = directAttachedHop;
@@ -72,7 +72,7 @@ public class Push extends Message {
 
     @Override
     public String toString() {
-        return "Push{" +
+        return "PushMessage{" +
                 "sourceAddressOfHop='" + sourceAddressOfHop + '\'' +
                 ", directAttachedHop='" + directAttachedHop + '\'' +
                 ", latitude=" + latitude +

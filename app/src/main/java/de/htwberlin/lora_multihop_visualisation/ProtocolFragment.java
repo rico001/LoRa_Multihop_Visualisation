@@ -8,44 +8,67 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class ProtocolFragment extends Fragment implements View.OnClickListener {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+public class ProtocolFragment extends Fragment {
+
+    @BindView(R.id.buttonFetch) Button fetch;
+    @BindView(R.id.buttonFetchReply) Button fetchReply;
+
+    @BindView(R.id.buttonJoin) Button join;
+    @BindView(R.id.buttonJoinReply) Button joinReply;
+
+    @BindView(R.id.buttonMove) Button move;
+
+    @BindView(R.id.buttonLeave) Button leave;
+
+    @BindView(R.id.buttonPull) Button pull;
+    @BindView(R.id.buttonPush) Button push;
+
+    @BindView(R.id.buttonAck) Button ack;
+
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_protocol, container, false);
-
-        initButtons(view);
-
+        ButterKnife.bind(this,view);
         return view;
     }
 
-    private void initButtons(View view){
-        Button b1 = (Button) view.findViewById(R.id.button_msg1);
-        Button b2 = (Button) view.findViewById(R.id.button_msg2);
-        Button b3 = (Button) view.findViewById(R.id.button_msg3);
-        b1.setOnClickListener(this);
-        b2.setOnClickListener(this);
-        b3.setOnClickListener(this);
+    @OnClick(R.id.buttonFetch)
+    public void fetchClicked(){
     }
 
-    @Override
-    public void onClick(View v) {
-        Button button = (Button) v;
-            switch (button.getId()) {
-                case R.id.button_msg1:
-                    //deine Logik
-                    Toast.makeText(getActivity(), button.getText(), Toast.LENGTH_LONG).show();
-                    break;
-                case R.id.button_msg2:
-                    //deine Logik
-                    Toast.makeText(getActivity(), button.getText(), Toast.LENGTH_LONG).show();
-                    break;
-                case R.id.button_msg3:
-                    //deine Logik
-                    Toast.makeText(getActivity(), button.getText(), Toast.LENGTH_LONG).show();
-                    break;
-                default:
-                    Toast.makeText(getActivity(), button.getText(), Toast.LENGTH_LONG).show();
-            }
+    @OnClick(R.id.buttonFetchReply)
+    public void FetchReplyClicked(){
     }
 
+    @OnClick(R.id.buttonPull)
+    public void pullClicked(){
+    }
+
+    @OnClick(R.id.buttonPush)
+    public void pushClicked(){
+    }
+
+    @OnClick(R.id.buttonMove)
+    public void moveClicked(){
+    }
+
+    @OnClick(R.id.buttonLeave)
+    public void leaveClicked(){
+    }
+
+    @OnClick(R.id.buttonAck)
+    public void ackClicked(){
+    }
+
+    @OnClick(R.id.buttonJoin)
+    public void joinClicked(){
+    }
+
+    @OnClick(R.id.buttonJoinReply)
+    public void joinReplyClicked(){
+    }
 }

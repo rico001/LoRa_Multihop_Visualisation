@@ -24,7 +24,7 @@ public class JoinReplyMessage extends JoinMessage {
     private  static final boolean UNICAST = Boolean.TRUE;
 
 
-    public JoinReplyMessage(EMessageType type, String sourceAddress, Double longitude, Double latitude) {
+    public JoinReplyMessage(String sourceAddress, Double longitude, Double latitude) {
         super(sourceAddress, longitude, latitude);
     }
 

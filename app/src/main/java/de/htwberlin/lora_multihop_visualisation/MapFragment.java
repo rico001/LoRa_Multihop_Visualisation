@@ -82,7 +82,8 @@ public class MapFragment extends Fragment implements IMapFragmentListener, OnMap
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {
                         Location currentLocation = (Location) task.getResult();
-                        setCurrentLocation(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
+                        //setCurrentLocation(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())); //TODO: TMP_FIX
+                        setCurrentLocation(new LatLng(52.232, 42.322));
                     }
                 }
             });

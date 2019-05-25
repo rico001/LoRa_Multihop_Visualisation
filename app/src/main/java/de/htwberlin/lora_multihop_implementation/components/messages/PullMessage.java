@@ -17,14 +17,14 @@ import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
  *
  * @author morelly_t1
  */
-public class Pull extends Message {
+public class PullMessage extends Message {
 
     private  static final EMessageType replyMessage = EMessageType.PUSH;
     private  static final boolean UNICAST = Boolean.TRUE;
 
     private String checksum;
 
-    public Pull(String sourceAddress, String checksum) {
+    public PullMessage(String sourceAddress, String checksum) {
         super(sourceAddress);
         this.checksum = checksum;
     }
@@ -39,7 +39,7 @@ public class Pull extends Message {
 
     @Override
     public String toString() {
-        return "Pull{" +
+        return "PullMessage{" +
                 "checksum='" + checksum + '\'' +
                 '}';
     }
