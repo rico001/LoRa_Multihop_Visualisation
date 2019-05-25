@@ -19,9 +19,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.Map;
 
 import de.htwberlin.lora_multihop_implementation.components.lora.LoraCommandsExecutor;
+import de.htwberlin.lora_multihop_implementation.components.model.NeighbourSet;
 import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_implementation.interfaces.IMapFragmentListener;
 import de.htwberlin.lora_multihop_implementation.interfaces.ITerminalFragmentListener;
@@ -38,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
     private MainFragmentsAdapter mainFragmentsAdapter;
     private ViewPager viewPager;
 
+    private MapFragment mapFragment;
+    private TerminalFragment terminalFragment;
     private ITerminalFragmentListener terminalListener;
     private IMapFragmentListener mapListener;
 
@@ -153,11 +158,16 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
 
         MapFragment mapFragment = new MapFragment();
         TerminalFragment terminalFragment = new TerminalFragment();
+        NeighbourSetTableFragment neighbourSetTableFragment = new NeighbourSetTableFragment();
         ProtocolFragment logicFragment = new ProtocolFragment();
+
+        this.mapFragment = mapFragment;
+        this.terminalFragment = terminalFragment;
 
         // The order in which the fragments are added is very important!
         adapter.addFragment(mapFragment, "MapFragment");
         adapter.addFragment(terminalFragment, "TerminalFragment");
+        adapter.addFragment(neighbourSetTableFragment, "NeighbourSetTableFragment");
         adapter.addFragment(logicFragment, "LogicFragment");
 
         setMapListener(mapFragment);
@@ -171,6 +181,10 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
      */
     public void setViewPager(int position) {
         viewPager.setCurrentItem(position);
+
+        if (mapFragment.isVisible()) {
+            mapListener.addHostMarker(new LatLng(50.000, 50.0000), "asd", 1000);
+        }
     }
 
     private void initBluetoothService() {
@@ -179,8 +193,6 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
             btService.connectWithBluetoothDevice();
         } catch (NullPointerException e) {
             Log.d("initBluetoothService", "Choose a device!");
-            // This is broken
-            //terminalListener.updateTerminalMessages(readColor, "Wählen Sie ein Device in den Settings", false);
         }
     }
 
@@ -217,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
             startAnotherActivity(SelectDeviceActivity.class);
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 

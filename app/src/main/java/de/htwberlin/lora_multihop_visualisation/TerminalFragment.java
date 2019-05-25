@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ public class TerminalFragment extends Fragment implements ITerminalFragmentListe
 
     private static final String TAG = "TerminalFragment";
 
+    private ScrollView scrollView;
     private LinearLayout terminalMessages;
     private EditText terminalInput;
     private Button sendButton;
@@ -38,6 +40,7 @@ public class TerminalFragment extends Fragment implements ITerminalFragmentListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_terminal, container, false);
+        scrollView = ((ScrollView) view.findViewById(R.id.terminal_scroll));
         terminalMessages = (LinearLayout) view.findViewById(R.id.terminal_messages);
         terminalInput = (EditText) view.findViewById(R.id.terminal_send_text);
         sendButton = (Button) view.findViewById(R.id.terminal_send_button);
@@ -99,7 +102,15 @@ public class TerminalFragment extends Fragment implements ITerminalFragmentListe
 
         terminalMessages.addView(textView);
 
-        //TODO auto. scrolling nach unten bei update
+
+        // Auto scroll down
+        scrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
+
         return true;
     }
 
