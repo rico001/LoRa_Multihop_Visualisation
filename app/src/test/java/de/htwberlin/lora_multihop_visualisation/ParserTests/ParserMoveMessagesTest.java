@@ -1,9 +1,8 @@
-package de.htwberlin.lora_multihop_visualisation.NeighbourDiscoveryProtocol.ParserTests;
+package de.htwberlin.lora_multihop_visualisation.ParserTests;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import de.htwberlin.lora_multihop_implementation.components.messages.JoinMessage;
 import de.htwberlin.lora_multihop_implementation.components.messages.Message;
 import de.htwberlin.lora_multihop_implementation.components.messages.MoveMessage;
 import de.htwberlin.lora_multihop_implementation.components.parser.MessageParser;

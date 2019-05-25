@@ -1,19 +1,17 @@
-package de.htwberlin.lora_multihop_visualisation.NeighbourDiscoveryProtocol.ParserTests;
+package de.htwberlin.lora_multihop_visualisation.ParserTests;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.concurrent.ExecutionException;
-
-import static junit.framework.TestCase.assertEquals;
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.CoreMatchers.instanceOf;
 
 import de.htwberlin.lora_multihop_implementation.components.messages.JoinMessage;
 import de.htwberlin.lora_multihop_implementation.components.messages.Message;
 import de.htwberlin.lora_multihop_implementation.components.parser.MessageParser;
 import de.htwberlin.lora_multihop_implementation.components.parser.ParserException;
 import de.htwberlin.lora_multihop_implementation.components.queue.NeighbourDiscoveryProtocolQueue;
+
+import static junit.framework.TestCase.assertEquals;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  *

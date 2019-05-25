@@ -1,11 +1,10 @@
-package de.htwberlin.lora_multihop_visualisation.NeighbourDiscoveryProtocol.ParserTests;
+package de.htwberlin.lora_multihop_visualisation.ParserTests;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import de.htwberlin.lora_multihop_implementation.components.messages.Message;
-import de.htwberlin.lora_multihop_implementation.components.messages.MoveMessage;
-import de.htwberlin.lora_multihop_implementation.components.messages.PullMessage;
+import de.htwberlin.lora_multihop_implementation.components.messages.PushMessage;
 import de.htwberlin.lora_multihop_implementation.components.parser.MessageParser;
 import de.htwberlin.lora_multihop_implementation.components.parser.ParserException;
 import de.htwberlin.lora_multihop_implementation.components.queue.NeighbourDiscoveryProtocolQueue;
@@ -16,17 +15,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  *
- * Tests PULL messages Parser
+ * Tests PUSH messages Parser
  *
  * Test Cases:
  *
- *  - "PULL"
+ *  - "PUSH"
  *  - if source Address is valid
+ *  - if latitude/longitude can be parsed to double
  *  - missing / to much parts in message
  *
  */
-
-public class ParsePullMessagesTest {
+public class ParserPushMessagesTest {
 
     private NeighbourDiscoveryProtocolQueue queue;
 
@@ -36,46 +35,46 @@ public class ParsePullMessagesTest {
     }
 
     @Test
-    public void givenValidPullMessageShouldReturnInstanceOfPullMessage() throws Exception {
-        String inputMessage = "PULL;1234;34534";
+    public void givenValidPushMessageShouldReturnInstanceOfPushMessage() throws Exception {
+        String inputMessage = "PUSH;1234;23DE;34DE;43.453;23.2232";
         MessageParser.parseInput(inputMessage);
-        Message pullMessage = (Message) queue.poll();
-        assertThat(pullMessage, instanceOf(PullMessage.class));
+        Message pushMessage = (Message) queue.poll();
+        assertThat(pushMessage, instanceOf(PushMessage.class));
     }
 
     @Test
-    public void givenValidPullMessageShouldReturnInstanceOfPullMessage2() throws Exception {
-        String inputMessage = "PULL;1234;34534";
+    public void givenValidPushMessageShouldReturnInstanceOfPushMessage2() throws Exception {
+        String inputMessage = "PUSH;12DE;343E;1232;21.453;45.2232";
         MessageParser.parseInput(inputMessage);
-        Message pullMessage = (Message) queue.poll();
-        assertThat(pullMessage, instanceOf(PullMessage.class));
+        Message pushMessage = (Message) queue.poll();
+        assertThat(pushMessage, instanceOf(PushMessage.class));
     }
 
     @Test
-    public void givenValidPullMessageShouldReturnInstanceOfPullMessage3() throws Exception {
-        String inputMessage = "PULL;1234;34534";
+    public void givenValidPushMessageShouldReturnInstanceOfPushMessage3() throws Exception {
+        String inputMessage = "PUSH;FFED;45DE;FF34;43.453;23.2232";
         MessageParser.parseInput(inputMessage);
-        Message pullMessage = (Message) queue.poll();
-        assertThat(pullMessage, instanceOf(PullMessage.class));
+        Message pushMessage = (Message) queue.poll();
+        assertThat(pushMessage, instanceOf(PushMessage.class));
     }
 
     @Test
     public void givenInvalidPullMessageShouldNotBeAddedToQueue() throws Exception {
         int queueSizeBefore = queue.size();
-        String inputMessage = "PLL;1234;43453";
+        String inputMessage = "PLL;1234;2432;24DE;43.453;23.2232";
         MessageParser.parseInput(inputMessage);
         assertEquals(queueSizeBefore,0);
     }
 
     @Test(expected = ParserException.class)
     public void givenInvalidPullMessageShouldThrowParserException() throws Exception {
-        String inputMessage = "PULL;1234;43453;0";
+        String inputMessage = "PULL;1234;DEAB;DEA3;43.453;23.2232;0";
         MessageParser.parseInput(inputMessage);
     }
 
     @Test(expected = ParserException.class)
     public void givenInvalidPullMessageShouldThrowParserException2() throws Exception {
-        String inputMessage = "PULL;124;43.453";
+        String inputMessage = "PULL;1234";
         MessageParser.parseInput(inputMessage);
     }
 
@@ -84,4 +83,5 @@ public class ParsePullMessagesTest {
         String inputMessage = "PULL;123y4;43.453;54.232";
         MessageParser.parseInput(inputMessage);
     }
+
 }
