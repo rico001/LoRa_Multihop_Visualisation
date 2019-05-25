@@ -12,7 +12,10 @@ import de.htwberlin.lora_multihop_implementation.components.messages.Message;
 import de.htwberlin.lora_multihop_implementation.components.messages.MoveMessage;
 import de.htwberlin.lora_multihop_implementation.components.messages.PullMessage;
 import de.htwberlin.lora_multihop_implementation.components.messages.PushMessage;
+import de.htwberlin.lora_multihop_implementation.components.queue.NeighbourDiscoveryProtocolQueue;
 import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
+
+import static java.lang.Double.*;
 
 /**
  * This class parses Strings to instances of Messages and adds them to the queue
@@ -23,65 +26,107 @@ public class MessageParser {
 
     private static final String TAG = "MessageParser";
 
-    public static Message parseInput(String inputString){
+    public static void parseInput(String inputString) {
+
+        NeighbourDiscoveryProtocolQueue queue = NeighbourDiscoveryProtocolQueue.getInstance();
 
         String[] inputParts = inputString.split(";");
-        Message message = null;
+        Message message;
 
+        //TODO: template pattern maybe can be used here ... 
         try {
-            if (inputParts[0] == "JOIN") {
-                message = parseJoinMessage(inputParts);
-            } else if (inputParts[0] == "JOIN_REPLY") {
-                message = parseJoinReplyMessage(inputParts);
-            } else if (inputParts[0] == "PULL") {
-                message = parsePullMessage(inputParts);
-            } else if (inputParts[0] == "PUSH") {
-                message = parsePushMessage(inputParts);
-            } else if (inputParts[0] == "MOVE") {
-                message = parseMoveMessage(inputParts);
-            } else if (inputParts[0] == "LEAVE") {
-                message = parseLeaveMessage(inputParts);
-            } else if (inputParts[0] == "FETCH") {
-                message = parseFetchMessage(inputParts);
-            } else if (inputParts[0] == "FETCH_REPLY") {
-                message = parseFetchReplyMessage(inputParts);
-            } else if (inputParts[0] == "ACK") {
-                message = parseAckMessage(inputParts);
-            } else {
-                Log.e(TAG, "couldnt determine which Message type " + inputString + " is.");
+            switch(inputParts[0]){
+                case "JOIN":
+                    message = parseJoinMessage(inputParts);
+                    Log.i(TAG, "successfully parsed JOIN message");
+                    queue.add(message);
+                    Log.i(TAG, "added " + message.toString() + " to queue");
+                    break;
+                case "JOIN_REPLY":
+                    message = parseJoinReplyMessage(inputParts);
+                    Log.i(TAG, "successfully parsed JOIN_REPLY message");
+                    queue.add(message);
+                    Log.i(TAG, "added " + message.toString() + " to queue");
+                    break;
+                case "FETCH":
+                    message = parseFetchMessage(inputParts);
+                    Log.i(TAG, "successfully parsed FETCH message");
+                    queue.add(message);
+                    Log.i(TAG, "added " + message.toString() + " to queue");
+                    break;
+                case "FETCH_REPLY":
+                    message = parseFetchReplyMessage(inputParts);
+                    Log.i(TAG, "successfully parsed FETCH_REPLY message");
+                    queue.add(message);
+                    Log.i(TAG, "added " + message.toString() + " to queue");
+                    break;
+                case "PULL":
+                    message = parsePullMessage(inputParts);
+                    Log.i(TAG, "successfully parsed PULL message");
+                    queue.add(message);
+                    Log.i(TAG, "added " + message.toString() + " to queue");
+                    break;
+                case "PUSH":
+                    message = parsePushMessage(inputParts);
+                    Log.i(TAG, "successfully parsed PUSH message");
+                    queue.add(message);
+                    Log.i(TAG, "added " + message.toString() + " to queue");
+                    break;
+                case "MOVE":
+                    message = parseMoveMessage(inputParts);
+                    Log.i(TAG, "successfully parsed MOVE message");
+                    queue.add(message);
+                    Log.i(TAG, "added " + message.toString() + " to queue");
+                    break;
+                case "LEAVE":
+                    message = parseLeaveMessage(inputParts);
+                    Log.i(TAG, "successfully parsed LEAVE message");
+                    queue.add(message);
+                    Log.i(TAG, "added " + message.toString() + " to queue");
+                    break;
+                case "ACK":
+                    message = parseAckMessage(inputParts);
+                    Log.i(TAG, "successfully parsed ACK message");
+                    queue.add(message);
+                    Log.i(TAG, "added " + message.toString() + " to queue");
+                    break;
+                default:
+                    Log.e(TAG, "couldnt determine which Message type " + inputString + " is.");
+                    break;
             }
-        } catch (IndexOutOfBoundsException e ){
+        } catch (IndexOutOfBoundsException e) {
             Log.e(TAG, "Index Out of Bounds, while parsing  ");
         } catch (ParserException e) {
             Log.e(TAG, "Error while parsing " + e.getCause());
-        } finally {
-            return message;
         }
     }
 
-   private static Message parseJoinMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException {
-        if (inputParts.length != 4) throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.JOIN.name()));
+    private static Message parseJoinMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException {
+        if (inputParts.length != 4)
+            throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.JOIN.name()));
 
         String sourceAddress = inputParts[1];
-        double latitude = Double.parseDouble(inputParts[2]);
-        double longitude = Double.parseDouble(inputParts[3]);
+        double latitude = parseDouble(inputParts[2]);
+        double longitude = parseDouble(inputParts[3]);
 
         return new JoinMessage(sourceAddress, latitude, longitude);
     }
 
 
     private static Message parseJoinReplyMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException {
-        if (inputParts.length != 4) throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.JOIN_REPLY.name()));
+        if (inputParts.length != 4)
+            throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.JOIN_REPLY.name()));
 
         String sourceAddress = inputParts[1];
-        double latitude = Double.parseDouble(inputParts[2]);
-        double longitude = Double.parseDouble(inputParts[3]);
+        double latitude = parseDouble(inputParts[2]);
+        double longitude = parseDouble(inputParts[3]);
 
         return new JoinReplyMessage(sourceAddress, latitude, longitude);
     }
 
     private static Message parseFetchMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException {
-        if (inputParts.length != 2) throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.FETCH.name()));
+        if (inputParts.length != 2)
+            throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.FETCH.name()));
 
         String sourceAddress = inputParts[1];
 
@@ -93,12 +138,13 @@ public class MessageParser {
         // sourceAddress; N; checksum_for_each_N; -> N + 2;
         int amountOfChecksums = Integer.parseInt(inputParts[2]);
         int necessaryLength = amountOfChecksums + 2;
-        if (inputParts.length != necessaryLength) throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.FETCH_REPLY.name()));
+        if (inputParts.length != necessaryLength)
+            throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.FETCH_REPLY.name()));
 
         String sourceAddress = inputParts[1];
         String[] checksums = new String[amountOfChecksums];
 
-        for (int i = 0; i < checksums.length; i++){
+        for (int i = 0; i < checksums.length; i++) {
             checksums[i] = ""; // TODO: generateChecksum method & receiving NS entry
         }
 
@@ -107,7 +153,8 @@ public class MessageParser {
 
     private static Message parsePullMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException {
 
-        if (inputParts.length != 2) throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.PULL.name()));
+        if (inputParts.length != 3)
+            throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.PULL.name()));
 
         String sourceAddress = inputParts[1];
         String checksum = inputParts[2];
@@ -115,15 +162,16 @@ public class MessageParser {
         return new PullMessage(sourceAddress, checksum);
     }
 
-    private static Message parsePushMessage(String[] inputParts)throws ParserException, IndexOutOfBoundsException {
+    private static Message parsePushMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException {
 
-        if (inputParts.length != 6) throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.PUSH.name()));
+        if (inputParts.length != 6)
+            throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.PUSH.name()));
 
         String sourceAddress = inputParts[1];
         String sourceAddresHop = inputParts[2];
         String directAttachedHop = inputParts[3];
-        Double latitude = Double.parseDouble(inputParts[4]);
-        double longitude = Double.parseDouble(inputParts[5]);
+        double latitude = parseDouble(inputParts[4]);
+        double longitude = parseDouble(inputParts[5]);
 
         return new PushMessage(sourceAddress, sourceAddresHop, directAttachedHop, latitude, longitude);
 
@@ -131,7 +179,8 @@ public class MessageParser {
 
     private static Message parseLeaveMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException {
 
-        if (inputParts.length != 2) throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.LEAVE.name()));
+        if (inputParts.length != 2)
+            throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.LEAVE.name()));
 
         String sourceAddress = inputParts[1];
 
@@ -140,18 +189,20 @@ public class MessageParser {
 
     private static Message parseMoveMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException {
 
-        if (inputParts.length != 4) throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.MOVE.name()));
+        if (inputParts.length != 4)
+            throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.MOVE.name()));
 
         String sourceAddress = inputParts[1];
-        double latitude = Double.parseDouble(inputParts[2]);
-        double longitude = Double.parseDouble(inputParts[3]);
+        double latitude = parseDouble(inputParts[2]);
+        double longitude = parseDouble(inputParts[3]);
 
-        return new MoveMessage(sourceAddress,latitude,longitude);
+        return new MoveMessage(sourceAddress, latitude, longitude);
     }
 
     private static Message parseAckMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException {
 
-        if (inputParts.length != 2) throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.ACK.name()));
+        if (inputParts.length != 2)
+            throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.ACK.name()));
 
         String sourceAddress = inputParts[1];
 
