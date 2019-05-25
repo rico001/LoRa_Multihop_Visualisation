@@ -11,6 +11,9 @@ import android.widget.Toast;
 import de.htwberlin.lora_multihop_implementation.components.lora.LoRaConfig;
 import de.htwberlin.lora_multihop_visualisation.settings.SeekBarHandler;
 
+/**
+ * configuration for some AT CMDS (e.g. CONFIGURE_CMD).
+ */
 public class LoraSettingsActivity extends AppCompatActivity {
     LoRaConfig loRaConfig;
 

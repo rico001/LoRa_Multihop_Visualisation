@@ -35,6 +35,18 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
     implementation 'com.google.guava:guava:24.1-jre'
     implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+
+    /**
+     *  Import dependencies for room (sqlite abstraction layer lib)
+     */
+    def room_version = "1.1.1"
+
+    implementation "android.arch.persistence.room:runtime:$room_version"
+    annotationProcessor "android.arch.persistence.room:compiler:$room_version"  // For Kotlin use kapt instead of annotationProcessor
+    implementation "android.arch.persistence.room:rxjava2:$room_version"        // optional - RxJava support for Room
+    implementation "android.arch.persistence.room:guava:$room_version"          // optional - Guava support for Room, including Optional and ListenableFuture
+    testImplementation "android.arch.persistence.room:testing:$room_version"    // Test helpers
 }
 
 repositories {
