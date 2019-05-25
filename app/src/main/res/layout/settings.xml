@@ -205,7 +205,6 @@
                     android:visibility="visible" />
 
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -239,6 +238,143 @@
                     android:visibility="visible" />
 
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Implicit Header"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/textView_implicitHeader"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="explicit"
+                    android:textAlignment="textStart"
+                    android:visibility="visible" />
+
+                <Switch
+                    android:id="@+id/switch_implicitHeader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:showText="false"
+                    android:textAlignment="textStart"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Rx Single"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/textView_rxSingle"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="continue"
+                    android:textAlignment="textStart"
+                    android:visibility="visible" />
+
+                <Switch
+                    android:id="@+id/switch_rxSingle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:showText="false"
+                    android:textAlignment="textStart"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Frequency Hop"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/textView_frequencyHop"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="aus"
+                    android:textAlignment="textStart"
+                    android:visibility="visible" />
+
+                <Switch
+                    android:id="@+id/switch_frequencyHop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:showText="false"
+                    android:textAlignment="textStart"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Rx Packet Timeout"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/textView_rxPacketTimeout"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="3000ms"
+                    android:textAlignment="textStart"
+                    android:visibility="visible" />
+
+                <SeekBar
+                    android:id="@+id/seekBar_rxPacketTimeout"
+                    style="@style/Widget.AppCompat.SeekBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:max="65534"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
 
 
         </LinearLayout>
