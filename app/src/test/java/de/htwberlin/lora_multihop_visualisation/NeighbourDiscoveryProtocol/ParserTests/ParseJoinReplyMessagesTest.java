@@ -25,7 +25,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  *  - missing / to much parts in message
  *
  */
-public class ParseJoinReplyMessageTest {
+public class ParseJoinReplyMessagesTest {
 
     private NeighbourDiscoveryProtocolQueue queue;
 
