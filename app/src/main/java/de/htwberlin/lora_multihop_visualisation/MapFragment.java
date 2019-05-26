@@ -18,15 +18,20 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import de.htwberlin.lora_multihop_implementation.enums.EFragments;
-import de.htwberlin.lora_multihop_implementation.interfaces.IMapFragmentListener;
+import java.util.HashMap;
+import java.util.Map;
 
-public class MapFragment extends Fragment implements IMapFragmentListener, OnMapReadyCallback {
+import de.htwberlin.lora_multihop_implementation.enums.EFragments;
+
+public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -35,8 +40,13 @@ public class MapFragment extends Fragment implements IMapFragmentListener, OnMap
     private Button terminalButton;
     private LatLng location;
 
+    private Map<String, Marker> markers;
+    private Map<String, Circle> circles;
+
     public MapFragment() {
         // Required empty public constructor
+        markers = new HashMap<>();
+        circles = new HashMap<>();
     }
 
     @Override
@@ -53,9 +63,7 @@ public class MapFragment extends Fragment implements IMapFragmentListener, OnMap
         terminalButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).setViewPager(EFragments.TERMINAL_FRAGMENT.get());
-                //just a test
-                addMarker(location,BitmapDescriptorFactory.HUE_YELLOW);
+                ((MainActivity) getActivity()).setViewPager(EFragments.TERMINAL_FRAGMENT.get());
             }
         });
 
@@ -65,10 +73,10 @@ public class MapFragment extends Fragment implements IMapFragmentListener, OnMap
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        // mMap.setMyLocationEnabled(true);
-        // Add a marker in Sydney, Australia, and move the camera.
-        LatLng brln3 = new LatLng(52.5004, 13.5001);
         getDeviceLocation();
+
+        // We ask for permission in the main activity
+        // mMap.setMyLocationEnabled(true);
     }
 
     public void getDeviceLocation() {
@@ -82,8 +90,8 @@ public class MapFragment extends Fragment implements IMapFragmentListener, OnMap
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {
                         Location currentLocation = (Location) task.getResult();
-                        //setCurrentLocation(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())); //TODO: TMP_FIX
-                        setCurrentLocation(new LatLng(52.232, 42.322));
+                        setCurrentLocation(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
+                        addHostMarker(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), "me", 1000, "This is a title", "This is a description");
                     }
                 }
             });
@@ -92,7 +100,11 @@ public class MapFragment extends Fragment implements IMapFragmentListener, OnMap
         }
     }
 
-    @Override
+    /**
+     * Returns the actual location, default 50.000 - 50.000
+     *
+     * @return
+     */
     public LatLng getLocation() {
         if (this.location == null) {
             getDeviceLocation();
@@ -102,24 +114,71 @@ public class MapFragment extends Fragment implements IMapFragmentListener, OnMap
         return new LatLng(50.000, 50.000);
     }
 
+    /**
+     * Helper method to set the current location
+     * @param latLng
+     */
     private void setCurrentLocation(LatLng latLng) {
-        location = latLng;
+        this.location = latLng;
+    }
+
+    /**
+     * Adds a purple marker to the map
+     *
+     * @param location
+     * @param id
+     * @param radius
+     */
+    public void addHostMarker(LatLng location, String id, int radius) {
+        addHostMarker(location, id, radius, "", "");
+    }
+
+    /**
+     * Adds a purple marker to the map
+     *
+     * @param location
+     * @param id
+     * @param radius
+     * @param title
+     * @param description
+     */
+    public void addHostMarker(LatLng location, String id, int radius, String title, String description) {
+        Marker marker = mMap.addMarker(new MarkerOptions()
+                .position(location)
+                .title(title)
+                .snippet(description)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.host_marker)));
+
+        Circle circle = mMap.addCircle(new CircleOptions()
+                .center(location)
+                .radius(radius)
+                .strokeWidth(3)
+                .fillColor(Color.argb(30, 98, 2, 238))
+                .strokeColor(Color.rgb(98, 2, 238)));
+
+        this.markers.put(id, marker);
+        this.circles.put(id, circle);
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
+    }
+
+    /**
+     * Removes a marker from the map
+     *
+     * @param id
+     */
+    public void removeMarker(String id) {
+        if (this.markers.containsKey(id)) {
+            this.markers.remove(id);
+            this.circles.remove(id);
+        }
     }
 
     @Override
     public void onResume() {
         mapView.onResume();
         super.onResume();
-    }
-
-    public void addMarker(LatLng location, float color){
-        mMap.addMarker(new MarkerOptions()
-                .position(location).title("Icke"))
-                .setIcon(BitmapDescriptorFactory.defaultMarker(color));
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
-
     }
 
     @Override

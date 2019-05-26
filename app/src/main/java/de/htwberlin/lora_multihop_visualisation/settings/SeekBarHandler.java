@@ -60,8 +60,7 @@ public class SeekBarHandler {
             }
         }
 
-        int step = (max - min) / input.getMax();
-        return (value - min) / step;
+        return (value - min) / getStep();
     }
 
     /**
@@ -75,8 +74,11 @@ public class SeekBarHandler {
         }
 
         // No label-value map, so try to derive the value from the progress based on value step per change.
-        int step = (max - min) / input.getMax();
-        return min + (progress * step);
+        return min + (progress * getStep());
+    }
+
+    private int getStep() {
+        return Math.max((max - min) / input.getMax(), 1);
     }
 
     private void syncLabel(int value) {

@@ -106,7 +106,7 @@ public class LoRaConfig {
      * Invalid under "explicit" mode.
      * [5-255]
      */
-    private int payloadLength;
+    private int payloadLength = 8;
     /**
      * [4-65535]
      */

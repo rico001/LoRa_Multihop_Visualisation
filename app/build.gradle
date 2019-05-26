@@ -24,6 +24,9 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
+    }
 }
 
 dependencies {
@@ -55,6 +58,8 @@ dependencies {
     // butterknife
     implementation 'com.jakewharton:butterknife:9.0.0-rc1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-rc1'
+
+    androidTestImplementation 'com.google.code.findbugs:jsr305:1.3.9'
 }
 
 repositories {

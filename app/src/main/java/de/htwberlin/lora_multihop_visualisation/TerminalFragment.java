@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,15 +18,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.htwberlin.lora_multihop_implementation.enums.EFragments;
-import de.htwberlin.lora_multihop_implementation.interfaces.ITerminalFragmentListener;
 
-public class TerminalFragment extends Fragment implements ITerminalFragmentListener {
+public class TerminalFragment extends Fragment {
     private final static int sendColor = Color.RED;
     private final static int readColor = Color.BLUE;
     private final static String AT_POSTFIX = "\r\n";
 
     private static final String TAG = "TerminalFragment";
 
+    private ScrollView scrollView;
     private LinearLayout terminalMessages;
     private EditText terminalInput;
     private Button sendButton;
@@ -38,6 +39,7 @@ public class TerminalFragment extends Fragment implements ITerminalFragmentListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_terminal, container, false);
+        scrollView = ((ScrollView) view.findViewById(R.id.terminal_scroll));
         terminalMessages = (LinearLayout) view.findViewById(R.id.terminal_messages);
         terminalInput = (EditText) view.findViewById(R.id.terminal_send_text);
         sendButton = (Button) view.findViewById(R.id.terminal_send_button);
@@ -83,7 +85,6 @@ public class TerminalFragment extends Fragment implements ITerminalFragmentListe
      * @param isSendMessage
      * @return
      */
-    @Override
     public synchronized boolean updateTerminalMessages(int color, String message, boolean isSendMessage) {
 
         String symbols = "<< ";
@@ -99,7 +100,15 @@ public class TerminalFragment extends Fragment implements ITerminalFragmentListe
 
         terminalMessages.addView(textView);
 
-        //TODO auto. scrolling nach unten bei update
+
+        // Auto scroll down
+        scrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
+
         return true;
     }
 
