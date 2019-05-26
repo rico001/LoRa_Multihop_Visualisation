@@ -4,12 +4,10 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -21,13 +19,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.Map;
-
 import de.htwberlin.lora_multihop_implementation.components.lora.LoraCommandsExecutor;
-import de.htwberlin.lora_multihop_implementation.components.model.NeighbourSet;
 import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
-import de.htwberlin.lora_multihop_implementation.interfaces.IMapFragmentListener;
-import de.htwberlin.lora_multihop_implementation.interfaces.ITerminalFragmentListener;
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 
 /**
@@ -43,8 +36,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
 
     private MapFragment mapFragment;
     private TerminalFragment terminalFragment;
-    private ITerminalFragmentListener terminalListener;
-    private IMapFragmentListener mapListener;
+    private NeighbourSetTableFragment neighbourSetTableFragment;
 
     private static final String[] LOCATION_PERMS = {
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -62,14 +54,14 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
         public synchronized void handleMessage(Message msg) {
             switch (msg.what) {
                 case STATE_CONNECTING:
-                    terminalListener.updateTerminalMessages(readColor, "Verbindung mit " + SingletonDevice.getBluetoothDevice().getName() + " wird aufgebaut", false);
+                    terminalFragment.updateTerminalMessages(readColor, "Verbindung mit " + SingletonDevice.getBluetoothDevice().getName() + " wird aufgebaut", false);
                     break;
                 case STATE_CONNECTED:
-                    terminalListener.updateTerminalMessages(readColor, "Verbindung ist aufgebaut", false);
+                    terminalFragment.updateTerminalMessages(readColor, "Verbindung ist aufgebaut", false);
                     break;
                 case MESSAGE_READ:
                     String message = (String) msg.obj;
-                    terminalListener.updateTerminalMessages(readColor, message, false);
+                    terminalFragment.updateTerminalMessages(readColor, message, false);
                     break;
                 case MESSAGE_ERROR:
                     System.out.println("MSG ERROR");
@@ -137,19 +129,6 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
     }
 
     /**
-     * Sets the terminal listener to our fragment so we can call terminalListener.updateTerminalMessages
-     * @param listener
-     */
-    public void setTerminalListener(ITerminalFragmentListener listener) {
-        this.terminalListener = listener;
-    }
-
-    public void setMapListener(IMapFragmentListener listener) {
-        this.mapListener = listener;
-    }
-
-
-    /**
      * Sets the fragment container and adds the map and terminal fragments
      * @param viewPager
      */
@@ -163,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
 
         this.mapFragment = mapFragment;
         this.terminalFragment = terminalFragment;
+        this.neighbourSetTableFragment = neighbourSetTableFragment;
 
         // The order in which the fragments are added is very important!
         adapter.addFragment(mapFragment, "MapFragment");
@@ -170,8 +150,6 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
         adapter.addFragment(neighbourSetTableFragment, "NeighbourSetTableFragment");
         adapter.addFragment(logicFragment, "LogicFragment");
 
-        setMapListener(mapFragment);
-        setTerminalListener(terminalFragment);
         viewPager.setAdapter(adapter);
     }
 
@@ -183,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
         viewPager.setCurrentItem(position);
 
         if (mapFragment.isVisible()) {
-            mapListener.addHostMarker(new LatLng(50.000, 50.0000), "asd", 1000);
+            mapFragment.addHostMarker(new LatLng(50.000, 50.0000), "asd", 1000);
         }
     }
 
@@ -221,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
 
         if (id == R.id.item_LoraKonfig) {
             startAnotherActivity(LoraSettingsActivity.class);
-            Toast.makeText(this, "Lat: " + mapListener.getLocation().latitude + "\nLon: " + mapListener.getLocation().longitude, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Lat: " + mapFragment.getLocation().latitude + "\nLon: " + mapFragment.getLocation().longitude, Toast.LENGTH_LONG).show();
             return true;
         }
         if (id == R.id.item_bluetooth) {

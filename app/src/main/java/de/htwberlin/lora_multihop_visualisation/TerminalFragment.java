@@ -18,9 +18,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.htwberlin.lora_multihop_implementation.enums.EFragments;
-import de.htwberlin.lora_multihop_implementation.interfaces.ITerminalFragmentListener;
 
-public class TerminalFragment extends Fragment implements ITerminalFragmentListener {
+public class TerminalFragment extends Fragment {
     private final static int sendColor = Color.RED;
     private final static int readColor = Color.BLUE;
     private final static String AT_POSTFIX = "\r\n";
@@ -86,7 +85,6 @@ public class TerminalFragment extends Fragment implements ITerminalFragmentListe
      * @param isSendMessage
      * @return
      */
-    @Override
     public synchronized boolean updateTerminalMessages(int color, String message, boolean isSendMessage) {
 
         String symbols = "<< ";

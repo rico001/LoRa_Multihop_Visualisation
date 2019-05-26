@@ -30,9 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.htwberlin.lora_multihop_implementation.enums.EFragments;
-import de.htwberlin.lora_multihop_implementation.interfaces.IMapFragmentListener;
 
-public class MapFragment extends Fragment implements IMapFragmentListener, OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -105,7 +104,6 @@ public class MapFragment extends Fragment implements IMapFragmentListener, OnMap
      * Returns the actual location, default 50.000 - 50.000
      * @return
      */
-    @Override
     public LatLng getLocation() {
         if (this.location == null) {
             getDeviceLocation();
@@ -129,7 +127,6 @@ public class MapFragment extends Fragment implements IMapFragmentListener, OnMap
      * @param id
      * @param radius
      */
-    @Override
     public void addHostMarker(LatLng location, String id, int radius) {
         addHostMarker(location, id, radius, "", "");
     }
