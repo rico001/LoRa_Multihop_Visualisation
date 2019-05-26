@@ -46,6 +46,7 @@ public class NeighbourSetTableFragment extends Fragment {
 
     /**
      * Adds a row to the table
+     *
      * @param id
      * @param address
      * @param dah
@@ -73,6 +74,7 @@ public class NeighbourSetTableFragment extends Fragment {
 
     /**
      * Gets the row with the matching id
+     *
      * @param id
      * @return
      */
@@ -82,6 +84,7 @@ public class NeighbourSetTableFragment extends Fragment {
 
     /**
      * Removes a row
+     *
      * @param id
      */
     public void removeRow(String id) {

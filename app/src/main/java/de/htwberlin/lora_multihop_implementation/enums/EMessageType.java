@@ -4,9 +4,16 @@ public enum EMessageType {
 
     JOIN,
     JOIN_REPLY,
+
+    FETCH,
+    FETCH_REPLY,
+
+    PUSH,
+    PULL,
+
     MOVE,
+
     LEAVE,
-    ACK;
 
-
+    ACK
 }

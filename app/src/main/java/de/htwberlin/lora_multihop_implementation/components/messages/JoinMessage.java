@@ -3,14 +3,30 @@ package de.htwberlin.lora_multihop_implementation.components.messages;
 import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
 
 /**
+ * JOIN={SA, LAT, LONG}
+ *
+ * SA = Source Address
+ * LAT = Latitude
+ * Long = Longitude
+ *
+ * Predecessor Message = Null
+ * Reply Message = JOIN_REPLY
+ *
+ * Communication Type = BROADCAST
+ *
+ * Use Case: Used to detect possible destination hops.
+ *
  * @author morelly_t1
  */
 public class JoinMessage extends Message {
 
+    private  static final EMessageType replyMessage = EMessageType.JOIN_REPLY;
+    private  static final boolean UNICAST = Boolean.FALSE;
+
     private Double longitude, latitude;
 
-    public JoinMessage(EMessageType type, String sourceAddress, Double longitude, Double latitude) {
-        super(type, sourceAddress);
+    public JoinMessage(String sourceAddress, Double longitude, Double latitude) {
+        super(sourceAddress);
         this.longitude = longitude;
         this.latitude = latitude;
     }
@@ -30,4 +46,13 @@ public class JoinMessage extends Message {
     public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
+
+    @Override
+    public String toString() {
+        return "JoinMessage{" +
+                "longitude=" + longitude +
+                ", latitude=" + latitude +
+                '}';
+    }
+
 }

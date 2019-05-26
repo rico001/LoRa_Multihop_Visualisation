@@ -32,21 +32,27 @@ public class NeighbourSetTableRow extends TableRow {
     public void setUidText(String uid) {
         this.uid.setText(uid);
     }
+
     public void setAddressText(String address) {
         this.address.setText(address);
     }
+
     public void setDahText(String dah) {
         this.dah.setText(dah);
     }
+
     public void setLatitudeText(String latitude) {
         this.latitude.setText(latitude);
     }
+
     public void setLongitudeText(String longitude) {
         this.longitude.setText(longitude);
     }
+
     public void setStatusText(String status) {
         this.status.setText(status);
     }
+
     public void setTimestampText(String timestamp) {
         this.timestamp.setText(timestamp);
     }

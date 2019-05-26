@@ -5,11 +5,19 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import de.htwberlin.lora_multihop_implementation.components.messages.Message;
 
 /**
+ * NDP Message Queue
+ * Stores instances of Messages
+ * Used to process all incoming messages
+ *
+ * Is a Singleton
+ *
  * @author morelly_t1
  */
 public class NeighbourDiscoveryProtocolQueue extends ConcurrentLinkedQueue {
 
-    public NeighbourDiscoveryProtocolQueue() {
+    public  static NeighbourDiscoveryProtocolQueue queue = null;
+
+    private NeighbourDiscoveryProtocolQueue() {
         super();
     }
 
@@ -35,6 +43,11 @@ public class NeighbourDiscoveryProtocolQueue extends ConcurrentLinkedQueue {
     @Override
     public boolean isEmpty() {
         return super.isEmpty();
+    }
+
+    public static NeighbourDiscoveryProtocolQueue getInstance(){
+        if (queue == null) queue = new NeighbourDiscoveryProtocolQueue();
+        return queue;
     }
 
 }

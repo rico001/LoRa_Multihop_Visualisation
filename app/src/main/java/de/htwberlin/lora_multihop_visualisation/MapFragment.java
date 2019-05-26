@@ -102,6 +102,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     /**
      * Returns the actual location, default 50.000 - 50.000
+     *
      * @return
      */
     public LatLng getLocation() {
@@ -123,6 +124,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     /**
      * Adds a purple marker to the map
+     *
      * @param location
      * @param id
      * @param radius
@@ -133,6 +135,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     /**
      * Adds a purple marker to the map
+     *
      * @param location
      * @param id
      * @param radius
@@ -141,17 +144,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      */
     public void addHostMarker(LatLng location, String id, int radius, String title, String description) {
         Marker marker = mMap.addMarker(new MarkerOptions()
-                            .position(location)
-                            .title(title)
-                            .snippet(description)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.host_marker)));
+                .position(location)
+                .title(title)
+                .snippet(description)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.host_marker)));
 
         Circle circle = mMap.addCircle(new CircleOptions()
-                            .center(location)
-                            .radius(radius)
-                            .strokeWidth(3)
-                            .fillColor(Color.argb(30, 98, 2, 238))
-                            .strokeColor(Color.rgb(98, 2, 238)));
+                .center(location)
+                .radius(radius)
+                .strokeWidth(3)
+                .fillColor(Color.argb(30, 98, 2, 238))
+                .strokeColor(Color.rgb(98, 2, 238)));
 
         this.markers.put(id, marker);
         this.circles.put(id, circle);
@@ -162,6 +165,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     /**
      * Removes a marker from the map
+     *
      * @param id
      */
     public void removeMarker(String id) {

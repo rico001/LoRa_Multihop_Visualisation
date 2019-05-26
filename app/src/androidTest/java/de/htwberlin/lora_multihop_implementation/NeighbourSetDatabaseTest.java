@@ -98,7 +98,7 @@ public class NeighbourSetDatabaseTest {
     }
 
     @Test
-    public void testUpdateObjSuccess()  {
+    public void testUpdateObjSuccess() {
         NeighbourSet ns = createNeighbourSetUid0000();
         neighbourSetDAO.saveNeighbourSet(ns);
 
@@ -112,7 +112,7 @@ public class NeighbourSetDatabaseTest {
     }
 
     @Test
-    public void testSaveTwoObjAndClearTableSuccess()  {
+    public void testSaveTwoObjAndClearTableSuccess() {
         NeighbourSet nsOne = createNeighbourSetUid0000();
         NeighbourSet nsTwo = createNeighbourSetUid0001();
 
@@ -149,14 +149,14 @@ public class NeighbourSetDatabaseTest {
         db.close();
     }
 
-    private NeighbourSet createNeighbourSetUid0000()   {
+    private NeighbourSet createNeighbourSetUid0000() {
         Location local = new Location("berlin");
         local.setLatitude(52.5200);
         local.setLongitude(13.4050);
         return new NeighbourSet(0, "AAAA", "AAAB", local, ELoraNodeState.UNKNOWN, new Timestamp(System.currentTimeMillis()));
     }
 
-    private NeighbourSet createNeighbourSetUid0001()   {
+    private NeighbourSet createNeighbourSetUid0001() {
         Location local = new Location("berlin");
         local.setLatitude(52.5200);
         local.setLongitude(13.4050);

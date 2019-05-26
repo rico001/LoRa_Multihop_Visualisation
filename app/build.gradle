@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "de.htwberlin.lora_multihop_visualisation"
-        minSdkVersion 26
+        minSdkVersion 25
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -20,8 +20,12 @@ android {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
     configurations.all {
-        resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.0'
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
     }
 }
 
@@ -50,6 +54,12 @@ dependencies {
     implementation "android.arch.persistence.room:rxjava2:$room_version"        // optional - RxJava support for Room
     implementation "android.arch.persistence.room:guava:$room_version"          // optional - Guava support for Room, including Optional and ListenableFuture
     testImplementation "android.arch.persistence.room:testing:$room_version"    // Test helpers
+
+    // butterknife
+    implementation 'com.jakewharton:butterknife:9.0.0-rc1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-rc1'
+
+    androidTestImplementation 'com.google.code.findbugs:jsr305:1.3.9'
 }
 
 repositories {

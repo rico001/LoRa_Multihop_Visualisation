@@ -28,9 +28,9 @@ public interface NeighbourSetDAO {
 	@Delete
 	void deleteNeighbourSet(NeighbourSet neighbourSet);
 
-	@Query("DELETE FROM neighbourset WHERE uid LIKE :uid")
-	void deleteNeighbourSetByUid(int uid);
+    @Query("DELETE FROM neighbourset WHERE uid LIKE :uid")
+    void deleteNeighbourSetByUid(int uid);
 
-	@Query("DELETE FROM neighbourset")
-	void clearTable();
+    @Query("DELETE FROM neighbourset")
+    void clearTable();
 }
