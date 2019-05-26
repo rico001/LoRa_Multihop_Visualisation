@@ -317,3 +317,27 @@
 * BluetoothService-Objekt wird erzeugt & verbindet sich mit Bluetooth Modul via .connectWithBluetoothDevice()
 * LoRaCommandsExecutor wird mit BluetoothService-Objekt als Übergabeparameter erzeugt
 * static Handler kümmert sich über eintreffende LoRa-Responses & ruft .processLoraResponse(String responseMsg) auf
+
+---
+---
+---
+
+## ``de.htwberlin.lora_multihop_visualization``
+### **public class MapFragment**
+
+#### Attribute
+
+| Name | Typ | Funktion |
+| --- | --- | --- |
+| mMap |  com.google.android.gms.maps.GoogleMap | Map object |
+| fusedLocationProviderClient | com.google.android.gms.location.FusedLocationProviderClient | Location provider |
+| mapView | com.google.android.gms.maps.MapView | Provides the view object of the map |
+| location | com.google.android.gms.maps.model.LatLng | Current location |
+| markers | java.util.Map<String, Marker> | HashMap that contains the current markers on the map |
+| circles | java.util.Map<String, Circle> | HashMap that contains the corresponding circle radius of each marker |
+
+#### Methoden-Liste
+
+| Methodenkopf | Zweck | Testklasse |
+| --- | --- | --- |
+| public void getDeviceLocation() | Gets the location | - |
