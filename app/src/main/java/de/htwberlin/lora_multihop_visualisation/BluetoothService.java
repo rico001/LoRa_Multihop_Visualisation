@@ -203,10 +203,17 @@ public class BluetoothService implements MessageConstants{
                     readMessage+=newInput;
 
                     if(readMessage.contains(System.lineSeparator())){
-                        readMessage=readMessage.replace(System.lineSeparator(),"");
-                        handler.obtainMessage(MESSAGE_READ, numBytes, -1, readMessage).sendToTarget();
-                        Log.d(TAG,"komplett"+readMessage);
+
+                        Log.d(TAG,"komplett (mind 1 Seperator): "+readMessage);
+
+                        String[] msgs=readMessage.split(System.lineSeparator());
+                        for(String msg: msgs){
+                            Log.d(TAG,"     message: "+msg);
+                            handler.obtainMessage(MESSAGE_READ, numBytes, -1, msg).sendToTarget();
+                        }
+
                         readMessage="";
+
                     }else{
                         Log.d(TAG,"nicht komplett"+readMessage);
                     }
