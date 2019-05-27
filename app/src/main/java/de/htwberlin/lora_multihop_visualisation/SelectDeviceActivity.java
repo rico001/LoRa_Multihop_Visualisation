@@ -30,23 +30,36 @@ import java.util.Set;
  */
 public class SelectDeviceActivity extends AppCompatActivity{
 
+    /**
+     * represents no device selected in listview
+     */
     private final static int NO_ITEM_SELECTED=-1;
+
+    /**
+     * position od selected device in listview
+     */
     private int selectedItemPosition=NO_ITEM_SELECTED;
+
+    /**
+     * color of selected device
+     */
     private int selectedItemColor=Color.LTGRAY;
 
     /**
      * Access to to paired and new bt devices
      */
     private BluetoothAdapter bluetoothAdapter;
+
     /**
      * contains all devices
      */
     private ArrayList<BluetoothDevice> bluetoothDevices = new ArrayList<>();    //contains alls currently accessable devices and fills listadapter
 
     /**
-     *
+     *  set text and behaviour of every item in listView
      */
-    private ArrayAdapter<BluetoothDevice> listAdapter = null;       //fills listView
+    private ArrayAdapter<BluetoothDevice> listAdapter = null;
+
     /**
      * contains all accessable devices for s possible connection (on Itemclick set SingleDevice)
      */
@@ -111,18 +124,21 @@ public class SelectDeviceActivity extends AppCompatActivity{
                 String deviceName= device.getName();
                 String mac= device.getAddress();
 
+                //set devicename in item
                 if (deviceName != null && !deviceName.isEmpty()) {
                     textView_devicename.setText(deviceName);
                 }else{
                     textView_devicename.setText("Unknown");
                 }
 
+                //change color if selected
                 if (position == selectedItemPosition) {
                    convertView.setBackgroundColor(selectedItemColor);
                 }else{
                     convertView.setBackgroundColor(Color.WHITE);
                 }
 
+                //set MAC addr in item
                 textView_macAddr.setText(mac);
 
                 return convertView;
