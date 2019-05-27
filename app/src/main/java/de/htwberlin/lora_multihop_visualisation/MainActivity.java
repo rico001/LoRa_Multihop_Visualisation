@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
         mainFragmentsAdapter = new MainFragmentsAdapter(getSupportFragmentManager());
         viewPager = (ViewPager) findViewById(R.id.main_container);
 
+        // Sets up the ViewPager with all the fragments
         setUpViewPager(viewPager);
 
         loraCommandsExecutor = new LoraCommandsExecutor(btService);
