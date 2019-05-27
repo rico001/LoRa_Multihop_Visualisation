@@ -29,8 +29,6 @@ public class BluetoothService implements MessageConstants{
     private AcceptThread acceptThread;
     private ConnectedThread connectThread;
 
-    private boolean connected=false;
-
     public BluetoothService(Context context, Handler handler, BluetoothDevice device) {
         adapter = BluetoothAdapter.getDefaultAdapter();
         this.handler = handler;
@@ -44,11 +42,10 @@ public class BluetoothService implements MessageConstants{
     }
 
     public boolean isConnected() {
-        return connected;
-    }
+        if (connectThread!=null && connectThread.isAlive())
+            return true;
 
-    public void setConnected(boolean connected) {
-        this.connected = connected;
+        return false;
     }
 
     public synchronized void write(byte[] out) {
@@ -56,20 +53,29 @@ public class BluetoothService implements MessageConstants{
         ConnectedThread r;
 
         synchronized (this) {
-            if (!isConnected()) return;
+            if (connectThread!=null && !connectThread.isAlive()) return;
+
             r = connectThread;
         }
+
         // Perform the write unsynchronized
         r.write(out);
     }
 
-    public void diconnect() {
+    public void disconnect() {
         if (!isConnected()) return;
-        connectThread.cancel();
+
+        if(acceptThread!=null && acceptThread.isAlive())
+            Log.d(TAG,"acceptThread disconnct");
+            acceptThread.cancel();
+
+        if(connectThread!= null && connectThread.isAlive())
+            Log.d(TAG,"connectThread disconnct");
+            connectThread.cancel();
     }
 
     /**
-     * init a Bluetooth Connection
+     * init a Bluetooth Connection and starts the connectThread on end
      */
     private class AcceptThread extends Thread {
         private final BluetoothSocket mmSocket;
@@ -107,6 +113,7 @@ public class BluetoothService implements MessageConstants{
 
         public void run() {
             // Cancel discovery because it otherwise slows down the connection.
+            Log.d(TAG, "AcceptThread start");
             adapter.cancelDiscovery();
 
             try {
@@ -179,9 +186,9 @@ public class BluetoothService implements MessageConstants{
         }
 
         public void run() {
-            setConnected(true);
+            //setConnected(true);
 
-            Log.d(TAG, "connected thread start");
+            Log.d(TAG, "connectThread start");
 
             mmBuffer = new byte[512];
             int numBytes=0; // bytes returned from read()
@@ -239,7 +246,6 @@ public class BluetoothService implements MessageConstants{
         public void cancel() {
             try {
                 mmSocket.close();
-                setConnected(false);
             } catch (IOException e) {
                 Log.e(TAG, "Could not close the connect socket", e);
             }

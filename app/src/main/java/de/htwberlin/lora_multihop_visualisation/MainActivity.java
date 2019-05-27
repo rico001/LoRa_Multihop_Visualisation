@@ -28,6 +28,8 @@ import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
  */
 public class MainActivity extends AppCompatActivity implements MessageConstants {
 
+    private final static String TAG = "mainactivity";
+
     private final static int sendColor = Color.RED;
     private final static int readColor = Color.BLUE;
 
@@ -88,11 +90,6 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
         } else {
             init();
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         initBluetoothService();
     }
 
@@ -195,6 +192,13 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        try{
+            btService.disconnect();
+        }catch(NullPointerException e){
+            Log.d(TAG, "btService is null");
+        }
+
         int id = item.getItemId();
 
         if (id == R.id.item_LoraKonfig) {
@@ -210,40 +214,6 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
 
         return super.onOptionsItemSelected(item);
     }
-
-    /**
-     * Handling of all Button in mainactivity (onClickHandler
-     * is init in mainactivity.xml file/ android:onClick="buttonHandling")
-     *
-     * @param v as button
-     */
-    /*public void buttonHandling(View v) {
-        Button button = (Button) v;
-        int id = v.getId();
-
-        try {
-
-            switch (id) {
-                case R.id.bttn_test:
-                    //TODO @Gruppe Rountinen mit kurzem warten zwischen einzelnen Befehle sonst "ERR:BUSY" ggf Warten auf Response/CMD (Queue?)
-                    loraCommandsExecutor.test();//just a test
-                    //BSP:
-                    //loraCommandsExecutor.setAddress("EEEE");
-                    //kurz Warten (ggf. response verarbeiten, wenn notwendig!)
-                    //loraCommandsExecutor.getAddress();
-                    break;
-                case R.id.bttn_setAddr:
-                    loraCommandsExecutor.getVersion();//just a test
-                    break;
-                default:
-                    Toast.makeText(this, button.getText() + " AT-Routine", Toast.LENGTH_LONG).show();
-            }
-        } catch (NullPointerException e) {
-            updateTerminalMessages(readColor, "Wählen Sie ein Device in den Settings", false);
-        }
-
-    }*/
-
     /**
      * Starts a new activity
      * @param c is Class of this Activity
@@ -251,17 +221,6 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
     private void startAnotherActivity(Class c) {
         Intent intent = new Intent(this, c);
         startActivity(intent);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        if (btService == null) {
-            return;
-        } else {
-            btService.diconnect();
-        }
     }
 
 }
