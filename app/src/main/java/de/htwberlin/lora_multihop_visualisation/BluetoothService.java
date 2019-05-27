@@ -151,8 +151,9 @@ public class BluetoothService implements MessageConstants{
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
 
-        private final DataInputStream dataInStream;
+       // private final DataInputStream dataInStream;
         private byte[] mmBuffer; // mmBuffer store for the stream
+        private String readMessage="";  //contains input until Lineseperator
 
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
@@ -174,7 +175,7 @@ public class BluetoothService implements MessageConstants{
 
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
-            dataInStream = new DataInputStream(tmpIn);
+            //dataInStream = new DataInputStream(tmpIn);
         }
 
         public void run() {
@@ -183,22 +184,26 @@ public class BluetoothService implements MessageConstants{
             Log.d(TAG, "connected thread start");
 
             mmBuffer = new byte[512];
-            int numBytes; // bytes returned from read()
+            int numBytes=0; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs.
             while (true) {
                 try {
                     // Read from the InputStream.
-                        numBytes = dataInStream.read(mmBuffer);
-                        String readMessage = new String(mmBuffer, 0, numBytes)
-                                .replace(System.lineSeparator(),"!");
+                    numBytes= mmInStream.read(mmBuffer);
 
-                        Log.d(TAG,readMessage);
+                    String newInput = new String(mmBuffer, 0, numBytes);
+                    readMessage+=newInput;
 
-                        if(!readMessage.isEmpty())
-                            handler.obtainMessage(MESSAGE_READ, numBytes, -1, readMessage)
-                                    .sendToTarget();
-                        //TODO is reading to fast und interpretiert "\r\n"
+                    if(readMessage.contains(System.lineSeparator())){
+                        readMessage=readMessage.replace(System.lineSeparator(),"");
+                        handler.obtainMessage(MESSAGE_READ, numBytes, -1, readMessage).sendToTarget();
+                        Log.d(TAG,"komplett"+readMessage);
+                        readMessage="";
+                    }else{
+                        Log.d(TAG,"nicht komplett"+readMessage);
+                    }
+
                 } catch (IOException e) {
                     Log.d(TAG, "Input stream was disconnected", e);
                     break;
