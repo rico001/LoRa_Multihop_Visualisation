@@ -47,6 +47,11 @@ public class JoinMessage extends Message {
         this.latitude = latitude;
     }
 
+
+    public Message getResponse(String source, Double lng, Double lat) {
+        return new JoinReplyMessage(source, lng, lat);
+    }
+
     @Override
     public String toString() {
         return "JoinMessage{" +
