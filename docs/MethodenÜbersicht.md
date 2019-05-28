@@ -317,3 +317,224 @@
 * BluetoothService-Objekt wird erzeugt & verbindet sich mit Bluetooth Modul via .connectWithBluetoothDevice()
 * LoRaCommandsExecutor wird mit BluetoothService-Objekt als Übergabeparameter erzeugt
 * static Handler kümmert sich über eintreffende LoRa-Responses & ruft .processLoraResponse(String responseMsg) auf
+
+---
+
+---
+
+---
+
+## ``de.htwberlin.lora_multihop_visualization``
+
+**public class MapFragment extends Fragment implements OnMapReadyCallback**
+
+#### Attribute
+
+| Name                        | Typ                                                         | Access    | Funktion                                                     |
+| --------------------------- | ----------------------------------------------------------- | --------- | ------------------------------------------------------------ |
+|                             |                                                             |           |                                                              |
+| mMap                        | com.google.android.gms.maps.GoogleMap                       | `private` | Map object                                                   |
+|                             |                                                             |           |                                                              |
+| mMap                        | com.google.android.gms.maps.GoogleMap                       | `private` | Map object                                                   |
+|                             |                                                             |           |                                                              |
+| mMap                        | com.google.android.gms.maps.GoogleMap                       | `private` | Map object                                                   |
+|                             |                                                             |           |                                                              |
+| fusedLocationProviderClient | com.google.android.gms.location.FusedLocationProviderClient | `private` | Location provider                                            |
+|                             |                                                             |           |                                                              |
+| mapView                     | com.google.android.gms.maps.MapView                         | `private` | Provides the view object of the map                          |
+|                             |                                                             |           |                                                              |
+| location                    | com.google.android.gms.maps.model.LatLng                    | `private` | Current location                                             |
+|                             |                                                             |           |                                                              |
+| markers                     | java.util.Map<String, Marker>                               | `private` | HashMap that contains the current markers on the map         |
+|                             |                                                             |           |                                                              |
+| circles                     | java.util.Map<String, Circle>                               | `private` | HashMap that contains the corresponding circle radius of each marker |
+
+#### Methoden-Liste
+
+| Methodenkopf                                                 | Zweck                                                        | Testklasse |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ---------- |
+| public MapFragment()                                         | Constructor                                                  | -          |
+|                                                              |                                                              |            |
+| @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) | Will be called when the fragment is created                  | -          |
+|                                                              |                                                              |            |
+| @Override public void onMapReady(GoogleMap googleMap)        | Called when the GoogleMap is ready and sets the global variable `mMap` |            |
+|                                                              |                                                              |            |
+| public void getDeviceLocation()                              | Gets the location and sets the global `location`. <strong>This method only sets the global variable and should be called if the location is `null`, if you want to get the location use the `getLocation()` method</strong> | -          |
+|                                                              |                                                              |            |
+| public LatLng getLocation()                                  | Returns the current location. If the `location` variable is `null` the `getDeviceLocation()` will be called (asynchronously) and a default value will be returned | -          |
+|                                                              |                                                              |            |
+| public void addHostMarker(LatLng location, String id, int radius) | Adds a marker to the map                                     | -          |
+|                                                              |                                                              |            |
+| public void addHostMarker(LatLng location, String id, int radius, String title, String description) | Method overload to pass a title and a description            | -          |
+|                                                              |                                                              |            |
+| public void removeMarker(String id)                          | Removes a marker from the map                                | -          |
+
+
+
+---
+
+### **public class TerminalFragment extends Fragment**
+
+#### Attribute
+
+| Name             | Typ                           | Access    | Funktion                                             |
+| ---------------- | ----------------------------- | --------- | ---------------------------------------------------- |
+| sendColor        | `int`                         | `private` | Text color                                           |
+|                  |                               |           |                                                      |
+| readColor        | `int`                         | `private` | Text color                                           |
+|                  |                               |           |                                                      |
+| AT_POSTFIX       | `String`                      | `private` | Postfix for each AT CMD                              |
+|                  |                               |           |                                                      |
+| TAG              | `String`                      | `private` | Fragment name                                        |
+|                  |                               |           |                                                      |
+| scrollView       | `android.widget.ScrollView`   | `private` | ScrollView element in the xml                        |
+|                  |                               |           |                                                      |
+| terminalMessages | `android.widget.LinearLayout` | `private` | LinearLayout that contains all the terminal messages |
+|                  |                               |           |                                                      |
+| sendButton       | `android.widget.Button`       | `private` | Button to send a message                             |
+|                  |                               |           |                                                      |
+| returnButton     | `android.widget.Button`       | `private` | Button to return to the `MapFragment`                |
+
+#### Methoden-Liste
+
+| Methodenkopf                                                 | Zweck                                                        | Testklasse |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ---------- |
+| public TerminalFragment()                                    | Constructor                                                  | -          |
+|                                                              |                                                              |            |
+| @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) | Will be called when the fragment is created. Contains the listeners for both buttons | -          |
+|                                                              |                                                              |            |
+| public synchronized boolean updateTerminalMessages(int color, String message, boolean isSendMessage) | Adds a message to the terminal                               | -          |
+
+---
+
+### **public class NeighbourSetTableFragment extends Fragment**
+
+#### Attribute
+
+| Name      | Typ                                           | Access    | Funktion                  |
+| --------- | --------------------------------------------- | --------- | ------------------------- |
+| table     | `android.widget.TableLayout`                  | `private` | Contains the table layout |
+|           |                                               |           |                           |
+| tableData | `java.util.Map<String, NeighbourSetTableRow>` | `private` | Contains the table data   |
+
+#### Methoden-Liste
+
+| Methodenkopf                                                 | Zweck                                        | Testklasse |
+| ------------------------------------------------------------ | -------------------------------------------- | ---------- |
+| public NeighbourSetTableFragment()                           | Constructor                                  | -          |
+|                                                              |                                              |            |
+| @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) | Will be called when the fragment is created. | -          |
+|                                                              |                                              |            |
+| public void addRow(String id, String address, String dah, String latitude, String longitude, String state, String timestamp) | Adds a row to the table                      | -          |
+|                                                              |                                              |            |
+| public NeighbourSetTableRow getRow(String id)                | Returns a row                                | -          |
+|                                                              |                                              |            |
+| public void removeRow(String id)                             | Removes a row                                | -          |
+
+
+
+---
+
+### **public class MainFragmentsAdapter extends FragmentStatePagerAdapter**
+
+#### Attribute
+
+| Name               | Typ              | Access    | Funktion                                  |
+| ------------------ | ---------------- | --------- | ----------------------------------------- |
+| mFragmentList      | `java.util.List` | `private` | Contains a list with every fragment       |
+|                    |                  |           |                                           |
+| mFragmentTitleList | `java.util.List` | `private` | Contains a list with every fragment title |
+
+#### Methoden-Liste
+
+| Methodenkopf                                             | Zweck                           | Testklasse |
+| -------------------------------------------------------- | ------------------------------- | ---------- |
+| public MainFragmentsAdapter(FragmentManager fm)          | Constructor                     | -          |
+|                                                          |                                 |            |
+| public void addFragment(Fragment fragment, String title) | Adds a fragment to the list     | -          |
+|                                                          |                                 |            |
+| @Override public Fragment getItem(int position)          | Returns a fragment              | -          |
+|                                                          |                                 |            |
+| @Override public int getCount()                          | Returns the number of fragments | -          |
+
+---
+
+---
+
+---
+
+## ``de.htwberlin.lora_multihop_visualization.custom``
+
+### **public class NeighbourSetTableHead extends TableRow**
+
+#### Attribute
+
+| Name      | Typ                       | Access   | Funktion                          |
+| --------- | ------------------------- | -------- | --------------------------------- |
+| uid       | `android.widget.TextView` | `public` | Text which contains the uid       |
+|           |                           |          |                                   |
+| address   | `android.widget.TextView` | `public` | Text which contains the address   |
+|           |                           |          |                                   |
+| dah       | `android.widget.TextView` | `public` | Text which contains the dah       |
+|           |                           |          |                                   |
+| latitude  | `android.widget.TextView` | `public` | Text which contains the latitude  |
+|           |                           |          |                                   |
+| longitude | `android.widget.TextView` | `public` | Text which contains the longitude |
+|           |                           |          |                                   |
+| status    | `android.widget.TextView` | `public` | Text which contains the status    |
+|           |                           |          |                                   |
+| timestamp | `android.widget.TextView` | `public` | Text which contains the timestamp |
+
+#### Methoden-Liste
+
+| Methodenkopf                                  | Zweck      | Testklasse |
+| --------------------------------------------- | ---------- | ---------- |
+| public NeighbourSetTableHead(Context context) | Contructor | -          |
+
+### **Zusammenwirken**
+
+* Component thats models the table head of the `NeighbourSetTable`
+
+
+
+---
+
+### **public class NeighbourSetTableRow extends TableRow**
+
+#### Attribute
+
+| Name      | Typ                       | Access   | Funktion                          |
+| --------- | ------------------------- | -------- | --------------------------------- |
+| uid       | `android.widget.TextView` | `public` | Text which contains the uid       |
+|           |                           |          |                                   |
+| address   | `android.widget.TextView` | `public` | Text which contains the address   |
+|           |                           |          |                                   |
+| dah       | `android.widget.TextView` | `public` | Text which contains the dah       |
+|           |                           |          |                                   |
+| latitude  | `android.widget.TextView` | `public` | Text which contains the latitude  |
+|           |                           |          |                                   |
+| longitude | `android.widget.TextView` | `public` | Text which contains the longitude |
+|           |                           |          |                                   |
+| status    | `android.widget.TextView` | `public` | Text which contains the status    |
+|           |                           |          |                                   |
+| timestamp | `android.widget.TextView` | `public` | Text which contains the timestamp |
+
+#### Methoden-Liste
+
+| Methodenkopf                                   | Zweck                    | Testklasse |
+| ---------------------------------------------- | ------------------------ | ---------- |
+| public NeighbourSetTableRow(Context context)   | Constructor              | -          |
+|                                                |                          |            |
+| public void setUidText(String uid)             | Setter for the UID       | -          |
+|                                                |                          |            |
+| public void setAddressText(String address)     | Setter for the address   | -          |
+|                                                |                          |            |
+| public void setDahText(String dah)             | Setter for the DAH       | -          |
+|                                                |                          |            |
+| public void setLatitudeText(String latitude)   | Setter for the latitude  | -          |
+|                                                |                          |            |
+| public void setLongitudeText(String longitude) | Setter for the longitude | -          |
+|                                                |                          |            |
+| public void setStatusText(String status)       | Setter for the status    | -          |
+|                                                |                          |            |
+| public void setTimestampText(String timestamp) | Setter for the timestamp |            |

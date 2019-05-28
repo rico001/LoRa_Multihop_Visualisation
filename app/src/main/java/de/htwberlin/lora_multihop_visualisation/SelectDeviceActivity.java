@@ -9,9 +9,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,23 +28,38 @@ import java.util.Set;
  * possibility to select a discovered Bluetoothdevice (in our case MobANet)
  *
  */
-public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
+public class SelectDeviceActivity extends AppCompatActivity{
 
-    private int selectedDeviceColor = Color.YELLOW;
+    /**
+     * represents no device selected in listview
+     */
+    private final static int NO_ITEM_SELECTED=-1;
+
+    /**
+     * position od selected device in listview
+     */
+    private int selectedItemPosition=NO_ITEM_SELECTED;
+
+    /**
+     * color of selected device
+     */
+    private int selectedItemColor=Color.LTGRAY;
 
     /**
      * Access to to paired and new bt devices
      */
     private BluetoothAdapter bluetoothAdapter;
+
     /**
      * contains all devices
      */
     private ArrayList<BluetoothDevice> bluetoothDevices = new ArrayList<>();    //contains alls currently accessable devices and fills listadapter
 
     /**
-     *
+     *  set text and behaviour of every item in listView
      */
-    private ArrayAdapter<BluetoothDevice> listAdapter = null;       //fills listView
+    private ArrayAdapter<BluetoothDevice> listAdapter = null;
+
     /**
      * contains all accessable devices for s possible connection (on Itemclick set SingleDevice)
      */
@@ -92,8 +105,8 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 bluetoothAdapter.cancelDiscovery();
                 SingletonDevice.setBluetoothDevice(bluetoothDevices.get(position));  //a device is accessable for mainactivity
-                view.setBackgroundColor(selectedDeviceColor);
-                //TODO only one selected device pssible
+                setSelectedItemPosition(position);
+                listAdapter.notifyDataSetChanged();
             }
         });
 
@@ -111,12 +124,21 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
                 String deviceName= device.getName();
                 String mac= device.getAddress();
 
+                //set devicename in item
                 if (deviceName != null && !deviceName.isEmpty()) {
                     textView_devicename.setText(deviceName);
                 }else{
                     textView_devicename.setText("Unknown");
                 }
 
+                //change color if selected
+                if (position == selectedItemPosition) {
+                   convertView.setBackgroundColor(selectedItemColor);
+                }else{
+                    convertView.setBackgroundColor(Color.WHITE);
+                }
+
+                //set MAC addr in item
                 textView_macAddr.setText(mac);
 
                 return convertView;
@@ -174,18 +196,15 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
     }
 
     private void scanForNewDevices(){
+        setSelectedItemPosition(NO_ITEM_SELECTED);
         bluetoothAdapter.cancelDiscovery();
         bluetoothDevices.clear();
         listAdapter.notifyDataSetChanged();
         bluetoothAdapter.startDiscovery();
     }
 
-    @Override
-    public void run() {
-        //TODO if connnection success-> onDestroy and back to mainactivity, thread starts in on create
-    }
-
     private void showPairedDevices(){
+        setSelectedItemPosition(NO_ITEM_SELECTED);
         bluetoothAdapter.cancelDiscovery();
         bluetoothDevices.clear();
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
@@ -207,5 +226,9 @@ public class SelectDeviceActivity extends AppCompatActivity implements Runnable{
 
         }
         return false;
+    }
+
+    public void setSelectedItemPosition(int selectedItemPosition) {
+        this.selectedItemPosition = selectedItemPosition;
     }
 }
