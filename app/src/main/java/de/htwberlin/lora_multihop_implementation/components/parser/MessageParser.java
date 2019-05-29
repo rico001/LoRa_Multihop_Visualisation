@@ -2,7 +2,6 @@ package de.htwberlin.lora_multihop_implementation.components.parser;
 
 import android.util.Log;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.htwberlin.lora_multihop_implementation.components.messages.AckMessage;
@@ -18,7 +17,7 @@ import de.htwberlin.lora_multihop_implementation.components.messages.PushMessage
 import de.htwberlin.lora_multihop_implementation.components.queue.NeighbourDiscoveryProtocolQueue;
 import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
 
-import static java.lang.Double.*;
+import static java.lang.Double.parseDouble;
 import static java.util.regex.Pattern.compile;
 
 /**
@@ -31,37 +30,31 @@ public class MessageParser {
     private static final String TAG = "MessageParser";
     private static final Pattern HEXADECIMAL_PATTERN = compile("\\p{XDigit}+");
 
-    public static void parseInput(String inputString) throws ParserException, IndexOutOfBoundsException, NumberFormatException {
+    public static void parseInput(String inputString) throws ParserException, IndexOutOfBoundsException, NumberFormatException, NullPointerException {
+
+        // Message = "LR,Source Address, Message length, Message Type, Params...."
+        // inputString = "LR,2222,12,JOIN,52.323,40.121
 
         NeighbourDiscoveryProtocolQueue queue = NeighbourDiscoveryProtocolQueue.getInstance();
 
-        String[] inputParts = inputString.split(";");
+        String[] inputParts = inputString.split(",");
         Message message;
 
+        for (String part : inputParts) {
+            Log.i(TAG, part);
+        }
         // TODO: verifiy latitude / longitude between 0 - 180.00 and 3 decimal digits
         //TODO: template pattern maybe can be used here ...
-        switch (inputParts[0]) {
+        switch (inputParts[3]) {
             case "JOIN":
                 message = parseJoinMessage(inputParts);
                 Log.i(TAG, "successfully parsed JOIN message");
                 queue.add(message);
                 Log.i(TAG, "added " + message.toString() + " to queue");
                 break;
-            case "JOIN_REPLY":
+            case "JORP":
                 message = parseJoinReplyMessage(inputParts);
                 Log.i(TAG, "successfully parsed JOIN_REPLY message");
-                queue.add(message);
-                Log.i(TAG, "added " + message.toString() + " to queue");
-                break;
-            case "FETCH":
-                message = parseFetchMessage(inputParts);
-                Log.i(TAG, "successfully parsed FETCH message");
-                queue.add(message);
-                Log.i(TAG, "added " + message.toString() + " to queue");
-                break;
-            case "FETCH_REPLY":
-                message = parseFetchReplyMessage(inputParts);
-                Log.i(TAG, "successfully parsed FETCH_REPLY message");
                 queue.add(message);
                 Log.i(TAG, "added " + message.toString() + " to queue");
                 break;
@@ -102,28 +95,26 @@ public class MessageParser {
     }
 
     protected static Message parseJoinMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException, NumberFormatException {
-        if (inputParts.length != 4)
-            throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.JOIN.name()));
+        if (inputParts.length != 6)
+            throw new ParserException("Couldnt Parse Join Message", new Throwable(EMessageType.JOIN.name()));
 
         String sourceAddress = inputParts[1];
-        double latitude = parseDouble(inputParts[2]);
-        double longitude = parseDouble(inputParts[3]);
+        double latitude = parseDouble(inputParts[4]);
+        double longitude = parseDouble(inputParts[5]);
 
-        if (isValidAddress(sourceAddress) && sourceAddress.length() == 4)   return new JoinMessage(sourceAddress, latitude, longitude);
-        else                                                                throw new ParserException(sourceAddress + " is not a valid address");
+        return new JoinMessage(sourceAddress, latitude, longitude);
     }
 
 
     private static Message parseJoinReplyMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException, NumberFormatException {
-        if (inputParts.length != 4)
-            throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.JOIN_REPLY.name()));
+        if (inputParts.length != 6)
+            throw new ParserException("Couldnt Parse Join Reply Message", new Throwable(EMessageType.JOIN_REPLY.name()));
 
         String sourceAddress = inputParts[1];
-        double latitude = parseDouble(inputParts[2]);
-        double longitude = parseDouble(inputParts[3]);
+        double latitude = parseDouble(inputParts[4]);
+        double longitude = parseDouble(inputParts[5]);
 
-        if (isValidAddress(sourceAddress) && sourceAddress.length() == 4)   return new JoinReplyMessage(sourceAddress, latitude, longitude);
-        else                                                                throw new ParserException(sourceAddress + " is not a valid address");
+        return new JoinReplyMessage(sourceAddress, latitude, longitude);
 
     }
 
@@ -133,8 +124,7 @@ public class MessageParser {
 
         String sourceAddress = inputParts[1];
 
-        if (isValidAddress(sourceAddress) && sourceAddress.length() == 4)   return new FetchMessage(sourceAddress);
-        else                                                                throw new ParserException(sourceAddress + " is not a valid address");
+        return new FetchMessage(sourceAddress);
     }
 
     private static Message parseFetchReplyMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException {
@@ -152,35 +142,34 @@ public class MessageParser {
             checksums[i] = ""; // TODO: generateChecksum method & receiving NS entry
         }
 
-        if (isValidAddress(sourceAddress) && sourceAddress.length() == 4)   return new FetchReplyMessage(sourceAddress, amountOfChecksums, checksums);
-        else                                                                throw new ParserException(sourceAddress + " is not a valid address");
+        return new FetchReplyMessage(sourceAddress, amountOfChecksums, checksums);
     }
 
     private static Message parsePullMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException {
 
-        if (inputParts.length != 3)
-            throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.PULL.name()));
+        if (inputParts.length != 5)
+            throw new ParserException("Couldnt Parse Pull Message", new Throwable(EMessageType.PULL.name()));
 
         String sourceAddress = inputParts[1];
-        String checksum = inputParts[2];
+        String demandedAddress = inputParts[4];
 
-        if (isValidAddress(sourceAddress) && sourceAddress.length() == 4)   return new PullMessage(sourceAddress, checksum);
-        else                                                                throw new ParserException(sourceAddress + " is not a valid address");
+        return new PullMessage(sourceAddress, demandedAddress);
     }
 
     private static Message parsePushMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException, NumberFormatException {
 
-        if (inputParts.length != 6)
-            throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.PUSH.name()));
+        Log.i(TAG, "parse push");
+        if (inputParts.length != 8)
+            throw new ParserException("Couldnt Parse Push Message", new Throwable(EMessageType.PUSH.name()));
 
         String sourceAddress = inputParts[1];
-        String sourceAddresHop = inputParts[2];
-        String directAttachedHop = inputParts[3];
-        double latitude = parseDouble(inputParts[4]);
-        double longitude = parseDouble(inputParts[5]);
+        String sourceAddressHop = inputParts[4];
+        String directAttachedHop = inputParts[5];
+        double latitude = parseDouble(inputParts[6]);
+        double longitude = parseDouble(inputParts[7]);
+        Log.i(TAG, "parse push");
 
-        if (isValidAddress(sourceAddress) && sourceAddress.length() == 4)   return new PushMessage(sourceAddress, sourceAddresHop, directAttachedHop, latitude, longitude);
-        else                                                                throw new ParserException(sourceAddress + " is not a valid address");
+        return new PushMessage(sourceAddress, sourceAddressHop, directAttachedHop, latitude, longitude);
     }
 
     private static Message parseLeaveMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException {
@@ -190,8 +179,7 @@ public class MessageParser {
 
         String sourceAddress = inputParts[1];
 
-        if (isValidAddress(sourceAddress) && sourceAddress.length() == 4)   return new LeaveMessage(sourceAddress);
-        else                                                                throw new ParserException(sourceAddress + " is not a valid address");
+        return new LeaveMessage(sourceAddress);
     }
 
     private static Message parseMoveMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException, NumberFormatException {
@@ -203,23 +191,14 @@ public class MessageParser {
         double latitude = parseDouble(inputParts[2]);
         double longitude = parseDouble(inputParts[3]);
 
-        if (isValidAddress(sourceAddress) && sourceAddress.length() == 4)   return new MoveMessage(sourceAddress, latitude, longitude);
-        else                                                                throw new ParserException(sourceAddress + " is not a valid address");
+        return new MoveMessage(sourceAddress, latitude, longitude);
     }
 
     private static Message parseAckMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException {
-
-        if (inputParts.length != 2)
-            throw new ParserException("Couldnt Parse Message", new Throwable(EMessageType.ACK.name()));
+        //TODO LR,2222,ACK cannot be parsed ??
 
         String sourceAddress = inputParts[1];
 
-        if (isValidAddress(sourceAddress) && sourceAddress.length() == 4)   return new AckMessage(sourceAddress);
-        else                                                                throw new ParserException(sourceAddress + " is not a valid address");
-    }
-
-    private static boolean isValidAddress(String input) {
-        final Matcher matcher = HEXADECIMAL_PATTERN.matcher(input);
-        return matcher.matches();
+        return new AckMessage(sourceAddress);
     }
 }

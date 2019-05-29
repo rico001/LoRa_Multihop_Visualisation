@@ -3,20 +3,27 @@ package de.htwberlin.lora_multihop_visualisation;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import de.htwberlin.lora_multihop_implementation.components.parser.MessageParser;
+import de.htwberlin.lora_multihop_implementation.components.parser.ParserException;
 import de.htwberlin.lora_multihop_implementation.enums.EFragments;
 
 public class TerminalFragment extends Fragment {
@@ -70,36 +77,53 @@ public class TerminalFragment extends Fragment {
         returnButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).setViewPager(EFragments.MAP_FRAGMENT.get());
+                ((MainActivity) getActivity()).setViewPager(EFragments.MAP_FRAGMENT.get());
             }
         });
-
         return view;
     }
 
     /**
      * Adds new messages into terminal, declared in the ITerminalFragmentListener interface
      *
-     * @param color of text
+     * @param color         of text
      * @param message
      * @param isSendMessage
      * @return
      */
     public synchronized boolean updateTerminalMessages(int color, String message, boolean isSendMessage) {
 
-        String symbols = "<< ";
-        String time = getCurrentTime() + " ";
+        boolean isNDPMessage = Boolean.FALSE;
+        String prompt = "[" + getCurrentTime() + " - " + SingletonDevice.getBluetoothDevice().getName() + " ~]$ ";
+        String sendPrompt = ">> ";
+        TextView textView;
 
-        if (isSendMessage) {
-            symbols = ">> ";
+        try {
+            textView = new TextView(getContext());
+        } catch (NullPointerException e) {
+            return false;
         }
 
-        TextView textView = new TextView(getActivity());
-        textView.setText(time + symbols + message);
-        textView.setTextColor(color);
+        textView.setTextSize(12);
+
+        //TODO: distinguish whether message is send by user or is a reply message. To supress the prompt for "real" terminal behaviour
+        if (message.startsWith("AT,")) textView.setText(message);
+        else if (message.startsWith("LR,")) {
+            textView.setText(sendPrompt + message);
+            isNDPMessage = Boolean.TRUE;
+        } else textView.setText(prompt + message);
 
         terminalMessages.addView(textView);
+        terminalInput.setText("");
 
+        // Parsing
+        if (isNDPMessage) {
+            try {
+                MessageParser.parseInput(message);
+            } catch (ParserException e) {
+                Log.e(TAG, "Error while parsing " + message);
+            }
+        }
 
         // Auto scroll down
         scrollView.post(new Runnable() {
@@ -114,7 +138,7 @@ public class TerminalFragment extends Fragment {
 
     private String getCurrentTime() {
         Date date = new Date();
-        String strDateFormat = "hh:mm:ss";
+        String strDateFormat = "HH:mm:ss";
         DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
         String formattedDate = dateFormat.format(date);
         return formattedDate;

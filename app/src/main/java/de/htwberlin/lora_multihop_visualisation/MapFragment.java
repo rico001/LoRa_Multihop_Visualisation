@@ -90,8 +90,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {
                         Location currentLocation = (Location) task.getResult();
-                        setCurrentLocation(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
-                        addHostMarker(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), "me", 1000, "This is a title", "This is a description");
+                        //setCurrentLocation(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
+                        setCurrentLocation(new LatLng(52.3421, 13.3222));
+                        //addHostMarker(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), "me", 1000, "This is a title", "This is a description");
                     }
                 }
             });

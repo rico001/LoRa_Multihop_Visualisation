@@ -3,10 +3,10 @@ package de.htwberlin.lora_multihop_implementation.components.messages;
 import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
 
 /**
- * PULL ={SA;checksum(x)}
+ * PULL ={SA;demandedAddress(x)}
  *
  * SA = Source address
- * CHECKSUM = Checksum of a specific single NS entry
+ * demandedAddress = demandedAddress of a specific single NS entry
  *
  * Predecessor Message = Null
  * Reply Message = PUSH
@@ -22,25 +22,25 @@ public class PullMessage extends Message {
     private  static final EMessageType replyMessage = EMessageType.PUSH;
     private  static final boolean UNICAST = Boolean.TRUE;
 
-    private String checksum;
+    private String demandedAddress;
 
-    public PullMessage(String sourceAddress, String checksum) {
+    public PullMessage(String sourceAddress, String demandedAddress) {
         super(sourceAddress);
-        this.checksum = checksum;
+        this.demandedAddress = demandedAddress;
     }
 
-    public String getChecksum() {
-        return checksum;
+    public String getDemandedAddress() {
+        return demandedAddress;
     }
 
-    public void setChecksum(String checksum) {
-        this.checksum = checksum;
+    public void setDemandedAddress(String demandedAddress) {
+        this.demandedAddress = demandedAddress;
     }
 
     @Override
     public String toString() {
         return "PullMessage{" +
-                "checksum='" + checksum + '\'' +
+                "demandedAddress='" + demandedAddress + '\'' +
                 '}';
     }
 }

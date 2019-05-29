@@ -3,9 +3,9 @@ package de.htwberlin.lora_multihop_implementation.components.messages;
 import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
 
 /**
- * JOIN_REPLY ={SA, LAT, LONG}
+ * Length = 18
+ * JORP,LAT,LONG
  *
- * SA = Source Address
  * LAT = Latitude
  * Long = Longitude
  *
@@ -18,15 +18,41 @@ import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
  *
  * @author morelly_t1
  */
-public class JoinReplyMessage extends JoinMessage {
+public class JoinReplyMessage extends Message {
 
     private  static final EMessageType replyMessage = EMessageType.ACK;
     private  static final boolean UNICAST = Boolean.TRUE;
 
+    private Double longitude;
+    private Double latitude;
 
     public JoinReplyMessage(String sourceAddress, Double longitude, Double latitude) {
-        super(sourceAddress, longitude, latitude);
+        super(sourceAddress);
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
+    public Double getLongitude() {
+        return longitude;
+    }
 
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    @Override
+    public String toString() {
+        return "JoinReplyMessage{" +
+                "longitude=" + longitude +
+                ", latitude=" + latitude +
+                '}';
+    }
 }

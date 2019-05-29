@@ -3,9 +3,10 @@ package de.htwberlin.lora_multihop_implementation.components.messages;
 import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
 
 /**
- * JOIN={SA, LAT, LONG}
+ * BYTE LENGTH  = 18
  *
- * SA = Source Address
+ * JOIN;LAT;LONG
+ *
  * LAT = Latitude
  * Long = Longitude
  *
