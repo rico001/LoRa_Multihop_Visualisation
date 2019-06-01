@@ -1,5 +1,6 @@
-package de.htwberlin.lora_multihop_visualisation;
+package de.htwberlin.lora_multihop_visualisation.fragments;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -30,8 +31,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.htwberlin.lora_multihop_implementation.enums.EFragments;
+import de.htwberlin.lora_multihop_visualisation.MainActivity;
+import de.htwberlin.lora_multihop_visualisation.R;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
+
+    private static final String TAG = "MapFragment";
 
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -43,8 +48,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private Map<String, Marker> markers;
     private Map<String, Circle> circles;
 
+    private IMapListener listener;
+
     public MapFragment() {
-        // Required empty public constructor
         markers = new HashMap<>();
         circles = new HashMap<>();
     }
@@ -75,23 +81,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mMap = googleMap;
         getDeviceLocation();
 
+        // onMapReady() is called after onResume() therefore the mMap variable is
+        // overwritten with a new map. We have to call the onSetUpMap() here so that
+        // the markers are again on the map
+        this.listener.onSetUpMap();
+
         // We ask for permission in the main activity
         // mMap.setMyLocationEnabled(true);
     }
 
-    public void getDeviceLocation() {
+    private void getDeviceLocation() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
         Log.d("MapFragment", "Getting the location");
         try {
-            final Task location = fusedLocationProviderClient.getLastLocation();
+            final Task locationTask = fusedLocationProviderClient.getLastLocation();
 
-            location.addOnCompleteListener(new OnCompleteListener() {
+            locationTask.addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {
                         Location currentLocation = (Location) task.getResult();
-                        setCurrentLocation(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
-                        addHostMarker(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), "me", 1000, "This is a title", "This is a description");
+                        location = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                        // setCurrentLocation(location);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+                        mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
                     }
                 }
             });
@@ -122,6 +135,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         this.location = latLng;
     }
 
+    private void addMarker(LatLng location, String id, int radius, String title, String description, int markerBitmap, int circleFillColor, int circleStrokeColor) {
+        if (mMap != null && this.markers.get(id) == null) {
+            Marker marker = mMap.addMarker(new MarkerOptions()
+                    .position(location)
+                    .title(title)
+                    .snippet(description)
+                    .icon(BitmapDescriptorFactory.fromResource(markerBitmap)));
+
+            Circle circle = mMap.addCircle(new CircleOptions()
+                    .center(location)
+                    .radius(radius)
+                    .strokeWidth(3)
+                    .fillColor(circleFillColor)
+                    .strokeColor(circleStrokeColor));
+
+            this.markers.put(id, marker);
+            this.circles.put(id, circle);
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+            mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
+        }
+    }
+
     /**
      * Adds a purple marker to the map
      *
@@ -143,24 +179,35 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      * @param description
      */
     public void addHostMarker(LatLng location, String id, int radius, String title, String description) {
-        Marker marker = mMap.addMarker(new MarkerOptions()
-                .position(location)
-                .title(title)
-                .snippet(description)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.host_marker)));
+        // Get map null
+        addMarker(location, id, radius, title, description, R.drawable.host_marker, Color.argb(30, 98, 2, 238), Color.rgb(98, 2, 238));
 
-        Circle circle = mMap.addCircle(new CircleOptions()
-                .center(location)
-                .radius(radius)
-                .strokeWidth(3)
-                .fillColor(Color.argb(30, 98, 2, 238))
-                .strokeColor(Color.rgb(98, 2, 238)));
+    }
 
-        this.markers.put(id, marker);
-        this.circles.put(id, circle);
+    /**
+     * Adds a green marker to the map
+     *
+     * @param location
+     * @param id
+     * @param radius
+     */
+    public void addNeighbourMarker(LatLng location, String id, int radius) {
+        addNeighbourMarker(location, id, radius, "", "");
+    }
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
+    /**
+     * Adds a green marker to the map
+     *
+     * @param location
+     * @param id
+     * @param radius
+     * @param title
+     * @param description
+     */
+    public void addNeighbourMarker(LatLng location, String id, int radius, String title, String description) {
+        // Get map null
+        addMarker(location, id, radius, title, description, R.drawable.neighbour_marker, Color.argb(30, 1, 163, 153), Color.rgb(1, 163, 153));
+
     }
 
     /**
@@ -175,10 +222,42 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    /**
+     * Returns all the markers on the map
+     *
+     * @return
+     */
+    public Map<String, Marker> getMarkers() {
+        return this.markers;
+    }
+
+    /**
+     * Called when the Fragment is attached to the main activity
+     * and sets up the listener
+     *
+     * @param context
+     */
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof IMapListener) {
+            this.listener = (IMapListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " has to implement the IMapListener interface.");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        this.listener = null;
+    }
+
     @Override
     public void onResume() {
-        mapView.onResume();
         super.onResume();
+        mapView.onResume();
     }
 
     @Override
@@ -197,5 +276,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
+    }
+
+    /**
+     * Interface to communicate with the activity
+     */
+    public interface IMapListener {
+        void onSetUpMap();
     }
 }

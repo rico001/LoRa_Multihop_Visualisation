@@ -19,14 +19,21 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.Map;
+
 import de.htwberlin.lora_multihop_implementation.components.lora.LoraCommandsExecutor;
 import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
+import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableRow;
+import de.htwberlin.lora_multihop_visualisation.fragments.MainFragmentsAdapter;
+import de.htwberlin.lora_multihop_visualisation.fragments.MapFragment;
+import de.htwberlin.lora_multihop_visualisation.fragments.NeighbourSetTableFragment;
+import de.htwberlin.lora_multihop_visualisation.fragments.TerminalFragment;
 
 /**
  * Visualisation and building a multihop wireless network
  */
-public class MainActivity extends AppCompatActivity implements MessageConstants {
+public class MainActivity extends AppCompatActivity implements MessageConstants, NeighbourSetTableFragment.ITableListener, MapFragment.IMapListener {
 
     private final static String TAG = "mainactivity";
 
@@ -90,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
         } else {
             init();
         }
+
         initBluetoothService();
     }
 
@@ -157,10 +165,6 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
      */
     public void setViewPager(int position) {
         viewPager.setCurrentItem(position);
-
-        if (mapFragment.isVisible()) {
-            mapFragment.addHostMarker(new LatLng(50.000, 50.0000), "asd", 1000);
-        }
     }
 
     private void initBluetoothService() {
@@ -169,6 +173,42 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
             btService.connectWithBluetoothDevice();
         } catch (NullPointerException e) {
             Log.d("initBluetoothService", "Choose a device!");
+        }
+    }
+
+    /**
+     * Sets a marker every time a row is added
+     *
+     * @param row
+     */
+    @Override
+    public void onRowAdded(NeighbourSetTableRow row) {
+        if (row.getAddress().equals("000")) {
+            mapFragment.addHostMarker(mapFragment.getLocation(), row.getUid(), 1000);
+        } else {
+            mapFragment.addNeighbourMarker(new LatLng(row.getLatitude(), row.getLongitude()), row.getUid(), 1000);
+        }
+    }
+
+    /**
+     * Removes a marker when a row is removed
+     *
+     * @param id
+     */
+    @Override
+    public void onRowRemoved(String id) {
+        mapFragment.removeMarker(id);
+    }
+
+    /**
+     * Sets up the map after fragment navigation
+     */
+    @Override
+    public void onSetUpMap() {
+        Map<String, NeighbourSetTableRow> tableData = neighbourSetTableFragment.getTableData();
+
+        for (Map.Entry<String, NeighbourSetTableRow> row : tableData.entrySet()) {
+            onRowAdded(row.getValue());
         }
     }
 

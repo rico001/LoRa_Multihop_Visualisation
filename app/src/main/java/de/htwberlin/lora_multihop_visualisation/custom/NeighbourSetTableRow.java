@@ -2,6 +2,7 @@ package de.htwberlin.lora_multihop_visualisation.custom;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -41,12 +42,12 @@ public class NeighbourSetTableRow extends TableRow {
         this.dah.setText(dah);
     }
 
-    public void setLatitudeText(String latitude) {
-        this.latitude.setText(latitude);
+    public void setLatitudeText(Double latitude) {
+        this.latitude.setText(String.valueOf(latitude));
     }
 
-    public void setLongitudeText(String longitude) {
-        this.longitude.setText(longitude);
+    public void setLongitudeText(Double longitude) {
+        this.longitude.setText(String.valueOf(longitude));
     }
 
     public void setStatusText(String status) {
@@ -55,5 +56,33 @@ public class NeighbourSetTableRow extends TableRow {
 
     public void setTimestampText(String timestamp) {
         this.timestamp.setText(timestamp);
+    }
+
+    public String getUid() {
+        return uid.getText().toString();
+    }
+
+    public String getAddress() {
+        return address.getText().toString();
+    }
+
+    public String getDah() {
+        return dah.getText().toString();
+    }
+
+    public Double getLatitude() {
+        return Double.parseDouble(latitude.getText().toString());
+    }
+
+    public Double getLongitude() {
+        return Double.parseDouble(longitude.getText().toString());
+    }
+
+    public String getStatus() {
+        return status.getText().toString();
+    }
+
+    public String getTimestamp() {
+        return timestamp.getText().toString();
     }
 }

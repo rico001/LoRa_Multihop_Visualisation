@@ -5,7 +5,7 @@
     android:id="@+id/neighbour_set_table_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NeighbourSetTableFragment">
+    tools:context=".fragments.NeighbourSetTableFragment">
 
     <ScrollView
         android:layout_width="match_parent"

@@ -1,5 +1,6 @@
-package de.htwberlin.lora_multihop_visualisation;
+package de.htwberlin.lora_multihop_visualisation.fragments;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,13 +19,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.htwberlin.lora_multihop_implementation.enums.EFragments;
+import de.htwberlin.lora_multihop_visualisation.MainActivity;
+import de.htwberlin.lora_multihop_visualisation.R;
 
 public class TerminalFragment extends Fragment {
+    private static final String TAG = "TerminalFragment";
+
     private final static int sendColor = Color.RED;
     private final static int readColor = Color.BLUE;
     private final static String AT_POSTFIX = "\r\n";
-
-    private static final String TAG = "TerminalFragment";
 
     private ScrollView scrollView;
     private LinearLayout terminalMessages;
@@ -70,7 +73,7 @@ public class TerminalFragment extends Fragment {
         returnButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).setViewPager(EFragments.MAP_FRAGMENT.get());
+                ((MainActivity) getContext()).setViewPager(EFragments.MAP_FRAGMENT.get());
             }
         });
 
