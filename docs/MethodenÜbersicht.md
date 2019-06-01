@@ -324,7 +324,7 @@
 
 ---
 
-## ``de.htwberlin.lora_multihop_visualization``
+## ``de.htwberlin.lora_multihop_visualization.fragments``
 
 **public class MapFragment extends Fragment implements OnMapReadyCallback**
 
@@ -348,6 +348,8 @@
 | markers                     | java.util.Map<String, Marker>                               | `private` | HashMap that contains the current markers on the map         |
 |                             |                                                             |           |                                                              |
 | circles                     | java.util.Map<String, Circle>                               | `private` | HashMap that contains the corresponding circle radius of each marker |
+|                             |                                                             |           |                                                              |
+| listener                    | `IMapListener`                                              | `private` | Listener to communicate with the activity                    |
 
 #### Methoden-Liste
 
@@ -363,13 +365,27 @@
 |                                                              |                                                              |            |
 | public LatLng getLocation()                                  | Returns the current location. If the `location` variable is `null` the `getDeviceLocation()` will be called (asynchronously) and a default value will be returned | -          |
 |                                                              |                                                              |            |
-| public void addHostMarker(LatLng location, String id, int radius) | Adds a marker to the map                                     | -          |
+| public void addHostMarker(LatLng location, String id, int radius) | Adds a purple marker to the map                              | -          |
 |                                                              |                                                              |            |
 | public void addHostMarker(LatLng location, String id, int radius, String title, String description) | Method overload to pass a title and a description            | -          |
 |                                                              |                                                              |            |
+| public void addNeighbourMarker(LatLng location, String id, int radius) | Adds a green marker to the map                               | -          |
+|                                                              |                                                              |            |
+| public void addNeighbourMarker(LatLng location, String id, int radius, String title, String description) | Method overload to pass a title and a description            | -          |
+|                                                              |                                                              |            |
 | public void removeMarker(String id)                          | Removes a marker from the map                                | -          |
+|                                                              |                                                              |            |
+| public Map<String, Marker> getMarkers()                      | Returns all the markers on the map                           | -          |
 
 
+
+**public interface MapFragment.IMapListener**
+
+#### Methoden-Liste
+
+| Methodenkopf      | Zweck                       | Testklasse |
+| ----------------- | --------------------------- | ---------- |
+| void onSetUpMap() | Update function for the map | -          |
 
 ---
 
@@ -411,11 +427,13 @@
 
 #### Attribute
 
-| Name      | Typ                                           | Access    | Funktion                  |
-| --------- | --------------------------------------------- | --------- | ------------------------- |
-| table     | `android.widget.TableLayout`                  | `private` | Contains the table layout |
-|           |                                               |           |                           |
-| tableData | `java.util.Map<String, NeighbourSetTableRow>` | `private` | Contains the table data   |
+| Name      | Typ                                           | Access    | Funktion                                                    |
+| --------- | --------------------------------------------- | --------- | ----------------------------------------------------------- |
+| table     | `android.widget.TableLayout`                  | `private` | Contains the table layout                                   |
+|           |                                               |           |                                                             |
+| tableData | `java.util.Map<String, NeighbourSetTableRow>` | `private` | Contains the table data                                     |
+|           |                                               |           |                                                             |
+| listener  | `ITableListener`                              | `private` | Listener to communicate with the Activity / other Fragments |
 
 #### Methoden-Liste
 
@@ -429,9 +447,21 @@
 |                                                              |                                              |            |
 | public NeighbourSetTableRow getRow(String id)                | Returns a row                                | -          |
 |                                                              |                                              |            |
+| public Map<String, NeighbourSetTableRow> getTableData()      | Returns all the items on the table           | -          |
+|                                                              |                                              |            |
 | public void removeRow(String id)                             | Removes a row                                | -          |
 
 
+
+**public interface NeighbourSetTableFragment.ITableListener**
+
+#### Methoden-Liste
+
+| Methodenkopf                              | Zweck                                               | Testklasse |
+| ----------------------------------------- | --------------------------------------------------- | ---------- |
+| void onRowAdded(NeighbourSetTableRow row) | Will be called when a row is added to the table     | -          |
+|                                           |                                                     |            |
+| void onRowRemoved(String id)              | Will be called when a row is removed from the table |            |
 
 ---
 
@@ -537,4 +567,18 @@
 |                                                |                          |            |
 | public void setStatusText(String status)       | Setter for the status    | -          |
 |                                                |                          |            |
-| public void setTimestampText(String timestamp) | Setter for the timestamp |            |
+| public void setTimestampText(String timestamp) | Setter for the timestamp | -          |
+|                                                |                          |            |
+| public String getUid()                         | Getter for the UID       | -          |
+|                                                |                          |            |
+| public String getAddress()                     | Getter for the address   | -          |
+|                                                |                          |            |
+| public String getDah()                         | Getter for the DAH       | -          |
+|                                                |                          |            |
+| public Double getLatitude()                    | Getter for the latitude  | -          |
+|                                                |                          |            |
+| public Double getLongitude()                   | Getter for the longitude | -          |
+|                                                |                          |            |
+| public String getStatus()                      | Getter for the status    | -          |
+|                                                |                          |            |
+| public String getTimestamp()                   | Getter for the timestamp | -          |
