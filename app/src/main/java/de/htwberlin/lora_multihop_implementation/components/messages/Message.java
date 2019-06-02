@@ -1,28 +1,24 @@
 package de.htwberlin.lora_multihop_implementation.components.messages;
 
 import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
+import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 
 /**
  * Abstract class of a Message
+ *
  * @author morelly_t1
  */
 
 public abstract class Message {
 
-    private EMessageType type;
+    private static final EMessageType REPLY_MESSAGE = null;
     private String sourceAddress;
-    private EMessageType replyMessage;
 
-    public Message(String sourceAddress) {
+    private ILoraCommands executor;
+
+    public Message(String sourceAddress, ILoraCommands executor) {
         this.sourceAddress = sourceAddress;
-    }
-
-    public EMessageType getType() {
-        return type;
-    }
-
-    public void setType(EMessageType type) {
-        this.type = type;
+        this.executor = executor;
     }
 
     public String getSourceAddress() {
@@ -34,22 +30,21 @@ public abstract class Message {
     }
 
     public EMessageType getAnswerMessage() {
-        return replyMessage;
+        return REPLY_MESSAGE;
     }
 
-    public void setAnswerMessage(EMessageType replyMessage) {
-        this.replyMessage = replyMessage;
+    public ILoraCommands getExecutor() {
+        return executor;
     }
 
+    public void setExecutor(ILoraCommands executor) {
+        this.executor = executor;
+    }
 
     @Override
     public String toString() {
-        return "Message{" +
-                "type=" + type +
-                ", sourceAddress='" + sourceAddress + '\'' +
-                ", replyMessage=" + replyMessage +
-                '}';
+        return "";
     }
 
-
+    public abstract void executeAtRoutine();
 }

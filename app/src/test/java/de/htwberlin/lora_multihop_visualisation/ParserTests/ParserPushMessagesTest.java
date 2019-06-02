@@ -4,10 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.htwberlin.lora_multihop_implementation.components.messages.Message;
-import de.htwberlin.lora_multihop_implementation.components.messages.PushMessage;
 import de.htwberlin.lora_multihop_implementation.components.parser.MessageParser;
 import de.htwberlin.lora_multihop_implementation.components.parser.ParserException;
-import de.htwberlin.lora_multihop_implementation.components.queue.NeighbourDiscoveryProtocolQueue;
+import de.htwberlin.lora_multihop_implementation.components.queue.IncomingMessageQueue;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -27,11 +26,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class ParserPushMessagesTest {
 
-    private NeighbourDiscoveryProtocolQueue queue;
+    private IncomingMessageQueue queue;
 
     @Before
     public void init(){
-        queue = NeighbourDiscoveryProtocolQueue.getInstance();
+        queue = IncomingMessageQueue.getInstance();
     }
 
     @Test

@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 
 import de.htwberlin.lora_multihop_implementation.components.lora.LoraCommandsExecutor;
+import de.htwberlin.lora_multihop_implementation.components.lora.LoraHandler;
 import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
 
     private MapFragment mapFragment;
     private TerminalFragment terminalFragment;
+    private ProtocolFragment protocolFragment;
     private NeighbourSetTableFragment neighbourSetTableFragment;
 
     private static final String[] LOCATION_PERMS = {
@@ -45,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
 
-    private ILoraCommands loraCommandsExecutor;
+    private LoraHandler loraHandler;
     public BluetoothService btService = null;
 
     /**
@@ -64,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
                 case MESSAGE_READ:
                     String message = (String) msg.obj;
                     terminalFragment.updateTerminalMessages(readColor, message, false);
+                    // update all fragements gui
+                    // pass to handler for logic stuff
+                    loraHandler.processLoraResponse(message);
                     break;
                 case MESSAGE_ERROR:
                     System.out.println("MSG ERROR");
@@ -91,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
             init();
         }
         initBluetoothService();
+        initLoraHandler();
     }
 
     /**
@@ -123,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
         // Sets up the ViewPager with all the fragments
         setUpViewPager(viewPager);
 
-        loraCommandsExecutor = new LoraCommandsExecutor(btService);
+        //loraCommandsExecutor = new LoraCommandsExecutor(btService);
     }
 
     /**
@@ -136,17 +142,19 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
         MapFragment mapFragment = new MapFragment();
         TerminalFragment terminalFragment = new TerminalFragment();
         NeighbourSetTableFragment neighbourSetTableFragment = new NeighbourSetTableFragment();
-        ProtocolFragment logicFragment = new ProtocolFragment();
+        ProtocolFragment protocolFragment = new ProtocolFragment();
 
         this.mapFragment = mapFragment;
         this.terminalFragment = terminalFragment;
         this.neighbourSetTableFragment = neighbourSetTableFragment;
+        this.protocolFragment = protocolFragment;
 
         // The order in which the fragments are added is very important!
         adapter.addFragment(mapFragment, "MapFragment");
         adapter.addFragment(terminalFragment, "TerminalFragment");
         adapter.addFragment(neighbourSetTableFragment, "NeighbourSetTableFragment");
-        adapter.addFragment(logicFragment, "LogicFragment");
+        adapter.addFragment(protocolFragment, "LogicFragment");
+
 
         viewPager.setAdapter(adapter);
     }
@@ -165,10 +173,18 @@ public class MainActivity extends AppCompatActivity implements MessageConstants 
 
     private void initBluetoothService() {
         try {
-            btService = new BluetoothService(this, msgHandler, SingletonDevice.getBluetoothDevice());
+            btService = new BluetoothService(msgHandler, SingletonDevice.getBluetoothDevice());
             btService.connectWithBluetoothDevice();
         } catch (NullPointerException e) {
-            Log.d("initBluetoothService", "Choose a device!");
+            Log.e(TAG, "Choose a device!");
+        }
+    }
+
+    private void initLoraHandler() {
+        try {
+            loraHandler = new LoraHandler(btService);
+        } catch (NullPointerException e) {
+            Log.e(TAG, "Lora Handler could not be init");
         }
     }
 

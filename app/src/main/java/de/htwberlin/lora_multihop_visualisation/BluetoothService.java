@@ -29,7 +29,7 @@ public class BluetoothService implements MessageConstants{
     private AcceptThread acceptThread;
     private ConnectedThread connectThread;
 
-    public BluetoothService(Context context, Handler handler, BluetoothDevice device) {
+    public BluetoothService(Handler handler, BluetoothDevice device) {
         adapter = BluetoothAdapter.getDefaultAdapter();
         this.handler = handler;
         bluetoothDevive=device;

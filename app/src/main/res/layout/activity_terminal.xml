@@ -38,6 +38,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
+        <Spinner
+            android:id="@+id/terminal_dropdown"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#00897B"
+            android:spinnerMode="dropdown"
+            android:visibility="visible" />
+
         <EditText
             android:id="@+id/terminal_send_text"
             android:layout_width="wrap_content"

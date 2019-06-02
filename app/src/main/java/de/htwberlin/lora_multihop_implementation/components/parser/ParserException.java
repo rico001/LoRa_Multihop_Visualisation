@@ -1,7 +1,5 @@
 package de.htwberlin.lora_multihop_implementation.components.parser;
 
-import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
-
 public class ParserException extends Exception {
 
     public ParserException() {

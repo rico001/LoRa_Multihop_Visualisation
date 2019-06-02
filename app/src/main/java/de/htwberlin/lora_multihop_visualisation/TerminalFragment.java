@@ -22,8 +22,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.htwberlin.lora_multihop_implementation.components.lora.LoraHandler;
 import de.htwberlin.lora_multihop_implementation.components.parser.MessageParser;
 import de.htwberlin.lora_multihop_implementation.components.parser.ParserException;
+import de.htwberlin.lora_multihop_implementation.components.processor.MessageProcessor;
 import de.htwberlin.lora_multihop_implementation.enums.EFragments;
 
 public class TerminalFragment extends Fragment {
@@ -100,11 +102,10 @@ public class TerminalFragment extends Fragment {
 
         try {
             textView = new TextView(getContext());
+            textView.setTextSize(12);
         } catch (NullPointerException e) {
             return false;
         }
-
-        textView.setTextSize(12);
 
         //TODO: distinguish whether message is send by user or is a reply message. To supress the prompt for "real" terminal behaviour
         if (message.startsWith("AT,")) textView.setText(message);
@@ -115,15 +116,6 @@ public class TerminalFragment extends Fragment {
 
         terminalMessages.addView(textView);
         terminalInput.setText("");
-
-        // Parsing
-        if (isNDPMessage) {
-            try {
-                MessageParser.parseInput(message);
-            } catch (ParserException e) {
-                Log.e(TAG, "Error while parsing " + message);
-            }
-        }
 
         // Auto scroll down
         scrollView.post(new Runnable() {

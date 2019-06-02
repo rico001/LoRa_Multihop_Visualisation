@@ -1,10 +1,19 @@
 package de.htwberlin.lora_multihop_implementation.components.processor;
 
+import android.os.Handler;
 import android.util.Log;
 
+import de.htwberlin.lora_multihop_implementation.components.lora.LoraCommandsExecutor;
+import de.htwberlin.lora_multihop_implementation.components.messages.JoinMessage;
+import de.htwberlin.lora_multihop_implementation.components.messages.JoinReplyMessage;
 import de.htwberlin.lora_multihop_implementation.components.messages.Message;
-import de.htwberlin.lora_multihop_implementation.components.queue.NeighbourDiscoveryProtocolQueue;
+import de.htwberlin.lora_multihop_implementation.components.queue.IncomingMessageQueue;
+import de.htwberlin.lora_multihop_implementation.components.queue.OutgoingMessageQueue;
 import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
+import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
+import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
+import de.htwberlin.lora_multihop_visualisation.BluetoothService;
+import de.htwberlin.lora_multihop_visualisation.SingletonDevice;
 
 /**
  * This class removes messages from queue and processes them.
@@ -12,29 +21,45 @@ import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
  * @author morelly_t1
  */
 
-public class MessageProcessor {
+public class MessageProcessor implements MessageConstants {
 
     private static final String TAG = "MessageProcessor";
 
-    public static void processQueue(){
+    private ILoraCommands executor;
 
-        NeighbourDiscoveryProtocolQueue queue = NeighbourDiscoveryProtocolQueue.getInstance();
+    public MessageProcessor(ILoraCommands executor) {
+        this.executor = executor;
+    }
 
-        Message message = (Message) queue.poll();
+    public void processMessage() {
 
-        if (message.getAnswerMessage() == null){
+        IncomingMessageQueue incomingMessageQueue = IncomingMessageQueue.getInstance();
+        OutgoingMessageQueue outgoingMessageQueue = OutgoingMessageQueue.getInstance();
+
+        Message incomingMessage = (Message) incomingMessageQueue.poll();
+        EMessageType answerMessage = incomingMessage.getAnswerMessage();
+
+        Log.i(TAG, "Processing " + incomingMessage.toString());
+        if (answerMessage == null) {
             Log.i(TAG, "Processed Message results in a neighbour set action");
             // updateNSEntry
             // addNSEntry
 
         } else {
-            Log.i(TAG, "processed Message results in sending an answerMessage");
 
-            Message answerMessage;
-            // sendMessage(answerMessage);
-            // TODO: generating answer Messages
-            Log.i(TAG, "successfully sended answerMessage");
+            try {
 
+                Thread.sleep(1000);
+                executor.setTargetAddress("FFFF");
+                Thread.sleep(1000);
+                executor.send(5);
+                Thread.sleep(1000);
+                executor.send("12345");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Log.i(TAG, "Sending reply msg ");
         }
     }
+
 }
