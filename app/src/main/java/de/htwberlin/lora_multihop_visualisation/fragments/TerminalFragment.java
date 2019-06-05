@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ public class TerminalFragment extends Fragment {
 
     private ScrollView scrollView;
     private LinearLayout terminalMessages;
+    private LastCommandsUI_Layout lastComandsUILayout = null;
     private EditText terminalInput;
     private Button sendButton;
     private Button returnButton;
@@ -49,12 +51,23 @@ public class TerminalFragment extends Fragment {
         sendButton = (Button) view.findViewById(R.id.terminal_send_button);
         returnButton = (Button) view.findViewById(R.id.return_to_map);
 
+        lastComandsUILayout = new LastCommandsUI_Layout(view.findViewById(R.id.linearLayout_lastCommands), getContext(), v-> {
+            Button b = (Button) v;
+            terminalInput.setText(b.getText());
+        });
+
+
+
+
         /**
          * Action for the send button
          */
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                lastComandsUILayout.addCMD(terminalInput.getText().toString());
+
                 if (v.getId() == sendButton.getId()) {
                     try {
                         ((MainActivity) getActivity()).btService.write((terminalInput.getText().toString() + AT_POSTFIX).getBytes());
