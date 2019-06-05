@@ -13,6 +13,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class ProtocolFragment extends Fragment {
+    private static final String TAG = "ProtocolFragment";
 
     @BindView(R.id.buttonFetch) Button fetch;
     @BindView(R.id.buttonFetchReply) Button fetchReply;

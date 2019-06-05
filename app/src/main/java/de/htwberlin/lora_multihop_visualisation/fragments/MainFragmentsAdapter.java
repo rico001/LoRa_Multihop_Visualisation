@@ -1,4 +1,4 @@
-package de.htwberlin.lora_multihop_visualisation;
+package de.htwberlin.lora_multihop_visualisation.fragments;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
