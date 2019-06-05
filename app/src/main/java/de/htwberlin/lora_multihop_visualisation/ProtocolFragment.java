@@ -1,9 +1,7 @@
 package de.htwberlin.lora_multihop_visualisation;
 
-import android.graphics.Color;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,15 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.htwberlin.lora_multihop_implementation.components.lora.LoraCommandsExecutor;
 import de.htwberlin.lora_multihop_implementation.components.lora.LoraHandler;
-import de.htwberlin.lora_multihop_implementation.components.messages.JoinMessage;
-import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 
 public class ProtocolFragment extends Fragment implements MessageConstants {
@@ -34,11 +28,15 @@ public class ProtocolFragment extends Fragment implements MessageConstants {
     Button buttonInit;
     @BindView(R.id.textviewOutput)
     TextView protocolOutput;
+    @BindView(R.id.textViewStatus)
+    TextView protocolStatus;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_protocol, container, false);
-        ButterKnife.bind(this,view);
+        ButterKnife.bind(this, view);
+        initFragment();
         return view;
     }
 
@@ -69,10 +67,30 @@ public class ProtocolFragment extends Fragment implements MessageConstants {
 
     @OnClick(R.id.buttonInit)
     public void initButtonClicked() {
-        protocolOutput.setText("Preparing module " + SingletonDevice.getBluetoothDevice().getName() + " for neighbour discovery.");
-        //TODO: AT+CFG
-        //TODO: AT+ADDR=
-        //TODO: AT+DEST=FFFF
+        String deviceAddress = SingletonDevice.getBluetoothDevice().getAddress().replace(":", "").substring(12 - 4);
+        protocolOutput.setText("Initializing LoRA-Hop " + SingletonDevice.getBluetoothDevice().getName() + " for Neighbour Discovery.");
+        protocolOutput.append("\nConfigure " + SingletonDevice.getBluetoothDevice().getName() + ".");
+
+        protocolOutput.append("\nConfiguring source address [" + deviceAddress + "]");
+        protocolOutput.append("\nConfiguring remote address [FFFF]");
+
+        protocolOutput.append("\nSuccessfully finished initializing " + SingletonDevice.getBluetoothDevice().getName());
+        buttonUpdate.setEnabled(Boolean.TRUE);
+    }
+
+    private void initFragment() {
+
+        buttonInit.setEnabled(Boolean.FALSE);
+        buttonUpdate.setEnabled(Boolean.FALSE);
+        buttonSearch.setEnabled(Boolean.FALSE);
+
+        try {
+            SingletonDevice.getBluetoothDevice().getName();
+            protocolStatus.setText("[CONNECTED]");
+            buttonInit.setEnabled(Boolean.TRUE);
+        } catch (NullPointerException e) {
+            protocolStatus.setText("No active connection.\nPlease select an AT-module under Settings -> Bluetooth");
+        }
     }
 
 }

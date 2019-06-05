@@ -10,6 +10,7 @@ import de.htwberlin.lora_multihop_implementation.components.messages.Message;
 import de.htwberlin.lora_multihop_implementation.components.queue.IncomingMessageQueue;
 import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
 import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
+import de.htwberlin.lora_multihop_visualisation.SingletonDevice;
 
 import static java.lang.Double.parseDouble;
 import static java.util.regex.Pattern.compile;
@@ -68,7 +69,7 @@ public class MessageParser {
         double latitude = parseDouble(inputParts[4]);
         double longitude = parseDouble(inputParts[5]);
 
-        return new JoinMessage(sourceAddress, executor, latitude, longitude);
+        return new JoinMessage(executor, sourceAddress, latitude, longitude);
     }
 
 
@@ -76,12 +77,12 @@ public class MessageParser {
         if (inputParts.length != 6)
             throw new ParserException("Couldnt Parse Join Reply Message", new Throwable(EMessageType.JORP.name()));
 
-        String sourceAddress = inputParts[1];
+        String sourceAddress = SingletonDevice.getLocalHop().getAddress();
         String remoteAddress = inputParts[2];
         double latitude = parseDouble(inputParts[4]);
         double longitude = parseDouble(inputParts[5]);
 
-        return new JoinReplyMessage(sourceAddress, executor, remoteAddress, latitude, longitude);
+        return new JoinReplyMessage(executor, sourceAddress, remoteAddress, latitude, longitude);
 
     }
 }

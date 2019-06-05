@@ -12,13 +12,23 @@ import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 public abstract class Message {
 
     private static final EMessageType REPLY_MESSAGE = null;
+    private String remoteAddress;
     private String sourceAddress;
 
     private ILoraCommands executor;
 
-    public Message(String sourceAddress, ILoraCommands executor) {
-        this.sourceAddress = sourceAddress;
+    public Message(ILoraCommands executor, String sourceAddress, String remoteAddress) {
         this.executor = executor;
+        this.sourceAddress = sourceAddress;
+        this.remoteAddress = remoteAddress;
+    }
+
+    public String getRemoteAddress() {
+        return remoteAddress;
+    }
+
+    public void setRemoteAddress(String remoteAddress) {
+        this.remoteAddress = remoteAddress;
     }
 
     public String getSourceAddress() {

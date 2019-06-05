@@ -28,8 +28,8 @@ public class JoinReplyMessage extends Message {
     private Double longitude;
     private Double latitude;
 
-    public JoinReplyMessage(String sourceAddress, ILoraCommands executor, String remoteAddress, Double longitude, Double latitude) {
-        super(sourceAddress, executor);
+    public JoinReplyMessage(ILoraCommands executor, String sourceAddress, String remoteAddress, Double longitude, Double latitude) {
+        super(executor, sourceAddress, remoteAddress);
         this.remoteAddress = remoteAddress;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -65,9 +65,16 @@ public class JoinReplyMessage extends Message {
         JOIN,LAT,LONG
          */
         ILoraCommands loraCommandsExecutor = super.getExecutor();
-        loraCommandsExecutor.setTargetAddress(remoteAddress);
-        loraCommandsExecutor.send(MESSAGE_SIZE);
-        loraCommandsExecutor.send(this.toString());
+
+        try {
+            loraCommandsExecutor.setTargetAddress(remoteAddress);
+            Thread.sleep(1000);
+            loraCommandsExecutor.send(MESSAGE_SIZE);
+            Thread.sleep(1000);
+            loraCommandsExecutor.send(this.toString());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 }
