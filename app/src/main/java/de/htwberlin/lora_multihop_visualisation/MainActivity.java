@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
         MapFragment mapFragment = new MapFragment();
         TerminalFragment terminalFragment = new TerminalFragment();
         NeighbourSetTableFragment neighbourSetTableFragment = new NeighbourSetTableFragment();
-        ProtocolFragment logicFragment = new ProtocolFragment();
+        ProtocolFragment protocolFragment = new ProtocolFragment();
 
         this.mapFragment = mapFragment;
         this.terminalFragment = terminalFragment;
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
         adapter.addFragment(mapFragment, "MapFragment");
         adapter.addFragment(terminalFragment, "TerminalFragment");
         adapter.addFragment(neighbourSetTableFragment, "NeighbourSetTableFragment");
-        adapter.addFragment(logicFragment, "LogicFragment");
+        adapter.addFragment(protocolFragment, "LogicFragment");
 
         viewPager.setAdapter(adapter);
     }

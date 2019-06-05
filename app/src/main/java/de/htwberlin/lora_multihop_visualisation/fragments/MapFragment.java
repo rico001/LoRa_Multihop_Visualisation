@@ -270,6 +270,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+        this.markers.clear();
+        this.circles.clear();
     }
 
     @Override
