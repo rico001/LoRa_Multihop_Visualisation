@@ -7,7 +7,6 @@ import de.htwberlin.lora_multihop_implementation.components.model.LocalHop;
 import de.htwberlin.lora_multihop_implementation.components.parser.MessageParser;
 import de.htwberlin.lora_multihop_implementation.components.parser.ParserException;
 import de.htwberlin.lora_multihop_implementation.components.processor.MessageProcessor;
-import de.htwberlin.lora_multihop_implementation.components.queue.IncomingMessageQueue;
 import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 import de.htwberlin.lora_multihop_visualisation.BluetoothService;
@@ -33,7 +32,6 @@ public class LoraHandler extends AppCompatActivity implements MessageConstants {
 
     public void processLoraResponse(String responseMsg) {
         if (parseMessage(responseMsg)) processMessage();
-        sendReplyMessage();
     }
 
     public BluetoothService getBtService() {
@@ -72,10 +70,6 @@ public class LoraHandler extends AppCompatActivity implements MessageConstants {
         processor.processMessage();
     }
 
-    private void sendReplyMessage() {
-        processor.sendReplyMessage();
-    }
-
     public static LoraHandler getInstance(BluetoothService btService) {
         if (instance == null) instance = new LoraHandler(btService);
         return instance;
@@ -87,7 +81,10 @@ public class LoraHandler extends AppCompatActivity implements MessageConstants {
 
     private void initLocalHop() {
         LocalHop localHop = SingletonDevice.getLocalHop();
-        String deviceAddress = SingletonDevice.getBluetoothDevice().getAddress().replace(":", "").substring(12 - 4);
+        String deviceAddress = SingletonDevice.getBluetoothDevice()
+                                              .getAddress()
+                                              .replace(":", "")
+                                              .substring(12 - 4);
         localHop.setAddress(deviceAddress);
         localHop.setLatitude(50.123);
         localHop.setLongitude(40.123);

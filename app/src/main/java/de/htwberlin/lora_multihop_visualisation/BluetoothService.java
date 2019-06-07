@@ -3,14 +3,11 @@ package de.htwberlin.lora_multihop_visualisation;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,7 +18,7 @@ import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 /**
  * Allows communication building and Access to Inputstream and Outputstream of BTsocket
  */
-public class BluetoothService implements MessageConstants{
+public class BluetoothService implements MessageConstants {
     private static final String TAG = "blue";
     private Handler handler; // handler that gets info from Bluetooth service
     private BluetoothAdapter adapter;
@@ -32,20 +29,18 @@ public class BluetoothService implements MessageConstants{
     public BluetoothService(Handler handler, BluetoothDevice device) {
         adapter = BluetoothAdapter.getDefaultAdapter();
         this.handler = handler;
-        bluetoothDevive=device;
+        bluetoothDevive = device;
     }
 
 
-    public void connectWithBluetoothDevice(){
+    public void connectWithBluetoothDevice() {
         acceptThread = new AcceptThread(bluetoothDevive);
         acceptThread.start();
     }
 
     public boolean isConnected() {
-        if (connectThread!=null && connectThread.isAlive())
-            return true;
+        return connectThread != null && connectThread.isAlive();
 
-        return false;
     }
 
     public synchronized void write(byte[] out) {
@@ -53,7 +48,7 @@ public class BluetoothService implements MessageConstants{
         ConnectedThread r;
 
         synchronized (this) {
-            if (connectThread!=null && !connectThread.isAlive()) return;
+            if (connectThread != null && !connectThread.isAlive()) return;
 
             r = connectThread;
         }
@@ -65,13 +60,13 @@ public class BluetoothService implements MessageConstants{
     public void disconnect() {
         if (!isConnected()) return;
 
-        if(acceptThread!=null && acceptThread.isAlive())
-            Log.d(TAG,"acceptThread disconnct");
-            acceptThread.cancel();
+        if (acceptThread != null && acceptThread.isAlive())
+            Log.d(TAG, "acceptThread disconnct");
+        acceptThread.cancel();
 
-        if(connectThread!= null && connectThread.isAlive())
-            Log.d(TAG,"connectThread disconnct");
-            connectThread.cancel();
+        if (connectThread != null && connectThread.isAlive())
+            Log.d(TAG, "connectThread disconnct");
+        connectThread.cancel();
     }
 
     /**
@@ -90,24 +85,21 @@ public class BluetoothService implements MessageConstants{
             mmDevice = device;
 
             try {
-                if (mmDevice != null)
-                {
+                if (mmDevice != null) {
                     Log.d(TAG, "Device Name: " + mmDevice.getName());
                     Log.d(TAG, "Device UUID: " + mmDevice.getUuids()[0].getUuid());
                     tmp = device.createRfcommSocketToServiceRecord(mmDevice.getUuids()[0].getUuid());
 
                 }
-            }
-            catch (NullPointerException e)
-            {
+            } catch (NullPointerException e) {
                 Log.d(TAG, " UUID from device is null, Using Default UUID, Device name: " + device.getName());
                 try {
                     tmp = device.createRfcommSocketToServiceRecord(DEFAULT_UUID);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
+            } catch (IOException e) {
             }
-            catch (IOException e) { }
             mmSocket = tmp;
         }
 
@@ -158,9 +150,9 @@ public class BluetoothService implements MessageConstants{
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
 
-       // private final DataInputStream dataInStream;
+        // private final DataInputStream dataInStream;
         private byte[] mmBuffer; // mmBuffer store for the stream
-        private String readMessage="";  //contains input until Lineseperator
+        private String readMessage = "";  //contains input until Lineseperator
 
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
@@ -191,31 +183,31 @@ public class BluetoothService implements MessageConstants{
             Log.d(TAG, "connectThread start");
 
             mmBuffer = new byte[512];
-            int numBytes=0; // bytes returned from read()
+            int numBytes = 0; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs.
             while (true) {
                 try {
                     // Read from the InputStream.
-                    numBytes= mmInStream.read(mmBuffer);
+                    numBytes = mmInStream.read(mmBuffer);
 
                     String newInput = new String(mmBuffer, 0, numBytes);
-                    readMessage+=newInput;
+                    readMessage += newInput;
 
-                    if(readMessage.contains(System.lineSeparator())){
+                    if (readMessage.contains(System.lineSeparator())) {
 
-                        Log.d(TAG,"komplett (mind 1 Seperator): "+readMessage);
+                        Log.d(TAG, "komplett (mind 1 Seperator): " + readMessage);
 
-                        String[] msgs=readMessage.split(System.lineSeparator());
-                        for(String msg: msgs){
-                            Log.d(TAG,"     message: "+msg);
+                        String[] msgs = readMessage.split(System.lineSeparator());
+                        for (String msg : msgs) {
+                            Log.d(TAG, "     message: " + msg);
                             handler.obtainMessage(MESSAGE_READ, numBytes, -1, msg).sendToTarget();
                         }
 
-                        readMessage="";
+                        readMessage = "";
 
-                    }else{
-                        Log.d(TAG,"nicht komplett"+readMessage);
+                    } else {
+                        Log.d(TAG, "nicht komplett" + readMessage);
                     }
 
                 } catch (IOException e) {
@@ -230,7 +222,7 @@ public class BluetoothService implements MessageConstants{
         // Call this from the main activity to send data to the remote device.
         public void write(byte[] bytes) {
             try {
-                    mmOutStream.write(bytes);
+                mmOutStream.write(bytes);
                 // Share the sent message with the UI activity.
             } catch (IOException e) {
                 Log.e(TAG, "Error occurred when sending data", e);

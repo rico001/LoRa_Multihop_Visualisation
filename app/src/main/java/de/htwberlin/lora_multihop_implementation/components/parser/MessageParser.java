@@ -2,8 +2,6 @@ package de.htwberlin.lora_multihop_implementation.components.parser;
 
 import android.util.Log;
 
-import java.util.regex.Pattern;
-
 import de.htwberlin.lora_multihop_implementation.components.messages.JoinMessage;
 import de.htwberlin.lora_multihop_implementation.components.messages.JoinReplyMessage;
 import de.htwberlin.lora_multihop_implementation.components.messages.Message;
@@ -13,7 +11,6 @@ import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_visualisation.SingletonDevice;
 
 import static java.lang.Double.parseDouble;
-import static java.util.regex.Pattern.compile;
 
 /**
  * This class parses Strings to instances of Messages and adds them to the queue
@@ -75,7 +72,8 @@ public class MessageParser {
 
     private Message parseJoinReplyMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException, NumberFormatException {
         if (inputParts.length != 6)
-            throw new ParserException("Couldnt Parse Join Reply Message", new Throwable(EMessageType.JORP.name()));
+            throw new ParserException("Couldnt Parse Join Reply Message", new Throwable(EMessageType.JORP
+                    .name()));
 
         String sourceAddress = SingletonDevice.getLocalHop().getAddress();
         String remoteAddress = inputParts[2];

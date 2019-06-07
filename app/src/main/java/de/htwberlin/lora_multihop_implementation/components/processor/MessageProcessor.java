@@ -2,15 +2,16 @@ package de.htwberlin.lora_multihop_implementation.components.processor;
 
 import android.util.Log;
 
-import de.htwberlin.lora_multihop_implementation.components.messages.JoinMessage;
-import de.htwberlin.lora_multihop_implementation.components.messages.JoinReplyMessage;
+import java.util.HashMap;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+
 import de.htwberlin.lora_multihop_implementation.components.messages.Message;
 import de.htwberlin.lora_multihop_implementation.components.queue.IncomingMessageQueue;
-import de.htwberlin.lora_multihop_implementation.components.queue.OutgoingMessageQueue;
-import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
 import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
-import de.htwberlin.lora_multihop_visualisation.SingletonDevice;
 
 /**
  * This class removes messages from queue and processes them.
@@ -25,41 +26,63 @@ public class MessageProcessor implements MessageConstants {
 
     private ILoraCommands executor;
     private IncomingMessageQueue incomingMessageQueue = IncomingMessageQueue.getInstance();
-    private OutgoingMessageQueue outgoingMessageQueue = OutgoingMessageQueue.getInstance();
+    private BlockingQueue<Message> outMessagesQueue = new LinkedBlockingQueue<>();
+
+    private ExecutorService outWorker;
+
+    // todo: need to iterate over the map and check if there are any "expired" (i.e. startTimestamp < now - 5minutes) handlers. destroy them to free the memory, write a line in the log.
+    private HashMap<String, ExchangeHandler> handlersMap = new HashMap<>();
 
     public MessageProcessor(ILoraCommands executor) {
+
         this.executor = executor;
+
+        this.outWorker = Executors.newSingleThreadExecutor();
+        this.outWorker.submit(new OutWorker());
     }
 
     public void processMessage() {
         Message incomingMessage = (Message) incomingMessageQueue.poll();
-        EMessageType answerMessage = incomingMessage.getAnswerMessage();
 
-        Log.i(TAG, "Processing " + incomingMessage.toString());
-        if (answerMessage == null) {
-            Log.i(TAG, "Processed Message results in a neighbour set action");
-            // updateNSEntry
-            // addNSEntry
+        // todo: No message should be with null id, new message must be initalized only in ExchangeHandler
+        String id = incomingMessage.getId();
+        ExchangeHandler handler = handlersMap.get(id);
 
-        } else {
-            if (incomingMessage instanceof JoinMessage) {
+        // Init a new handler as a replier.
+        if (handler == null) {
+            Log.i(TAG, "Creating new handler with exchange id " + id);
 
-                // REPLY: JOIN REPLY
-                JoinReplyMessage joinReplyMessage = new JoinReplyMessage(executor, "9341", "2222", 50.2332, 40.1221);
-                outgoingMessageQueue.add(joinReplyMessage);
-                Log.i(TAG, "added jorp message to queue");
-            } else if (incomingMessage instanceof JoinReplyMessage) {
-                // REPLY: ACK
-            } else {
-
-            }
+            // todo: for now just Join handler. need to create mapping between message classes and their corresponding handler classes
+            handler = new JoinExchangeHandler(outMessagesQueue, incomingMessage);
+            handlersMap.put(id, handler);
         }
+
+        // Process the message, do the needed work, queue a reply message, etc.
+        handler.processMessage(incomingMessage);
     }
 
-    public void sendReplyMessage() {
-        Message outgoingMessage = (Message) outgoingMessageQueue.poll();
+    /**
+     * A worker running in a separate thread that sends queued the messages to the connected LoRa module.
+     * There must be just ONE worker simultaneously, as LoRa module can process just one message at a time.
+     */
+    private class OutWorker implements Runnable {
+        public void run() {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    // todo: timeouts between messages?
+                    // todo: remote address should be in the exchange handler? when should it be set? figure out.
+                    Message message = outMessagesQueue.take();
 
-        outgoingMessage.executeAtRoutine();
-        //Log.i(TAG, "sended " + outgoingMessage.toString() + " to " + outgoingMessage.getRemoteAddress());
+                    Log.i(TAG, "Out worker: processing message " + message.getId());
+
+                    message.executeAtRoutine(executor);
+
+                    Log.i(TAG, "sended " + message.toString() + " to " + message.getRemoteAddress());
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }
     }
 }

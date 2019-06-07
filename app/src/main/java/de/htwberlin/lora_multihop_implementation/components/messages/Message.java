@@ -10,17 +10,29 @@ import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
  */
 
 public abstract class Message {
-
     private static final EMessageType REPLY_MESSAGE = null;
+    protected String id;
     private String remoteAddress;
     private String sourceAddress;
 
     private ILoraCommands executor;
 
+    public Message() {
+
+    }
+
     public Message(ILoraCommands executor, String sourceAddress, String remoteAddress) {
         this.executor = executor;
         this.sourceAddress = sourceAddress;
         this.remoteAddress = remoteAddress;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getRemoteAddress() {
@@ -56,5 +68,5 @@ public abstract class Message {
         return "";
     }
 
-    public abstract void executeAtRoutine();
+    public abstract void executeAtRoutine(ILoraCommands executor);
 }

@@ -28,6 +28,12 @@ public class JoinReplyMessage extends Message {
     private Double longitude;
     private Double latitude;
 
+    public JoinReplyMessage(String id, Double lng, Double lat) {
+        this.id = id;
+        this.longitude = lng;
+        this.latitude = lat;
+    }
+
     public JoinReplyMessage(ILoraCommands executor, String sourceAddress, String remoteAddress, Double longitude, Double latitude) {
         super(executor, sourceAddress, remoteAddress);
         this.remoteAddress = remoteAddress;
@@ -57,7 +63,7 @@ public class JoinReplyMessage extends Message {
     }
 
     @Override
-    public void executeAtRoutine() {
+    public void executeAtRoutine(ILoraCommands executor) {
 
         /*
         AT+DEST=REMOTE_ADDRESS
