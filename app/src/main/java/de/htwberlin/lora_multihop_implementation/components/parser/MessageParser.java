@@ -39,7 +39,10 @@ public class MessageParser {
         String[] inputParts = inputString.split(",");
         Message message;
 
-        // TODO: verifiy latitude / longitude between 0 - 180.00 and 3 decimal digits
+        // TODO: verify latitude / longitude between 0 - 180.00 and 3 decimal digits
+
+                // ---> maybe not needed... NeighbourSet Entry checks model data & has Exception calling
+
         //TODO: template pattern maybe can be used here ...
         switch (inputParts[3]) {
             case "JOIN":
@@ -66,7 +69,7 @@ public class MessageParser {
         }
     }
 
-    protected Message parseJoinMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException, NumberFormatException {
+    private Message parseJoinMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException, NumberFormatException {
         if (inputParts.length != 6)
             throw new ParserException("Couldnt Parse Join Message", new Throwable(EMessageType.JOIN.name()));
 
@@ -76,7 +79,6 @@ public class MessageParser {
 
         return new JoinMessage(executor, sourceAddress, latitude, longitude);
     }
-
 
     private Message parseJoinReplyMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException, NumberFormatException {
         if (inputParts.length != 6)
