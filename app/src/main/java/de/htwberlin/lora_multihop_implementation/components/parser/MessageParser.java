@@ -2,9 +2,11 @@ package de.htwberlin.lora_multihop_implementation.components.parser;
 
 import android.util.Log;
 
+import de.htwberlin.lora_multihop_implementation.components.messages.AckMessage;
 import de.htwberlin.lora_multihop_implementation.components.messages.JoinMessage;
 import de.htwberlin.lora_multihop_implementation.components.messages.JoinReplyMessage;
 import de.htwberlin.lora_multihop_implementation.components.messages.Message;
+import de.htwberlin.lora_multihop_implementation.components.model.LocalHop;
 import de.htwberlin.lora_multihop_implementation.components.queue.IncomingMessageQueue;
 import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
 import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
@@ -52,9 +54,15 @@ public class MessageParser {
                 queue.add(message);
                 Log.i(TAG, "added " + message.toString() + " to queue");
                 break;
+            case "ACK":
+                message = parseAckMessage(inputParts);
+                Log.i(TAG, "successfully parsed ACK message");
+                queue.add(message);
+                Log.i(TAG, "added " + message.toString() + " to queue");
+                break;
             default:
                 Log.e(TAG, "couldnt determine which Message type " + inputString + " is.");
-                break;
+                throw new ParserException("no message to queue");
         }
     }
 
@@ -75,12 +83,23 @@ public class MessageParser {
             throw new ParserException("Couldnt Parse Join Reply Message", new Throwable(EMessageType.JORP
                     .name()));
 
-        String sourceAddress = SingletonDevice.getLocalHop().getAddress();
+        String sourceAddress = LocalHop.getInstance().getAddress();
         String remoteAddress = inputParts[2];
         double latitude = parseDouble(inputParts[4]);
         double longitude = parseDouble(inputParts[5]);
 
         return new JoinReplyMessage(executor, sourceAddress, remoteAddress, latitude, longitude);
+
+    }
+
+    private Message parseAckMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException, NumberFormatException {
+        if (inputParts.length != 5)
+            throw new ParserException("Couldnt Parse Ack Reply Message", new Throwable(EMessageType.ACK.name()));
+
+        String sourceAddress = LocalHop.getInstance().getAddress();
+        String remoteAddress = inputParts[2];
+
+        return new AckMessage(executor, sourceAddress, remoteAddress);
 
     }
 }

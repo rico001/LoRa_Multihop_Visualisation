@@ -10,7 +10,6 @@ import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
  */
 
 public abstract class Message {
-    private static final EMessageType REPLY_MESSAGE = null;
     protected String id;
     private String remoteAddress;
     private String sourceAddress;
@@ -49,10 +48,6 @@ public abstract class Message {
 
     public void setSourceAddress(String sourceAddress) {
         this.sourceAddress = sourceAddress;
-    }
-
-    public EMessageType getAnswerMessage() {
-        return REPLY_MESSAGE;
     }
 
     public ILoraCommands getExecutor() {

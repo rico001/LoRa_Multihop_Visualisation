@@ -73,7 +73,9 @@ public class MessageProcessor implements MessageConstants {
                     // todo: remote address should be in the exchange handler? when should it be set? figure out.
                     Message message = outMessagesQueue.take();
 
-                    Log.i(TAG, "Out worker: processing message " + message.getId());
+                    message.setExecutor(executor);
+
+                    Log.i(TAG, "Out worker: processing message " + message.toString());
 
                     message.executeAtRoutine(executor);
 

@@ -97,6 +97,10 @@ abstract public class ExchangeHandler {
         return acknoweldged;
     }
 
+    public Queue getQueue() {
+        return this.queue;
+    }
+
     abstract protected Message getStartMessage();
 
     abstract protected Message getReplyMessage();

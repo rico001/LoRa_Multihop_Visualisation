@@ -21,7 +21,6 @@ import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
  * @author morelly_t1
  */
 public class JoinMessage extends Message {
-    private static final EMessageType REPLY_MESSAGE = EMessageType.JORP;
     private static final String BROADCAST_ADDRESS = "FFFF";
     private static final Integer MESSAGE_SIZE = 18;
 
@@ -37,27 +36,6 @@ public class JoinMessage extends Message {
         super(executor, sourceAddress, "FFFF");
         this.longitude = longitude;
         this.latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    @Override
-    public EMessageType getAnswerMessage() {
-        return REPLY_MESSAGE;
     }
 
     @Override

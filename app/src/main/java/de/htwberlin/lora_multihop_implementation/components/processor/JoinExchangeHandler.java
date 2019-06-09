@@ -1,14 +1,28 @@
 package de.htwberlin.lora_multihop_implementation.components.processor;
 
+import android.graphics.Paint;
+import android.location.Location;
+import android.util.Log;
+
 import java.security.InvalidParameterException;
+import java.security.Timestamp;
 import java.util.Queue;
 
 import de.htwberlin.lora_multihop_implementation.components.messages.AckMessage;
 import de.htwberlin.lora_multihop_implementation.components.messages.JoinMessage;
 import de.htwberlin.lora_multihop_implementation.components.messages.JoinReplyMessage;
 import de.htwberlin.lora_multihop_implementation.components.messages.Message;
+import de.htwberlin.lora_multihop_implementation.components.model.LocalHop;
+import de.htwberlin.lora_multihop_implementation.components.model.NeighbourSet;
+import de.htwberlin.lora_multihop_implementation.components.ndp.NeighbourSetHandler;
+import de.htwberlin.lora_multihop_implementation.components.storage.NeighbourSetDatabase;
+import de.htwberlin.lora_multihop_implementation.enums.ELoraNodeState;
+import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
+
+import static android.support.constraint.Constraints.TAG;
 
 public class JoinExchangeHandler extends ExchangeHandler {
+
     private Double lng;
     private Double lat;
 
@@ -46,10 +60,15 @@ public class JoinExchangeHandler extends ExchangeHandler {
                 throw new InvalidParameterException("The current handler IS NOT replier, but invalid init JoinMessage received.");
             }
 
+
             // todo: In JoinMessage we remember the coordinates and add them to the map after receiving the ACK message.
-            remoteLat = ((JoinMessage) message).getLatitude();
-            remoteLng = ((JoinMessage) message).getLongitude();
+            JoinReplyMessage joinReplyMessage = new JoinReplyMessage(id, LocalHop.getInstance().getLongitude(), LocalHop.getInstance().getLatitude());
+            joinReplyMessage.setRemoteAddress(message.getSourceAddress());
+            Log.i(TAG, "preparing join reply msg " + joinReplyMessage.toString());
+            getQueue().add(joinReplyMessage);
+            Log.i(TAG, "added to queue");
         }
+
         if (message instanceof JoinReplyMessage) {
             if (this.isReplier()) {
                 throw new InvalidParameterException("The current handler IS replier, but invalid reply JoinReplyMessage received.");
@@ -58,6 +77,13 @@ public class JoinExchangeHandler extends ExchangeHandler {
             // todo: In reply message we immediately add the point to the map.
             remoteLat = ((JoinReplyMessage) message).getLatitude();
             remoteLng = ((JoinReplyMessage) message).getLongitude();
+
+            //todo: send ack
+            AckMessage ackMessage = new AckMessage(id);
+            ackMessage.setRemoteAddress(message.getSourceAddress());
+            Log.i(TAG, "preparing ack msg " + ackMessage.toString());
+            getQueue().add(ackMessage);
+            Log.i(TAG, "added to queue");
         }
 
         // ACK message should be received only by replier (basically the central server).
@@ -68,6 +94,17 @@ public class JoinExchangeHandler extends ExchangeHandler {
             }
 
             // todo: add the remoteLat, remoteLng (remembered from the JoinMessage) to the map.
+            // todo: add to NS and table fragment
+            Location gps = new Location("");
+            gps.setLongitude(50.232);
+            gps.setLatitude(40.232);
+
+            NeighbourSet entry = new NeighbourSet(1, "2222", "1111", gps, ELoraNodeState.UP, null);
+
+            NeighbourSetHandler nsh = new NeighbourSetHandler();
+            NeighbourSetDatabase db = nsh.getDb();
+            db.neighbourSetDao().clearTable();
+            db.neighbourSetDao().saveNeighbourSet(entry);
         }
 
 
@@ -78,3 +115,4 @@ public class JoinExchangeHandler extends ExchangeHandler {
         return true;
     }
 }
+

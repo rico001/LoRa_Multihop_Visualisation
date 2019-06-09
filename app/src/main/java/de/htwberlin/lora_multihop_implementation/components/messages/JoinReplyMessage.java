@@ -1,5 +1,7 @@
 package de.htwberlin.lora_multihop_implementation.components.messages;
 
+import android.util.Log;
+
 import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
 import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 
@@ -21,10 +23,10 @@ import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
  */
 public class JoinReplyMessage extends Message {
 
+    private static final String TAG = "JoinReplyMessage";
+
     private static final EMessageType REPLY_MESSAGE = EMessageType.ACK;
     private static final Integer MESSAGE_SIZE = 18;
-
-    private String remoteAddress;
     private Double longitude;
     private Double latitude;
 
@@ -36,7 +38,6 @@ public class JoinReplyMessage extends Message {
 
     public JoinReplyMessage(ILoraCommands executor, String sourceAddress, String remoteAddress, Double longitude, Double latitude) {
         super(executor, sourceAddress, remoteAddress);
-        this.remoteAddress = remoteAddress;
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -73,14 +74,14 @@ public class JoinReplyMessage extends Message {
         ILoraCommands loraCommandsExecutor = super.getExecutor();
 
         try {
-            loraCommandsExecutor.setTargetAddress(remoteAddress);
+            loraCommandsExecutor.setTargetAddress(super.getRemoteAddress());
             Thread.sleep(1000);
             loraCommandsExecutor.send(MESSAGE_SIZE);
             Thread.sleep(1000);
             loraCommandsExecutor.send(this.toString());
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 }

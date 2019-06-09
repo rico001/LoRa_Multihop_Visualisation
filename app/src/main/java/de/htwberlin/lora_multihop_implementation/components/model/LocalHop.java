@@ -5,11 +5,11 @@ public class LocalHop {
     private String address;
     private double latitude;
     private double longitude;
+    public static LocalHop instance = null;
 
-    public LocalHop(String address, double latitude, double longitude) {
-        this.address = address;
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public static LocalHop getInstance() {
+        if (instance == null) instance = new LocalHop();
+        return instance;
     }
 
     public String getAddress() {
