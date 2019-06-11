@@ -5,7 +5,9 @@ import android.location.Location;
 import android.util.Log;
 
 import java.security.InvalidParameterException;
-import java.security.Timestamp;
+import java.security.cert.CertPath;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Queue;
 
 import de.htwberlin.lora_multihop_implementation.components.messages.AckMessage;
@@ -99,7 +101,7 @@ public class JoinExchangeHandler extends ExchangeHandler {
             gps.setLongitude(50.232);
             gps.setLatitude(40.232);
 
-            NeighbourSet entry = new NeighbourSet(1, "2222", "1111", gps, ELoraNodeState.UP, null);
+            NeighbourSet entry = new NeighbourSet(1, "2222", "1111", gps, ELoraNodeState.UP, System.currentTimeMillis());
 
             NeighbourSetHandler nsh = new NeighbourSetHandler();
             NeighbourSetDatabase db = nsh.getDb();
