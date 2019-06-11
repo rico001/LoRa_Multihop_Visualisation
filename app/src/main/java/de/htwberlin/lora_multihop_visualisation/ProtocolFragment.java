@@ -1,5 +1,6 @@
 package de.htwberlin.lora_multihop_visualisation;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -9,9 +10,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.htwberlin.lora_multihop_logic.components.messages.JoinMessage;
 import de.htwberlin.lora_multihop_logic.interfaces.MessageConstants;
 
 public class ProtocolFragment extends Fragment implements MessageConstants {
@@ -45,17 +49,11 @@ public class ProtocolFragment extends Fragment implements MessageConstants {
 
         Log.i(TAG, "Modul address " + modulAddress);
 
-        //JoinMessage join = new JoinMessage(modulAddress, 52.5545, 43.000);
-
-
         // Send JOIN
         protocolOutput.setText("Searching for Lora Modules ....");
 
-        //join.executeAtRoutine();
-        //protocolOutput.setText("Sending " + join.toString() + " as Broadcast.");
-
-        // Parse reply
-        // processs
+        LatLng location = ((MainActivity) getActivity()).getMapFragment().getLocation();
+        ((MainActivity) getActivity()).getSetupManager().getLoraHandler().getProcessor().getOutMessagesQueue().add(new JoinMessage(modulAddress, location.longitude, location.latitude));
     }
 
     @OnClick(R.id.buttonUpdate)

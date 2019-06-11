@@ -253,4 +253,12 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
     public void setTerminalFragment(TerminalFragment terminalFragment) {
         this.terminalFragment = terminalFragment;
     }
+
+    public MapFragment getMapFragment() {
+        return mapFragment;
+    }
+
+    public void setMapFragment(MapFragment mapFragment) {
+        this.mapFragment = mapFragment;
+    }
 }

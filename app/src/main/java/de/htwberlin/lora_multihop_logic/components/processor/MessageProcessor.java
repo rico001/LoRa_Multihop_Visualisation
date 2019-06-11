@@ -95,4 +95,12 @@ public class MessageProcessor implements MessageConstants {
             }
         }
     }
+
+    public BlockingQueue<Message> getOutMessagesQueue() {
+        return outMessagesQueue;
+    }
+
+    public void setOutMessagesQueue(BlockingQueue<Message> outMessagesQueue) {
+        this.outMessagesQueue = outMessagesQueue;
+    }
 }
