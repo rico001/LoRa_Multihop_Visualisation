@@ -1,9 +1,8 @@
-package de.htwberlin.lora_multihop_visualisation;
+package de.htwberlin.lora_multihop_visualisation.fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +18,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.htwberlin.lora_multihop_implementation.enums.EFragments;
+import de.htwberlin.lora_multihop_visualisation.LastCommandsUI_Layout;
+import de.htwberlin.lora_multihop_visualisation.MainActivity;
+import de.htwberlin.lora_multihop_visualisation.R;
+import de.htwberlin.lora_multihop_visualisation.SingletonDevice;
 
 public class TerminalFragment extends Fragment {
     private final static int sendColor = Color.RED;
@@ -52,9 +55,6 @@ public class TerminalFragment extends Fragment {
             terminalInput.setText(b.getText());
         });
 
-
-
-
         /**
          * Action for the send button
          */
@@ -66,7 +66,7 @@ public class TerminalFragment extends Fragment {
 
                 if (v.getId() == sendButton.getId()) {
                     try {
-                        ((MainActivity) getActivity()).btService.write((terminalInput.getText().toString() + AT_POSTFIX).getBytes());
+                        ((MainActivity) getActivity()).getSetupManager().getBtService().write((terminalInput.getText().toString() + AT_POSTFIX).getBytes());
                         updateTerminalMessages(sendColor, terminalInput.getText().toString(), true);
                     } catch (NullPointerException e) {
                         updateTerminalMessages(sendColor, "Wählen Sie ein Device in den Settings", true);

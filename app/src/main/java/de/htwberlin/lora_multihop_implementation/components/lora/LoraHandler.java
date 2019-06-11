@@ -1,5 +1,6 @@
 package de.htwberlin.lora_multihop_implementation.components.lora;
 
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -10,20 +11,27 @@ import de.htwberlin.lora_multihop_implementation.components.processor.MessagePro
 import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 import de.htwberlin.lora_multihop_visualisation.BluetoothService;
+import de.htwberlin.lora_multihop_visualisation.MainActivity;
 import de.htwberlin.lora_multihop_visualisation.SingletonDevice;
+import de.htwberlin.lora_multihop_visualisation.fragments.TerminalFragment;
+
+import static java.security.AccessController.getContext;
 
 public class LoraHandler extends AppCompatActivity implements MessageConstants {
 
     private static final String TAG = "MessageHandler";
 
     private BluetoothService btService;
-    private MessageParser parser;
+
     private ILoraCommands executor;
+    private MessageParser parser;
     private MessageProcessor processor;
+
     public static LoraHandler instance = null;
 
     public LoraHandler(BluetoothService btService) {
         this.btService = btService;
+
         this.executor = new LoraCommandsExecutor(this.btService);
         this.parser = new MessageParser(this.executor);
         this.processor = new MessageProcessor(this.executor);
@@ -31,22 +39,6 @@ public class LoraHandler extends AppCompatActivity implements MessageConstants {
 
     public void processLoraResponse(String responseMsg) {
         if (parseMessage(responseMsg)) processMessage();
-    }
-
-    public BluetoothService getBtService() {
-        return btService;
-    }
-
-    public MessageParser getParser() {
-        return parser;
-    }
-
-    public ILoraCommands getExecutor() {
-        return executor;
-    }
-
-    public MessageProcessor getProcessor() {
-        return processor;
     }
 
     private boolean parseMessage(String message) {
@@ -71,15 +63,6 @@ public class LoraHandler extends AppCompatActivity implements MessageConstants {
         processor.processMessage();
     }
 
-    public static LoraHandler getInstance(BluetoothService btService) {
-        if (instance == null) instance = new LoraHandler(btService);
-        return instance;
-    }
-
-    public static LoraHandler getInstance() {
-        return instance;
-    }
-
     private void initLocalHop() {
         LocalHop localHop = LocalHop.getInstance();
         String deviceAddress = SingletonDevice.getBluetoothDevice()
@@ -89,5 +72,46 @@ public class LoraHandler extends AppCompatActivity implements MessageConstants {
         localHop.setAddress(deviceAddress);
         localHop.setLatitude(50.123);
         localHop.setLongitude(40.123);
+    }
+
+    public static LoraHandler getInstance() {
+        return instance;
+    }
+
+    public static LoraHandler getInstance(BluetoothService btService) {
+        if (instance == null) instance = new LoraHandler(btService);
+        return instance;
+    }
+
+    public MessageParser getParser() {
+        return parser;
+    }
+
+    public void setParser(MessageParser parser) {
+        this.parser = parser;
+    }
+
+    public ILoraCommands getExecutor() {
+        return executor;
+    }
+
+    public void setExecutor(ILoraCommands executor) {
+        this.executor = executor;
+    }
+
+    public MessageProcessor getProcessor() {
+        return processor;
+    }
+
+    public void setProcessor(MessageProcessor processor) {
+        this.processor = processor;
+    }
+
+    public BluetoothService getBtService() {
+        return btService;
+    }
+
+    public void setBtService(BluetoothService btService) {
+        this.btService = btService;
     }
 }

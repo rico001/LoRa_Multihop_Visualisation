@@ -3,10 +3,7 @@ package de.htwberlin.lora_multihop_visualisation;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -21,16 +18,13 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Map;
 
-import de.htwberlin.lora_multihop_implementation.components.lora.LoraCommandsExecutor;
-import de.htwberlin.lora_multihop_implementation.components.lora.LoraHandler;
-import de.htwberlin.lora_multihop_implementation.components.model.NeighbourSet;
-import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
+import de.htwberlin.lora_multihop_implementation.components.lora.SetupManager;
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableRow;
 import de.htwberlin.lora_multihop_visualisation.fragments.MainFragmentsAdapter;
 import de.htwberlin.lora_multihop_visualisation.fragments.MapFragment;
 import de.htwberlin.lora_multihop_visualisation.fragments.NeighbourSetTableFragment;
-import de.htwberlin.lora_multihop_visualisation.TerminalFragment;
+import de.htwberlin.lora_multihop_visualisation.fragments.TerminalFragment;
 
 /**
  * Visualisation and building a multihop wireless network
@@ -39,51 +33,19 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
 
     private final static String TAG = "mainactivity";
 
-    private final static int sendColor = Color.RED;
-    private final static int readColor = Color.BLUE;
-
     private MainFragmentsAdapter mainFragmentsAdapter;
     private ViewPager viewPager;
 
     private MapFragment mapFragment;
-    private LoraHandler loraHandler;
     private TerminalFragment terminalFragment;
     private ProtocolFragment protocolFragment;
     private NeighbourSetTableFragment neighbourSetTableFragment;
 
+    private SetupManager setupManager;
+
     private static final String[] LOCATION_PERMS = {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
-    };
-
-    private ILoraCommands loraCommandsExecutor;
-    public BluetoothService btService = null;
-
-    /**
-     * Handler to update the terminal
-     */
-    private final Handler msgHandler = new Handler() {
-        @Override
-        public synchronized void handleMessage(Message msg) {
-            switch (msg.what) {
-                case STATE_CONNECTING:
-                    terminalFragment.updateTerminalMessages(readColor, "Verbindung mit " + SingletonDevice.getBluetoothDevice().getName() + " wird aufgebaut", false);
-                    break;
-                case STATE_CONNECTED:
-                    terminalFragment.updateTerminalMessages(readColor, "Verbindung ist aufgebaut", false);
-                    break;
-                case MESSAGE_READ:
-                    String message = (String) msg.obj;
-                    terminalFragment.updateTerminalMessages(readColor, message, false);
-                    // update all fragements gui
-                    // pass to handler for logic stuff
-                    loraHandler.processLoraResponse(message);
-                    break;
-                case MESSAGE_ERROR:
-                    System.out.println("MSG ERROR");
-                    break;
-            }
-        }
     };
 
     /**
@@ -104,8 +66,25 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
         } else {
             init();
         }
-        initBluetoothService();
-        initLoraHandler();
+        initLoraSetup();
+    }
+
+    /**
+     * Sets up the activity
+     */
+    private void init() {
+        mainFragmentsAdapter = new MainFragmentsAdapter(getSupportFragmentManager());
+        viewPager = (ViewPager) findViewById(R.id.main_container);
+
+        // Sets up the ViewPager with all the fragments
+        setUpViewPager(viewPager);
+    }
+
+    /**
+     * Sets up the connection between android & lora related stuff
+     */
+    private void initLoraSetup()    {
+        this.setupManager = new SetupManager(terminalFragment);
     }
 
     /**
@@ -127,19 +106,6 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
                 return;
             }
         }
-    }
-
-    /**
-     * Sets up the activity
-     */
-    private void init() {
-        mainFragmentsAdapter = new MainFragmentsAdapter(getSupportFragmentManager());
-        viewPager = (ViewPager) findViewById(R.id.main_container);
-
-        // Sets up the ViewPager with all the fragments
-        setUpViewPager(viewPager);
-
-        loraCommandsExecutor = new LoraCommandsExecutor(btService);
     }
 
     /**
@@ -179,23 +145,6 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
 
         if (mapFragment.isVisible()) {
             mapFragment.addHostMarker(new LatLng(50.000, 50.0000), "asd", 1000);
-        }
-    }
-
-    private void initBluetoothService() {
-        try {
-            btService = new BluetoothService(msgHandler, SingletonDevice.getBluetoothDevice());
-            btService.connectWithBluetoothDevice();
-        } catch (NullPointerException e) {
-            Log.e(TAG, "Choose a device!");
-        }
-    }
-
-    private void initLoraHandler() {
-        try {
-            loraHandler = new LoraHandler(btService);
-        } catch (NullPointerException e) {
-            Log.e(TAG, "Lora Handler could not be init");
         }
     }
 
@@ -258,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
     public boolean onOptionsItemSelected(MenuItem item) {
 
         try {
-            btService.disconnect();
+            this.setupManager.disconnectBluetooth();
         } catch (NullPointerException e) {
             Log.d(TAG, "btService is null");
         }
@@ -289,4 +238,19 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
         startActivity(intent);
     }
 
+    public SetupManager getSetupManager() {
+        return setupManager;
+    }
+
+    public void setSetupManager(SetupManager setupManager) {
+        this.setupManager = setupManager;
+    }
+
+    public TerminalFragment getTerminalFragment() {
+        return terminalFragment;
+    }
+
+    public void setTerminalFragment(TerminalFragment terminalFragment) {
+        this.terminalFragment = terminalFragment;
+    }
 }
