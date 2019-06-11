@@ -22,13 +22,15 @@ public class LoraSettingsActivityTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("de.htwberlin.ad_hoc_multihop_network", appContext.getPackageName());
+        assertEquals("de.htwberlin.lora_multihop_visualisation", appContext.getPackageName());
     }
 
     @Test
     public void frequencyChange() {
         // todo: test that changing the frequency changes the generated config string
         // also validate the min-max range
+
+        Context appContext = InstrumentationRegistry.getTargetContext();
     }
 
     @Test

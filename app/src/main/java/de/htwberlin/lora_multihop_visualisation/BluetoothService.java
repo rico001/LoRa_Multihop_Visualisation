@@ -3,7 +3,6 @@ package de.htwberlin.lora_multihop_visualisation;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,7 +15,10 @@ import java.util.UUID;
 
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 
-public class MyBluetoothService implements MessageConstants{
+/**
+ * Allows communication building and Access to Inputstream and Outputstream of BTsocket
+ */
+public class BluetoothService implements MessageConstants {
     private static final String TAG = "blue";
     private Handler handler; // handler that gets info from Bluetooth service
     private BluetoothAdapter adapter;
@@ -24,39 +26,51 @@ public class MyBluetoothService implements MessageConstants{
     private AcceptThread acceptThread;
     private ConnectedThread connectThread;
 
-    private boolean connected=false;
-
-    public MyBluetoothService(Context context, Handler handler, BluetoothDevice device) {
+    public BluetoothService(Handler handler, BluetoothDevice device) {
         adapter = BluetoothAdapter.getDefaultAdapter();
         this.handler = handler;
-        bluetoothDevive=device;
+        bluetoothDevive = device;
     }
 
 
-    public void connectWithBluetoothDevice(){
+    public void connectWithBluetoothDevice() {
         acceptThread = new AcceptThread(bluetoothDevive);
         acceptThread.start();
     }
 
     public boolean isConnected() {
-        return connected;
+        return connectThread != null && connectThread.isAlive();
+
     }
 
-    public void setConnected(boolean connected) {
-        this.connected = connected;
-    }
+    public synchronized void write(byte[] out) {
 
-    public void write(byte[] out) {
-        // Create temporary object
-        if(isConnected()){
-            connectThread.write(out);
-            Message writtenMsg = handler.obtainMessage(MESSAGE_WRITE, -1, -1, out);
-            writtenMsg.sendToTarget();
+        ConnectedThread r;
+
+        synchronized (this) {
+            if (connectThread != null && !connectThread.isAlive()) return;
+
+            r = connectThread;
         }
+
+        // Perform the write unsynchronized
+        r.write(out);
+    }
+
+    public void disconnect() {
+        if (!isConnected()) return;
+
+        if (acceptThread != null && acceptThread.isAlive())
+            Log.d(TAG, "acceptThread disconnct");
+        acceptThread.cancel();
+
+        if (connectThread != null && connectThread.isAlive())
+            Log.d(TAG, "connectThread disconnct");
+        connectThread.cancel();
     }
 
     /**
-     * init a Bluetooth Connection
+     * init a Bluetooth Connection and starts the connectThread on end
      */
     private class AcceptThread extends Thread {
         private final BluetoothSocket mmSocket;
@@ -71,30 +85,27 @@ public class MyBluetoothService implements MessageConstants{
             mmDevice = device;
 
             try {
-                if (mmDevice != null)
-                {
+                if (mmDevice != null) {
                     Log.d(TAG, "Device Name: " + mmDevice.getName());
                     Log.d(TAG, "Device UUID: " + mmDevice.getUuids()[0].getUuid());
                     tmp = device.createRfcommSocketToServiceRecord(mmDevice.getUuids()[0].getUuid());
 
                 }
-                else Log.d("TAG", "Device is null.");
-            }
-            catch (NullPointerException e)
-            {
+            } catch (NullPointerException e) {
                 Log.d(TAG, " UUID from device is null, Using Default UUID, Device name: " + device.getName());
                 try {
                     tmp = device.createRfcommSocketToServiceRecord(DEFAULT_UUID);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
+            } catch (IOException e) {
             }
-            catch (IOException e) { }
             mmSocket = tmp;
         }
 
         public void run() {
             // Cancel discovery because it otherwise slows down the connection.
+            Log.d(TAG, "AcceptThread start");
             adapter.cancelDiscovery();
 
             try {
@@ -112,9 +123,6 @@ public class MyBluetoothService implements MessageConstants{
                 }
                 return;
             }
-
-            setConnected(true);
-
 
             connectThread = new ConnectedThread(mmSocket);
             connectThread.start();
@@ -138,9 +146,13 @@ public class MyBluetoothService implements MessageConstants{
      */
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
+
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
+
+        // private final DataInputStream dataInStream;
         private byte[] mmBuffer; // mmBuffer store for the stream
+        private String readMessage = "";  //contains input until Lineseperator
 
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
@@ -162,22 +174,42 @@ public class MyBluetoothService implements MessageConstants{
 
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
+            //dataInStream = new DataInputStream(tmpIn);
         }
 
         public void run() {
-            Log.d(TAG, "connected thread start");
+            //setConnected(true);
 
-            mmBuffer = new byte[1024];
-            int numBytes; // bytes returned from read()
+            Log.d(TAG, "connectThread start");
+
+            mmBuffer = new byte[512];
+            int numBytes = 0; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs.
             while (true) {
                 try {
                     // Read from the InputStream.
-                    numBytes = mmInStream.read(mmBuffer);//TODO is reading too fast
-                    // Send the obtained bytes to the UI activity.
-                    Message readMsg = handler.obtainMessage(MESSAGE_READ, numBytes, -1, mmBuffer);
-                    readMsg.sendToTarget();
+                    numBytes = mmInStream.read(mmBuffer);
+
+                    String newInput = new String(mmBuffer, 0, numBytes);
+                    readMessage += newInput;
+
+                    if (readMessage.contains(System.lineSeparator())) {
+
+                        Log.d(TAG, "komplett (mind 1 Seperator): " + readMessage);
+
+                        String[] msgs = readMessage.split(System.lineSeparator());
+                        for (String msg : msgs) {
+                            Log.d(TAG, "     message: " + msg);
+                            handler.obtainMessage(MESSAGE_READ, numBytes, -1, msg).sendToTarget();
+                        }
+
+                        readMessage = "";
+
+                    } else {
+                        Log.d(TAG, "nicht komplett" + readMessage);
+                    }
+
                 } catch (IOException e) {
                     Log.d(TAG, "Input stream was disconnected", e);
                     break;
@@ -192,8 +224,6 @@ public class MyBluetoothService implements MessageConstants{
             try {
                 mmOutStream.write(bytes);
                 // Share the sent message with the UI activity.
-                Message writtenMsg = handler.obtainMessage(MESSAGE_WRITE, -1, -1, mmBuffer);
-                writtenMsg.sendToTarget();
             } catch (IOException e) {
                 Log.e(TAG, "Error occurred when sending data", e);
 
@@ -206,9 +236,12 @@ public class MyBluetoothService implements MessageConstants{
                 writeErrorMsg.setData(bundle);
                 handler.sendMessage(writeErrorMsg);
             }
+
         }
 
-        // Call this method from the main activity to shut down the connection.
+        /**
+         * cancel BTconnection
+         */
         public void cancel() {
             try {
                 mmSocket.close();

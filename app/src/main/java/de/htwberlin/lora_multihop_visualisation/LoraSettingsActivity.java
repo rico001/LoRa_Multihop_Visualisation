@@ -1,182 +1,107 @@
 package de.htwberlin.lora_multihop_visualisation;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.CompoundButton;
-import android.widget.SeekBar;
-import android.widget.Switch;
-import android.widget.TextView;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.Button;
+import android.widget.Toast;
 
+import de.htwberlin.lora_multihop_implementation.components.lora.LoRaConfig;
+import de.htwberlin.lora_multihop_visualisation.settings.SeekBarHandler;
+import de.htwberlin.lora_multihop_visualisation.settings.SwitchHandler;
+
+/**
+ * configuration for some AT CMDS (e.g. CONFIGURE_CMD).
+ */
 public class LoraSettingsActivity extends AppCompatActivity {
+    LoRaConfig loRaConfig;
 
-    private static String defaultMhzValue="433";
-
-    //SeekBars
-    SeekBar seekBar_transmitPower;
-    SeekBar seekBar_frequency;
-    SeekBar seekBar_bandwidth;
-
-    //TextViews
-    TextView textView_transmitPower;
-    TextView textView_frequency;
-    TextView textView_bandwidth;
-    TextView textView_CRC;
-
-    //Switches
-    Switch switch_crc;
+    Button button_saveSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
-        initTextViews();
+
+        LoRaApplication app = (LoRaApplication) getApplicationContext();
+        loRaConfig = app.getLoRaConfig();
+
         initSeekBars();
         initSwitches();
-        syncTextViewsAndSeekBars();
-        syncTextViewsAndSwitches();
-        setDefaultOptions();                //later options will loadet
-    }
-    private void initTextViews(){
-        textView_transmitPower = (TextView) findViewById(R.id.textView_transmitPower);
-        textView_frequency = (TextView) findViewById(R.id.textView_frequency);
-        textView_CRC = (TextView) findViewById(R.id.textView_CRC);
-        textView_bandwidth = (TextView) findViewById(R.id.textView_bandwidth);
-    }
 
-    private void initSeekBars(){
-        seekBar_frequency = (SeekBar) findViewById(R.id.seekBar_frequency);
-        seekBar_transmitPower = (SeekBar) findViewById(R.id.seekBar_transmitPower);
-        seekBar_bandwidth = (SeekBar) findViewById(R.id.seekBar_bandwidth);
-    }
-
-    private void initSwitches(){
-        switch_crc = (Switch) findViewById(R.id.switch_crc);
-    }
-
-    private void syncTextViewsAndSeekBars() {
-        seekBar_frequency.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                String unit = "mhz";
-                
-                switch(progress) {
-                    case 0:
-                        textView_frequency.setText(defaultMhzValue+unit);
-                        break;
-                    case 1:
-                        textView_frequency.setText(progress+unit);
-                        break;
-                    case 2:
-                        textView_frequency.setText(progress+unit);
-                        break;
-                    case 3:
-                        textView_frequency.setText(progress+unit);
-                        break;
-                    default:
-                        textView_frequency.setText(progress+unit);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-
-        seekBar_bandwidth.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                String unit = "dBm";
-                
-                switch(progress) {
-                    case 0:
-                        textView_bandwidth.setText(progress+unit);
-                        break;
-                    case 1:
-                        textView_bandwidth.setText(progress+unit);
-                        break;
-                    case 2:
-                        textView_bandwidth.setText(progress+unit);
-                        break;
-                    case 3:
-                        textView_bandwidth.setText(progress+unit);
-                        break;
-                    default:
-                        textView_bandwidth.setText(progress+unit);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        seekBar_transmitPower.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                String unit = "dBm";
-
-                switch(progress) {
-                    case 0:
-                        textView_transmitPower.setText(progress+unit);
-                        break;
-                    case 1:
-                        textView_transmitPower.setText(progress+unit);
-                        break;
-                    case 2:
-                        textView_transmitPower.setText(progress+unit);
-                        break;
-                    case 3:
-                        textView_transmitPower.setText(progress+unit);
-                        break;
-                    default:
-                        textView_transmitPower.setText(progress+unit);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-    }
-
-    private void syncTextViewsAndSwitches(){
-        switch_crc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked==true){
-                    textView_CRC.setText("1");
-                }else {
-                    textView_CRC.setText("0");
-                }
+        // Save button.
+        button_saveSettings = findViewById(R.id.button_saveSettings);
+        button_saveSettings.setOnClickListener(v -> {
+            if (app.persistConfig(loRaConfig)) {
+                Toast.makeText(this, "Settings saved", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void setDefaultOptions(){
-        seekBar_transmitPower.setProgress(3);
-        seekBar_frequency.setProgress(0);
-        seekBar_bandwidth.setProgress(2);
-        switch_crc.setChecked(true);
+    private void initSeekBars() {
+        new SeekBarHandler(
+                findViewById(R.id.seekBar_frequency),
+                findViewById(R.id.textView_frequency),
+                410, 470, "MHz"
+        ).setValueProxy(() -> loRaConfig.getFrequency(), (v) -> loRaConfig.setFrequency(v));
+
+        new SeekBarHandler(
+                findViewById(R.id.seekBar_transmitPower),
+                findViewById(R.id.textView_transmitPower),
+                5, 20, "dBm"
+        ).setValueProxy(() -> loRaConfig.getPower(), (v) -> loRaConfig.setPower(v));
+
+        new SeekBarHandler(
+                findViewById(R.id.seekBar_bandwidth),
+                findViewById(R.id.textView_bandwidth),
+                LoRaConfig.bandwidthMap
+        ).setValueProxy(() -> loRaConfig.getSignalBw(), (v) -> loRaConfig.setSignalBw(v));
+
+        new SeekBarHandler(
+                findViewById(R.id.seekBar_spreading),
+                findViewById(R.id.textView_spreading),
+                LoRaConfig.spreadingMap
+        ).setValueProxy(() -> loRaConfig.getSpreadingFactor(), (v) -> loRaConfig.setSpreadingFactor(v));
+
+        new SeekBarHandler(
+                findViewById(R.id.seekBar_errorCoding),
+                findViewById(R.id.textView_errorCoding),
+                LoRaConfig.errorCodingMap
+        ).setValueProxy(() -> loRaConfig.getErrorCoding(), (v) -> loRaConfig.setErrorCoding(v));
+
+        new SeekBarHandler(
+                findViewById(R.id.seekBar_rxPacketTimeout),
+                findViewById(R.id.textView_rxPacketTimeout),
+                1, 65535, "ms"
+        ).setValueProxy(() -> loRaConfig.getRxPacketTimeout(), (v) -> loRaConfig.setRxPacketTimeout(v));
     }
 
+    private void initSwitches() {
+        new SwitchHandler(
+                findViewById(R.id.switch_crc),
+                findViewById(R.id.textView_CRC),
+                loRaConfig.getCrc(),
+                (v) -> loRaConfig.setCrc(v)
+        );
+
+        new SwitchHandler(
+                findViewById(R.id.switch_implicitHeader),
+                findViewById(R.id.textView_implicitHeader),
+                loRaConfig.getImplicitHeaderOn(),
+                (v) -> loRaConfig.setImplicitHeaderOn(v)
+        ).setOnOffLabels("implicit", "explicit");
+
+        new SwitchHandler(
+                findViewById(R.id.switch_rxSingle),
+                findViewById(R.id.textView_rxSingle),
+                loRaConfig.getRxSingleOn(),
+                (v) -> loRaConfig.setRxSingleOn(v)
+        ).setOnOffLabels("single", "continue");
+
+        new SwitchHandler(
+                findViewById(R.id.switch_frequencyHop),
+                findViewById(R.id.textView_frequencyHop),
+                loRaConfig.getFrequencyHopOn(),
+                (v) -> loRaConfig.setFrequencyHopOn(v)
+        );
+    }
 }

@@ -20,7 +20,7 @@ public class LoraCommunicationActivityTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("de.htwberlin.ad_hoc_multihop_network", appContext.getPackageName());
+        assertEquals("de.htwberlin.lora_multihop_visualisation", appContext.getPackageName());
     }
 
     @Test
