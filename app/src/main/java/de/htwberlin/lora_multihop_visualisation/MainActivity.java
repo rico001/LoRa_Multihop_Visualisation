@@ -18,7 +18,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Map;
 
-import de.htwberlin.lora_multihop_implementation.components.lora.SetupManager;
+import de.htwberlin.lora_multihop_implementation.SetupManager;
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableRow;
 import de.htwberlin.lora_multihop_visualisation.fragments.MainFragmentsAdapter;

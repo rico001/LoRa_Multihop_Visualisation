@@ -1,7 +1,9 @@
-package de.htwberlin.lora_multihop_implementation.components.lora;
+package de.htwberlin.lora_multihop_implementation;
 
 import android.util.Log;
 
+import de.htwberlin.lora_multihop_implementation.components.lora.IncomingMessageHandler;
+import de.htwberlin.lora_multihop_implementation.components.lora.LoraHandler;
 import de.htwberlin.lora_multihop_visualisation.BluetoothService;
 import de.htwberlin.lora_multihop_visualisation.SingletonDevice;
 import de.htwberlin.lora_multihop_visualisation.fragments.TerminalFragment;
