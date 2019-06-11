@@ -1,6 +1,7 @@
 package de.htwberlin.lora_multihop_visualisation.fragments;
 
 import android.content.Context;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.htwberlin.lora_multihop_implementation.components.model.NeighbourSet;
+import de.htwberlin.lora_multihop_implementation.enums.ELoraNodeState;
 import de.htwberlin.lora_multihop_visualisation.R;
 import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableHead;
 import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableRow;
@@ -43,10 +45,14 @@ public class NeighbourSetTableFragment extends Fragment {
         table.addView(tableHead);
 
         // Testing
-        //addRow("192831123", "000", "JFG", 52.463201, 13.507464, "Active", "182381912");
-        //addRow("182381923", "FFF", "CDF", 52.461776, 13.492454, "Sending", "182381923");
-        //addRow("182381924", "FFF", "CDF", 52.459102, 13.506970, "Sending", "182381923");
-        //getRow("182381923").setAddressText("000");
+        Location mapPoint = new Location("NodeOne");
+        mapPoint.setLatitude(52.463201);
+        mapPoint.setLongitude(13.507464);
+
+        NeighbourSet nsOne = new NeighbourSet(0, "AAAA", "BBBB", mapPoint, ELoraNodeState.UP, System.currentTimeMillis())
+
+        addRow(nsOne);
+        getRow(Integer.toString(nsOne.getUid())).setAddressText("AAAB");
 
         return view;
     }
