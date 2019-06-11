@@ -1,6 +1,5 @@
 package de.htwberlin.lora_multihop_implementation.components.lora;
 
-import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -11,11 +10,7 @@ import de.htwberlin.lora_multihop_implementation.components.processor.MessagePro
 import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 import de.htwberlin.lora_multihop_visualisation.BluetoothService;
-import de.htwberlin.lora_multihop_visualisation.MainActivity;
 import de.htwberlin.lora_multihop_visualisation.SingletonDevice;
-import de.htwberlin.lora_multihop_visualisation.fragments.TerminalFragment;
-
-import static java.security.AccessController.getContext;
 
 public class LoraHandler extends AppCompatActivity implements MessageConstants {
 
