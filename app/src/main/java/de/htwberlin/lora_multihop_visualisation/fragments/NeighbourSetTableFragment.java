@@ -49,7 +49,7 @@ public class NeighbourSetTableFragment extends Fragment {
         mapPoint.setLatitude(52.463201);
         mapPoint.setLongitude(13.507464);
 
-        NeighbourSet nsOne = new NeighbourSet(0, "AAAA", "BBBB", mapPoint, ELoraNodeState.UP, System.currentTimeMillis())
+        NeighbourSet nsOne = new NeighbourSet(0, "AAAA", "BBBB", mapPoint, ELoraNodeState.UP, System.currentTimeMillis());
 
         addRow(nsOne);
         getRow(Integer.toString(nsOne.getUid())).setAddressText("AAAB");
