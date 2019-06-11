@@ -31,6 +31,14 @@ public class MessageProcessor implements MessageConstants {
     private ExecutorService outWorker;
 
     // todo: need to iterate over the map and check if there are any "expired" (i.e. startTimestamp < now - 5minutes) handlers. destroy them to free the memory, write a line in the log.
+
+    // I'd go for a singleton manager class.. state machine... shared buffer map
+    // buffer queue for last 20 msgs
+    // checks if already msg received from incoming source / remote adress
+    // which communication was inited? -> join? updateTableDataRoutine? ...
+
+    // now also... new exchange handler for every message, even it's part of exchange (join reply between join / ack)
+    // better? --> updated exchange objects (states: JOIN -> JOIN REPLY -> ACK UPDATE)
     private HashMap<String, ExchangeHandler> handlersMap = new HashMap<>();
 
     public MessageProcessor(ILoraCommands executor) {

@@ -47,26 +47,20 @@ public class NeighbourSetTableFragment extends Fragment {
     /**
      * Adds a row to the table
      *
-     * @param id
-     * @param address
-     * @param dah
-     * @param latitude
-     * @param longitude
-     * @param state
-     * @param timestamp
+     * @param ns NeighbourSet data to be mapped
      */
-    public void addRow(String id, String address, String dah, String latitude, String longitude, String state, String timestamp) {
+    public void addRow(NeighbourSet ns) {
         NeighbourSetTableRow row = new NeighbourSetTableRow(getContext());
 
-        row.setUidText(id);
-        row.setAddressText(address);
-        row.setDahText(dah);
-        row.setLatitudeText(latitude);
-        row.setLongitudeText(longitude);
-        row.setStatusText(state);
-        row.setTimestampText(timestamp);
+        row.setUidText(Integer.toString(ns.getUid()));
+        row.setAddressText(ns.getAddress());
+        row.setDahText(ns.getDah());
+        row.setLatitudeText(Double.toString(ns.getLatitude()));
+        row.setLongitudeText(Double.toString(ns.getLongitude()));
+        row.setStatusText(ns.getEnumLoraNodeState().toString());
+        row.setTimestampText(Long.toString(ns.getTimestamp()));
 
-        tableData.put(id, row);
+        tableData.put(Integer.toString(ns.getUid()), row);
 
         table.addView(row);
     }
