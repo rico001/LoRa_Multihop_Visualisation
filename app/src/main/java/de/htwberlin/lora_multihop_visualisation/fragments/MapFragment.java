@@ -101,7 +101,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {
                         Location currentLocation = (Location) task.getResult();
-                        location = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                        //location = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                        location = new LatLng(50.232, 40.232);
                         // setCurrentLocation(location);
                         mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
                         mMap.moveCamera(CameraUpdateFactory.zoomTo(10));

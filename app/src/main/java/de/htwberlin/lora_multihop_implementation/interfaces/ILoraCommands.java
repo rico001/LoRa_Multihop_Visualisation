@@ -202,7 +202,7 @@ public interface ILoraCommands {
 	 *	XX						HEX byte send-data length (01 - FB = 1 - 250)
 	 *							more data than specified gets abandoned
 	 */
-	void send();
+    void send(int bytes);
 
 	/**
 	 *	SEND DATA

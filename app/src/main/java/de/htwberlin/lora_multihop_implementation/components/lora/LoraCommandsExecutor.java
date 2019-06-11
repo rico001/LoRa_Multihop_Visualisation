@@ -152,9 +152,10 @@ public class LoraCommandsExecutor implements ILoraCommands, LoraCommandsConstant
 	}
 
 	@Override
-	public void send() {
+    public void send(int bytes) {
+        String completeCommand = SEND_CMD_MSG.replace("XX", Integer.toString(bytes));
 		if(btService.isConnected())	{
-			btService.write((SEND_CMD_MSG + AT_POSTFIX).getBytes());
+            btService.write((completeCommand + AT_POSTFIX).getBytes());
 		}
 	}
 

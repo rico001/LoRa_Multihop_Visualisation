@@ -127,6 +127,7 @@ public class SelectDeviceActivity extends AppCompatActivity{
                 //set devicename in item
                 if (deviceName != null && !deviceName.isEmpty()) {
                     textView_devicename.setText(deviceName);
+
                 }else{
                     textView_devicename.setText("Unknown");
                 }

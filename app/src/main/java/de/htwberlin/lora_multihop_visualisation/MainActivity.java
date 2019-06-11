@@ -22,18 +22,20 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.Map;
 
 import de.htwberlin.lora_multihop_implementation.components.lora.LoraCommandsExecutor;
+import de.htwberlin.lora_multihop_implementation.components.lora.LoraHandler;
+import de.htwberlin.lora_multihop_implementation.components.model.NeighbourSet;
 import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableRow;
 import de.htwberlin.lora_multihop_visualisation.fragments.MainFragmentsAdapter;
 import de.htwberlin.lora_multihop_visualisation.fragments.MapFragment;
 import de.htwberlin.lora_multihop_visualisation.fragments.NeighbourSetTableFragment;
-import de.htwberlin.lora_multihop_visualisation.fragments.TerminalFragment;
+import de.htwberlin.lora_multihop_visualisation.TerminalFragment;
 
 /**
  * Visualisation and building a multihop wireless network
  */
-public class MainActivity extends AppCompatActivity implements MessageConstants, NeighbourSetTableFragment.ITableListener, MapFragment.IMapListener {
+public class MainActivity extends AppCompatActivity implements MessageConstants, MapFragment.IMapListener, NeighbourSetTableFragment.ITableListener {
 
     private final static String TAG = "mainactivity";
 
@@ -44,7 +46,9 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
     private ViewPager viewPager;
 
     private MapFragment mapFragment;
+    private LoraHandler loraHandler;
     private TerminalFragment terminalFragment;
+    private ProtocolFragment protocolFragment;
     private NeighbourSetTableFragment neighbourSetTableFragment;
 
     private static final String[] LOCATION_PERMS = {
@@ -71,6 +75,9 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
                 case MESSAGE_READ:
                     String message = (String) msg.obj;
                     terminalFragment.updateTerminalMessages(readColor, message, false);
+                    // update all fragements gui
+                    // pass to handler for logic stuff
+                    loraHandler.processLoraResponse(message);
                     break;
                 case MESSAGE_ERROR:
                     System.out.println("MSG ERROR");
@@ -91,18 +98,19 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
 
         // Checks if the app has the location permissions, if not it requests them
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-            && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             requestPermissions(LOCATION_PERMS, 1337);
         } else {
             init();
         }
-
         initBluetoothService();
+        initLoraHandler();
     }
 
     /**
      * Callback for the location permissions
+     *
      * @param requestCode
      * @param permissions
      * @param grantResults
@@ -136,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
 
     /**
      * Sets the fragment container and adds the map and terminal fragments
+     *
      * @param viewPager
      */
     private void setUpViewPager(ViewPager viewPager) {
@@ -156,23 +165,37 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
         adapter.addFragment(neighbourSetTableFragment, "NeighbourSetTableFragment");
         adapter.addFragment(protocolFragment, "LogicFragment");
 
+
         viewPager.setAdapter(adapter);
     }
 
     /**
      * Changes the active fragment
+     *
      * @param position
      */
     public void setViewPager(int position) {
         viewPager.setCurrentItem(position);
+
+        if (mapFragment.isVisible()) {
+            mapFragment.addHostMarker(new LatLng(50.000, 50.0000), "asd", 1000);
+        }
     }
 
     private void initBluetoothService() {
         try {
-            btService = new BluetoothService(this, msgHandler, SingletonDevice.getBluetoothDevice());
+            btService = new BluetoothService(msgHandler, SingletonDevice.getBluetoothDevice());
             btService.connectWithBluetoothDevice();
         } catch (NullPointerException e) {
-            Log.d("initBluetoothService", "Choose a device!");
+            Log.e(TAG, "Choose a device!");
+        }
+    }
+
+    private void initLoraHandler() {
+        try {
+            loraHandler = new LoraHandler(btService);
+        } catch (NullPointerException e) {
+            Log.e(TAG, "Lora Handler could not be init");
         }
     }
 
@@ -234,9 +257,9 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        try{
+        try {
             btService.disconnect();
-        }catch(NullPointerException e){
+        } catch (NullPointerException e) {
             Log.d(TAG, "btService is null");
         }
 
@@ -255,8 +278,10 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
 
         return super.onOptionsItemSelected(item);
     }
+
     /**
      * Starts a new activity
+     *
      * @param c is Class of this Activity
      */
     private void startAnotherActivity(Class c) {

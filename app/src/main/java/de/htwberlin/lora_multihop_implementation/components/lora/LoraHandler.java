@@ -1,8 +1,12 @@
 package de.htwberlin.lora_multihop_implementation.components.lora;
 
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+
+import de.htwberlin.lora_multihop_implementation.components.model.LocalHop;
+import de.htwberlin.lora_multihop_implementation.components.parser.MessageParser;
+import de.htwberlin.lora_multihop_implementation.components.parser.ParserException;
+import de.htwberlin.lora_multihop_implementation.components.processor.MessageProcessor;
 import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
 import de.htwberlin.lora_multihop_visualisation.BluetoothService;
@@ -10,59 +14,80 @@ import de.htwberlin.lora_multihop_visualisation.SingletonDevice;
 
 public class LoraHandler extends AppCompatActivity implements MessageConstants {
 
-	private BluetoothService btService;
-	private ILoraCommands loraCommandsExecutor;
-	private final Handler responseHandler = new Handler() {
-		@Override
-		public synchronized void handleMessage(Message msg) {
-			switch (msg.what) {
-				case STATE_CONNECTING:
-					System.out.println("Verbindung mit " + SingletonDevice.getBluetoothDevice().getName() + " wird aufgebaut");
-					break;
-				case STATE_CONNECTED:
-					System.out.println("Verbindung ist aufgebaut");
-					break;
-				case MESSAGE_READ:
-					byte[] readBuf = (byte[]) msg.obj;
-					// construct a string from the valid bytes in the buffer
-					String readMessage = new String(readBuf);
-					processLoraResponse(readMessage.trim());
-					break;
-				case MESSAGE_ERROR:
-					System.out.println("MSG ERROR");
-					break;
-			}
-		}
-	};
+    private static final String TAG = "MessageHandler";
 
-	public LoraHandler()	{
-		this.initBluetoothService();
+    private BluetoothService btService;
+    private MessageParser parser;
+    private ILoraCommands executor;
+    private MessageProcessor processor;
+    public static LoraHandler instance = null;
 
-		this.loraCommandsExecutor = new LoraCommandsExecutor(btService);
-	}
+    public LoraHandler(BluetoothService btService) {
+        this.btService = btService;
+        this.executor = new LoraCommandsExecutor(this.btService);
+        this.parser = new MessageParser(this.executor);
+        this.processor = new MessageProcessor(this.executor);
+    }
 
-	private void initBluetoothService()	{
-		try {
-			btService = new BluetoothService(this, responseHandler, SingletonDevice.getBluetoothDevice());
-			btService.connectWithBluetoothDevice();
-		} catch (NullPointerException e) {
-			System.out.println("BT issue --- " + e.getStackTrace());
-		}
-	}
+    public void processLoraResponse(String responseMsg) {
+        if (parseMessage(responseMsg)) processMessage();
+    }
 
-	private static void processLoraResponse(String responseMsg)	{
-		System.out.println(">> " + responseMsg);
-	}
+    public BluetoothService getBtService() {
+        return btService;
+    }
 
-	public BluetoothService getBtService() {
-		return btService;
-	}
+    public MessageParser getParser() {
+        return parser;
+    }
 
-	public ILoraCommands getLoraCommandsExecutor() {
-		return loraCommandsExecutor;
-	}
+    public ILoraCommands getExecutor() {
+        return executor;
+    }
 
-	public Handler getResponseHandler() {
-		return responseHandler;
-	}
+    public MessageProcessor getProcessor() {
+        return processor;
+    }
+
+    private boolean parseMessage(String message) {
+        try {
+            initLocalHop(); //TODO: not the best place, but works
+            Log.i(TAG, "parsing message " + message);
+            if (message.startsWith("LR,")) {
+                parser.parseInput(message);
+                Log.i(TAG, "parsed message");
+                return Boolean.TRUE;
+            }
+        } catch (ParserException | ArrayIndexOutOfBoundsException | NullPointerException | NumberFormatException e) {
+            Log.e(TAG, e.getLocalizedMessage());
+            return Boolean.FALSE;
+        }
+
+        Log.i(TAG, "unable message");
+        return Boolean.FALSE;
+    }
+
+    private void processMessage() {
+        processor.processMessage();
+    }
+
+    public static LoraHandler getInstance(BluetoothService btService) {
+        if (instance == null) instance = new LoraHandler(btService);
+        return instance;
+    }
+
+    public static LoraHandler getInstance() {
+        return instance;
+    }
+
+    private void initLocalHop() {
+        LocalHop localHop = LocalHop.getInstance();
+        String deviceAddress = SingletonDevice.getBluetoothDevice()
+                .getAddress()
+                .replace(":", "")
+                .substring(12 - 4);
+        localHop.setAddress(deviceAddress);
+        localHop.setLatitude(50.123);
+        localHop.setLongitude(40.123);
+    }
 }

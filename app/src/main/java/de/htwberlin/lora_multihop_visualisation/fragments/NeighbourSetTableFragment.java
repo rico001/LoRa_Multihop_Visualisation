@@ -11,9 +11,11 @@ import android.widget.TableLayout;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.htwberlin.lora_multihop_implementation.components.model.NeighbourSet;
 import de.htwberlin.lora_multihop_visualisation.R;
 import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableHead;
 import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableRow;
+
 
 public class NeighbourSetTableFragment extends Fragment {
     private static final String TAG = "NeighbourSetTableFragme";
@@ -41,9 +43,9 @@ public class NeighbourSetTableFragment extends Fragment {
         table.addView(tableHead);
 
         // Testing
-        addRow("192831123", "000", "JFG", 52.463201, 13.507464, "Active", "182381912");
-        addRow("182381923", "FFF", "CDF", 52.461776, 13.492454, "Sending", "182381923");
-        addRow("182381924", "FFF", "CDF", 52.459102, 13.506970, "Sending", "182381923");
+        //addRow("192831123", "000", "JFG", 52.463201, 13.507464, "Active", "182381912");
+        //addRow("182381923", "FFF", "CDF", 52.461776, 13.492454, "Sending", "182381923");
+        //addRow("182381924", "FFF", "CDF", 52.459102, 13.506970, "Sending", "182381923");
         //getRow("182381923").setAddressText("000");
 
         return view;
@@ -52,26 +54,20 @@ public class NeighbourSetTableFragment extends Fragment {
     /**
      * Adds a row to the table
      *
-     * @param id
-     * @param address
-     * @param dah
-     * @param latitude
-     * @param longitude
-     * @param state
-     * @param timestamp
+     * @param ns NeighbourSet data to be mapped
      */
-    public void addRow(String id, String address, String dah, Double latitude, Double longitude, String state, String timestamp) {
+    public void addRow(NeighbourSet ns) {
         NeighbourSetTableRow row = new NeighbourSetTableRow(getContext());
 
-        row.setUidText(id);
-        row.setAddressText(address);
-        row.setDahText(dah);
-        row.setLatitudeText(latitude);
-        row.setLongitudeText(longitude);
-        row.setStatusText(state);
-        row.setTimestampText(timestamp);
+        row.setUidText(Integer.toString(ns.getUid()));
+        row.setAddressText(ns.getAddress());
+        row.setDahText(ns.getDah());
+        row.setLatitudeText(ns.getLatitude());
+        row.setLongitudeText(ns.getLongitude());
+        row.setStatusText(ns.getEnumLoraNodeState().toString());
+        row.setTimestampText(Long.toString(ns.getTimestamp()));
 
-        tableData.put(id, row);
+        tableData.put(Integer.toString(ns.getUid()), row);
 
         table.addView(row);
 

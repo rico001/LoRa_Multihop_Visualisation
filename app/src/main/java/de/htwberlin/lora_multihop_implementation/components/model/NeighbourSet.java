@@ -46,7 +46,7 @@ public class NeighbourSet {
 
 	public NeighbourSet()	{}
 
-	public NeighbourSet(int uid, String address, String dah, Location location, ELoraNodeState state, Timestamp timestamp)	{
+    public NeighbourSet(int uid, String address, String dah, Location location, ELoraNodeState state, Long timestamp) {
 		if(uid < 0 || uid > 9999)
 			throw new IllegalArgumentException("invalid UID for neighbour set");
 		if(Integer.parseInt(address, 16) < 0 || Integer.parseInt(address, 16) > 65534)
@@ -60,7 +60,7 @@ public class NeighbourSet {
 		this.longitude = location.getLongitude();
 		this.latitude = location.getLatitude();
 		this.state = state.name();
-		this.timestamp = timestamp.getTime();
+        this.timestamp = timestamp;
 	}
 
 	public int getUid() {

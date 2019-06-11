@@ -1,28 +1,45 @@
 package de.htwberlin.lora_multihop_implementation.components.messages;
 
 import de.htwberlin.lora_multihop_implementation.enums.EMessageType;
+import de.htwberlin.lora_multihop_implementation.interfaces.ILoraCommands;
 
 /**
  * Abstract class of a Message
+ *
  * @author morelly_t1
  */
 
 public abstract class Message {
-
-    private EMessageType type;
+    protected String id;
+    private String remoteAddress;
     private String sourceAddress;
-    private EMessageType replyMessage;
 
-    public Message(String sourceAddress) {
+    private ILoraCommands executor;
+
+    public Message() {
+
+    }
+
+    public Message(ILoraCommands executor, String sourceAddress, String remoteAddress) {
+        this.executor = executor;
         this.sourceAddress = sourceAddress;
+        this.remoteAddress = remoteAddress;
     }
 
-    public EMessageType getType() {
-        return type;
+    public String getId() {
+        return id;
     }
 
-    public void setType(EMessageType type) {
-        this.type = type;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getRemoteAddress() {
+        return remoteAddress;
+    }
+
+    public void setRemoteAddress(String remoteAddress) {
+        this.remoteAddress = remoteAddress;
     }
 
     public String getSourceAddress() {
@@ -33,23 +50,18 @@ public abstract class Message {
         this.sourceAddress = sourceAddress;
     }
 
-    public EMessageType getAnswerMessage() {
-        return replyMessage;
+    public ILoraCommands getExecutor() {
+        return executor;
     }
 
-    public void setAnswerMessage(EMessageType replyMessage) {
-        this.replyMessage = replyMessage;
+    public void setExecutor(ILoraCommands executor) {
+        this.executor = executor;
     }
-
 
     @Override
     public String toString() {
-        return "Message{" +
-                "type=" + type +
-                ", sourceAddress='" + sourceAddress + '\'' +
-                ", replyMessage=" + replyMessage +
-                '}';
+        return "";
     }
 
-
+    public abstract void executeAtRoutine(ILoraCommands executor);
 }
