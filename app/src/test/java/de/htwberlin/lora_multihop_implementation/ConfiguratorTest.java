@@ -3,7 +3,7 @@ package de.htwberlin.lora_multihop_implementation;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.htwberlin.lora_multihop_implementation.components.lora.LoRaConfig;
+import de.htwberlin.lora_multihop_logic.components.lora.LoRaConfig;
 
 
 public class ConfiguratorTest {

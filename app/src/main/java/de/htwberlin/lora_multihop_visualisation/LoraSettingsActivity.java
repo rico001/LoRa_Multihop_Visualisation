@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.Toast;
 
-import de.htwberlin.lora_multihop_implementation.components.lora.LoRaConfig;
+import de.htwberlin.lora_multihop_logic.components.lora.LoRaConfig;
 import de.htwberlin.lora_multihop_visualisation.settings.SeekBarHandler;
 import de.htwberlin.lora_multihop_visualisation.settings.SwitchHandler;
 

@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
+import de.htwberlin.lora_multihop_logic.interfaces.MessageConstants;
 
 /**
  * Allows communication building and Access to Inputstream and Outputstream of BTsocket

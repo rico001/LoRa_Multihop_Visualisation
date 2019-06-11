@@ -3,10 +3,10 @@ package de.htwberlin.lora_multihop_visualisation.ParserTests;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.htwberlin.lora_multihop_implementation.components.messages.Message;
-import de.htwberlin.lora_multihop_implementation.components.parser.MessageParser;
-import de.htwberlin.lora_multihop_implementation.components.parser.ParserException;
-import de.htwberlin.lora_multihop_implementation.components.queue.IncomingMessageQueue;
+import de.htwberlin.lora_multihop_logic.components.messages.Message;
+import de.htwberlin.lora_multihop_logic.components.parser.MessageParser;
+import de.htwberlin.lora_multihop_logic.components.parser.ParserException;
+import de.htwberlin.lora_multihop_logic.components.queue.IncomingMessageQueue;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.hamcrest.CoreMatchers.instanceOf;

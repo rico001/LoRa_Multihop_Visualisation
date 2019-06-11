@@ -12,8 +12,8 @@ import android.widget.TableLayout;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.htwberlin.lora_multihop_implementation.components.model.NeighbourSet;
-import de.htwberlin.lora_multihop_implementation.enums.ELoraNodeState;
+import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
+import de.htwberlin.lora_multihop_logic.enums.ELoraNodeState;
 import de.htwberlin.lora_multihop_visualisation.R;
 import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableHead;
 import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableRow;

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.location.Location;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.v7.app.AppCompatActivity;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -14,14 +13,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
 
-import de.htwberlin.lora_multihop_implementation.components.model.NeighbourSet;
-import de.htwberlin.lora_multihop_implementation.components.storage.NeighbourSetDAO;
-import de.htwberlin.lora_multihop_implementation.components.storage.NeighbourSetDatabase;
-import de.htwberlin.lora_multihop_implementation.enums.ELoraNodeState;
+import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
+import de.htwberlin.lora_multihop_logic.components.storage.NeighbourSetDAO;
+import de.htwberlin.lora_multihop_logic.components.storage.NeighbourSetDatabase;
+import de.htwberlin.lora_multihop_logic.enums.ELoraNodeState;
 
 @RunWith(AndroidJUnit4.class)
 public class NeighbourSetDatabaseTest {

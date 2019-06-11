@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import java.util.HashMap;
 
-import de.htwberlin.lora_multihop_implementation.interfaces.LoraCommandsConstants;
+import de.htwberlin.lora_multihop_logic.interfaces.LoraCommandsConstants;
 
 /**
  * Allows to save up to MAXSIZE favorite AT commands

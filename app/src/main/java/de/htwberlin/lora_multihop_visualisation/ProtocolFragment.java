@@ -1,6 +1,5 @@
 package de.htwberlin.lora_multihop_visualisation;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -13,8 +12,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.htwberlin.lora_multihop_implementation.components.lora.LoraHandler;
-import de.htwberlin.lora_multihop_implementation.interfaces.MessageConstants;
+import de.htwberlin.lora_multihop_logic.interfaces.MessageConstants;
 
 public class ProtocolFragment extends Fragment implements MessageConstants {
 

@@ -30,7 +30,7 @@ import com.google.android.gms.tasks.Task;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.htwberlin.lora_multihop_implementation.enums.EFragments;
+import de.htwberlin.lora_multihop_logic.enums.EFragments;
 import de.htwberlin.lora_multihop_visualisation.MainActivity;
 import de.htwberlin.lora_multihop_visualisation.R;
 

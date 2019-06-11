@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 
-import de.htwberlin.lora_multihop_implementation.components.lora.LoRaConfig;
+import de.htwberlin.lora_multihop_logic.components.lora.LoRaConfig;
 
 public class LoRaApplication extends Application {
     private String PREF_CONF_KEY = "config";

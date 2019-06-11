@@ -2,8 +2,6 @@ package de.htwberlin.lora_multihop_visualisation;
 
 import android.bluetooth.BluetoothDevice;
 
-import de.htwberlin.lora_multihop_implementation.components.model.LocalHop;
-
 /**
  * unique Access to device for BTcommunication (important for init BluetoothService)
  */

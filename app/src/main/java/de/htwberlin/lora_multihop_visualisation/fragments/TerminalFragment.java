@@ -17,7 +17,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import de.htwberlin.lora_multihop_implementation.enums.EFragments;
+import de.htwberlin.lora_multihop_logic.enums.EFragments;
 import de.htwberlin.lora_multihop_visualisation.LastCommandsUI_Layout;
 import de.htwberlin.lora_multihop_visualisation.MainActivity;
 import de.htwberlin.lora_multihop_visualisation.R;
