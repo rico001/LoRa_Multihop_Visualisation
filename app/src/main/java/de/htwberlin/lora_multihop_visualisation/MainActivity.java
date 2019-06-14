@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
         } else {
             init();
         }
+
         initLoraSetup();
     }
 
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
     /**
      * Sets up the connection between android & lora related stuff
      */
-    private void initLoraSetup()    {
+    private void initLoraSetup() {
         this.setupManager = new SetupManager(terminalFragment);
     }
 

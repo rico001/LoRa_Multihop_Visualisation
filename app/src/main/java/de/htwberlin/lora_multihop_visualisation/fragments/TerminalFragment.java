@@ -2,7 +2,10 @@ package de.htwberlin.lora_multihop_visualisation.fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +18,11 @@ import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import de.htwberlin.lora_multihop_logic.enums.EFragments;
 import de.htwberlin.lora_multihop_visualisation.LastCommandsUI_Layout;
@@ -37,8 +44,18 @@ public class TerminalFragment extends Fragment {
     private Button sendButton;
     private Button returnButton;
 
+    private ArrayList<String> messages = new ArrayList<>();
+
     public TerminalFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            messages = savedInstanceState.getStringArrayList("messages");
+        }
     }
 
     @Override
@@ -50,7 +67,9 @@ public class TerminalFragment extends Fragment {
         sendButton = (Button) view.findViewById(R.id.terminal_send_button);
         returnButton = (Button) view.findViewById(R.id.return_to_map);
 
-        lastComandsUILayout = new LastCommandsUI_Layout(view.findViewById(R.id.linearLayout_lastCommands), getContext(), v-> {
+        setUpTerminal();
+
+        lastComandsUILayout = new LastCommandsUI_Layout(view.findViewById(R.id.linearLayout_lastCommands), getContext(), v -> {
             Button b = (Button) v;
             terminalInput.setText(b.getText());
         });
@@ -93,7 +112,7 @@ public class TerminalFragment extends Fragment {
     /**
      * Adds new messages into terminal, declared in the ITerminalFragmentListener interface
      *
-     * @param color of text
+     * @param color         of text
      * @param message
      * @param isSendMessage
      * @return
@@ -101,36 +120,98 @@ public class TerminalFragment extends Fragment {
     public synchronized boolean updateTerminalMessages(int color, String message, boolean isSendMessage) {
 
         boolean isNDPMessage = Boolean.FALSE;
-        String prompt = "[" + getCurrentTime() + " - " + SingletonDevice.getBluetoothDevice().getName() + " ~]$ ";
+        String finalMessage;
+        String prompt = "";
         String sendPrompt = ">> ";
-        TextView textView;
+        TextView textView = new TextView(getContext());
 
         try {
-            textView = new TextView(getContext());
             textView.setTextSize(12);
         } catch (NullPointerException e) {
             return false;
         }
 
+        try {
+            SingletonDevice.getBluetoothDevice();
+            prompt = "[" + getCurrentTime() + " - " + SingletonDevice.getBluetoothDevice().getName() + " ~]$ ";
+        } catch (NullPointerException e) {
+            finalMessage = sendPrompt + "Please choose a bluetooth device!";
+            messages.add(finalMessage);
+            textView.setText(finalMessage);
+            terminalMessages.addView(textView);
+            return true;
+        }
+
         //TODO: distinguish whether message is send by user or is a reply message. To supress the prompt for "real" terminal behaviour
-        if (message.startsWith("AT,")) textView.setText(message);
-        else if (message.startsWith("LR,")) {
-            textView.setText(sendPrompt + message);
+        if (message.startsWith("AT,")) {
+            finalMessage = message;
+            textView.setText(message);
+        } else if (message.startsWith("LR,")) {
+            finalMessage = sendPrompt + message;
+            textView.setText(finalMessage);
             isNDPMessage = Boolean.TRUE;
-        } else textView.setText(prompt + message);
+        } else {
+            finalMessage = prompt + message;
+            textView.setText(finalMessage);
+        }
+
+        // List with messages so
+        // we can re-init the terminal in case
+        // it gets destroyed
+        messages.add(finalMessage);
 
         terminalMessages.addView(textView);
         terminalInput.setText("");
 
         // Auto scroll down
+        scrollDown();
+
+        return true;
+    }
+
+    /**
+     * Sets up old messages in case the fragment was destroyed
+     */
+    private void setUpTerminal() {
+        for (String message : messages) {
+            TextView textView = new TextView(getContext());
+
+            try {
+                textView.setTextSize(12);
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+
+            textView.setText(message);
+            terminalMessages.addView(textView);
+        }
+
+        scrollDown();
+    }
+
+    /**
+     * Scrolls down
+     */
+    private void scrollDown() {
         scrollView.post(new Runnable() {
             @Override
             public void run() {
                 scrollView.fullScroll(ScrollView.FOCUS_DOWN);
             }
         });
+    }
 
-        return true;
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putStringArrayList("messages", messages);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
     }
 
     private String getCurrentTime() {

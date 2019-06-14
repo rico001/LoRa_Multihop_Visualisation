@@ -3,6 +3,7 @@ package de.htwberlin.lora_multihop_visualisation.fragments;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -79,7 +80,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        getDeviceLocation();
+        // getDeviceLocation();
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(getLocation()));
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
 
         // onMapReady() is called after onResume() therefore the mMap variable is
         // overwritten with a new map. We have to call the onSetUpMap() here so that
@@ -90,9 +93,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         // mMap.setMyLocationEnabled(true);
     }
 
-    private void getDeviceLocation() {
+    /*private void getDeviceLocation() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
         Log.d("MapFragment", "Getting the location");
+
         try {
             final Task locationTask = fusedLocationProviderClient.getLastLocation();
 
@@ -112,7 +116,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         } catch (SecurityException e) {
             Log.d("MapFragment", "Getting the location failed");
         }
-    }
+    }*/
 
     /**
      * Returns the actual location, default 50.000 - 50.000
@@ -120,20 +124,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      * @return
      */
     public LatLng getLocation() {
+        LocationManager lm = (LocationManager) getContext().getSystemService(getContext().LOCATION_SERVICE);
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        /*Log.d("Main", Double.toString(location.getLatitude()));
         if (this.location == null) {
             getDeviceLocation();
         } else {
             return this.location;
-        }
-        return new LatLng(50.000, 50.000);
-    }
-
-    /**
-     * Helper method to set the current location
-     * @param latLng
-     */
-    private void setCurrentLocation(LatLng latLng) {
-        this.location = latLng;
+        }*/
+        return new LatLng(location.getLatitude(), location.getLongitude());
     }
 
     private void addMarker(LatLng location, String id, int radius, String title, String description, int markerBitmap, int circleFillColor, int circleStrokeColor) {
