@@ -3,15 +3,18 @@ package de.htwberlin.lora_multihop_visualisation.fragments;
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.htwberlin.lora_multihop_logic.NeighbourSetData;
 import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
 import de.htwberlin.lora_multihop_logic.enums.ELoraNodeState;
 import de.htwberlin.lora_multihop_visualisation.R;
@@ -19,20 +22,24 @@ import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableHead;
 import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableRow;
 
 
-public class NeighbourSetTableFragment extends Fragment {
+public class NeighbourSetTableFragment extends Fragment implements NeighbourSetData.INeighbourSetData {
     private static final String TAG = "NeighbourSetTableFragme";
 
     private TableLayout table;
-    private Map<String, NeighbourSetTableRow> tableData;
+    private HashMap<String, NeighbourSetTableRow> tableData;
     private ITableListener listener;
 
     public NeighbourSetTableFragment() {
         tableData = new HashMap<>();
+        //NeighbourSetData.getInstance().addListener(this);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+
+        }
     }
 
     @Override
@@ -52,7 +59,7 @@ public class NeighbourSetTableFragment extends Fragment {
         NeighbourSet nsOne = new NeighbourSet(0, "AAAA", "BBBB", mapPoint, ELoraNodeState.UP, System.currentTimeMillis());
 
         addRow(nsOne);
-        getRow(Integer.toString(nsOne.getUid())).setAddressText("AAAB");
+        //getRow(Integer.toString(nsOne.getUid())).setAddressText("AAAB");
 
         return view;
     }
@@ -91,6 +98,18 @@ public class NeighbourSetTableFragment extends Fragment {
         return tableData.get(id);
     }
 
+    public void updateRow(NeighbourSet neighbourSet) {
+        NeighbourSetTableRow row = getRow(Integer.toString(neighbourSet.getUid()));
+        row.setAddressText(neighbourSet.getAddress());
+        row.setDahText(neighbourSet.getDah());
+        row.setLatitudeText(neighbourSet.getLatitude());
+        row.setLongitudeText(neighbourSet.getLongitude());
+        row.setStatusText(neighbourSet.getState());
+        row.setTimestampText(Long.toString(neighbourSet.getTimestamp()));
+
+        this.listener.onRowUpdated(row);
+    }
+
     /**
      * Gets the table data
      *
@@ -112,6 +131,36 @@ public class NeighbourSetTableFragment extends Fragment {
         }
     }
 
+    public void removeAll() {
+        tableData.clear();
+        this.listener.onRemoveAll();
+    }
+
+    @Override
+    public void onSaveNeighbourSet(NeighbourSet neighbourSet) {
+        addRow(neighbourSet);
+    }
+
+    @Override
+    public void onUpdateNeighbourSet(NeighbourSet neighbourSet) {
+        updateRow(neighbourSet);
+    }
+
+    @Override
+    public void onDeleteNeighbourSet(int uid) {
+        removeRow(Integer.toString(uid));
+    }
+
+    @Override
+    public void onClearTable() {
+
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -131,6 +180,8 @@ public class NeighbourSetTableFragment extends Fragment {
 
     public interface ITableListener {
         void onRowAdded(NeighbourSetTableRow row);
+        void onRowUpdated(NeighbourSetTableRow row);
         void onRowRemoved(String id);
+        void onRemoveAll();
     }
 }

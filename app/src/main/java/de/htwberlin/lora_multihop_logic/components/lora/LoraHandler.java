@@ -1,7 +1,10 @@
 package de.htwberlin.lora_multihop_logic.components.lora;
 
+import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import de.htwberlin.lora_multihop_logic.components.model.LocalHop;
 import de.htwberlin.lora_multihop_logic.components.parser.MessageParser;
@@ -11,12 +14,14 @@ import de.htwberlin.lora_multihop_logic.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_logic.interfaces.MessageConstants;
 import de.htwberlin.lora_multihop_visualisation.BluetoothService;
 import de.htwberlin.lora_multihop_visualisation.SingletonDevice;
+import de.htwberlin.lora_multihop_visualisation.fragments.MapFragment;
 
 public class LoraHandler extends AppCompatActivity implements MessageConstants {
 
     private static final String TAG = "MessageHandler";
 
     private BluetoothService btService;
+    private MapFragment mapFragment;
 
     private ILoraCommands executor;
     private MessageParser parser;
@@ -24,8 +29,9 @@ public class LoraHandler extends AppCompatActivity implements MessageConstants {
 
     public static LoraHandler instance = null;
 
-    public LoraHandler(BluetoothService btService) {
+    public LoraHandler(BluetoothService btService, MapFragment mapFragment) {
         this.btService = btService;
+        this.mapFragment = mapFragment;
 
         this.executor = new LoraCommandsExecutor(this.btService);
         this.parser = new MessageParser(this.executor);
@@ -60,21 +66,23 @@ public class LoraHandler extends AppCompatActivity implements MessageConstants {
 
     private void initLocalHop() {
         LocalHop localHop = LocalHop.getInstance();
+        LatLng location = mapFragment.getLocation();
+
         String deviceAddress = SingletonDevice.getBluetoothDevice()
                 .getAddress()
                 .replace(":", "")
                 .substring(12 - 4);
         localHop.setAddress(deviceAddress);
-        localHop.setLatitude(50.123);
-        localHop.setLongitude(40.123);
+        localHop.setLatitude(location.latitude);
+        localHop.setLongitude(location.longitude);
     }
 
     public static LoraHandler getInstance() {
         return instance;
     }
 
-    public static LoraHandler getInstance(BluetoothService btService) {
-        if (instance == null) instance = new LoraHandler(btService);
+    public static LoraHandler getInstance(BluetoothService btService, MapFragment mapFragment) {
+        if (instance == null) instance = new LoraHandler(btService, mapFragment);
         return instance;
     }
 

@@ -1,11 +1,15 @@
 package de.htwberlin.lora_multihop_logic;
 
+import android.location.Location;
 import android.util.Log;
 
 import de.htwberlin.lora_multihop_logic.components.lora.IncomingMessageHandler;
 import de.htwberlin.lora_multihop_logic.components.lora.LoraHandler;
+import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
+import de.htwberlin.lora_multihop_logic.enums.ELoraNodeState;
 import de.htwberlin.lora_multihop_visualisation.BluetoothService;
 import de.htwberlin.lora_multihop_visualisation.SingletonDevice;
+import de.htwberlin.lora_multihop_visualisation.fragments.MapFragment;
 import de.htwberlin.lora_multihop_visualisation.fragments.TerminalFragment;
 
 public class SetupManager {
@@ -13,12 +17,14 @@ public class SetupManager {
     private final static String TAG = "lora-setup-manager";
 
     private TerminalFragment terminalFragment;
+    private MapFragment mapFragment;
 
     private IncomingMessageHandler incomingMessageHandler;
     private BluetoothService btService;
     private LoraHandler loraHandler;
 
-    public SetupManager(TerminalFragment terminalFragment)   {
+    public SetupManager(MapFragment mapFragment, TerminalFragment terminalFragment)   {
+        this.mapFragment = mapFragment;
         this.terminalFragment = terminalFragment;
 
         initIncomingMessageHandler();
@@ -42,7 +48,7 @@ public class SetupManager {
 
     private void initLoraHandler() {
         try {
-            this.loraHandler = new LoraHandler(this.btService);
+            this.loraHandler = new LoraHandler(this.btService, this.mapFragment);
         } catch (NullPointerException e) {
             Log.e(TAG, "Lora Handler could not be init");
         }
@@ -59,6 +65,14 @@ public class SetupManager {
 
     public void disconnectBluetooth()   {
         this.btService.disconnect();
+    }
+
+    public MapFragment getMapFragment() {
+        return mapFragment;
+    }
+
+    public void setMapFragment(MapFragment mapFragment) {
+        this.mapFragment = mapFragment;
     }
 
     public TerminalFragment getTerminalFragment() {

@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
      * Sets up the connection between android & lora related stuff
      */
     private void initLoraSetup() {
-        this.setupManager = new SetupManager(terminalFragment);
+        this.setupManager = new SetupManager(mapFragment, terminalFragment);
     }
 
     /**
@@ -143,10 +143,6 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
      */
     public void setViewPager(int position) {
         viewPager.setCurrentItem(position);
-
-        if (mapFragment.isVisible()) {
-            mapFragment.addHostMarker(new LatLng(50.000, 50.0000), "asd", 1000);
-        }
     }
 
     /**
@@ -171,6 +167,16 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
     @Override
     public void onRowRemoved(String id) {
         mapFragment.removeMarker(id);
+    }
+
+    @Override
+    public void onRowUpdated(NeighbourSetTableRow row) {
+
+    }
+
+    @Override
+    public void onRemoveAll() {
+        mapFragment.removeAll();
     }
 
     /**
@@ -217,7 +223,6 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
 
         if (id == R.id.item_LoraKonfig) {
             startAnotherActivity(LoraSettingsActivity.class);
-            Toast.makeText(this, "Lat: " + mapFragment.getLocation().latitude + "\nLon: " + mapFragment.getLocation().longitude, Toast.LENGTH_LONG).show();
             return true;
         }
         if (id == R.id.item_bluetooth) {

@@ -223,6 +223,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    public void removeAll() {
+        this.markers.clear();
+        this.circles.clear();
+    }
+
     /**
      * Returns all the markers on the map
      *
