@@ -31,6 +31,8 @@ public class SetupManager {
         initBtService();
         initLoraHandler();
         initIncomingMessageHandlerDestinations();
+
+        initNeighboursetData();
     }
 
     private void initIncomingMessageHandler() {
@@ -52,6 +54,22 @@ public class SetupManager {
         } catch (NullPointerException e) {
             Log.e(TAG, "Lora Handler could not be init");
         }
+    }
+
+    // TODO:    JUST A SKETCH FOR TESTING
+    //          also remove method from constructor
+    private void initNeighboursetData() {
+        NeighbourSetData nsd = NeighbourSetData.getInstance();
+
+        // Testing
+        Location mapPoint = new Location("NodeOne");
+        mapPoint.setLatitude(52.463201);
+        mapPoint.setLongitude(13.507464);
+
+        NeighbourSet nsOne = new NeighbourSet(0, "AAAA", "BBBB", mapPoint, ELoraNodeState.UP, System.currentTimeMillis());
+
+
+        nsd.saveNeighbourSet(nsOne);
     }
 
     private void initIncomingMessageHandlerDestinations()   {
