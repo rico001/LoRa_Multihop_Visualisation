@@ -1,21 +1,15 @@
 package de.htwberlin.lora_multihop_logic.components.processor;
 
-import android.location.Location;
 import android.util.Log;
 
 import java.security.InvalidParameterException;
 import java.util.Queue;
 
-import de.htwberlin.lora_multihop_logic.NeighbourSetData;
 import de.htwberlin.lora_multihop_logic.components.messages.AckMessage;
 import de.htwberlin.lora_multihop_logic.components.messages.JoinMessage;
 import de.htwberlin.lora_multihop_logic.components.messages.JoinReplyMessage;
 import de.htwberlin.lora_multihop_logic.components.messages.Message;
 import de.htwberlin.lora_multihop_logic.components.model.LocalHop;
-import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
-import de.htwberlin.lora_multihop_logic.components.ndp.NeighbourSetHandler;
-import de.htwberlin.lora_multihop_logic.components.storage.NeighbourSetDatabase;
-import de.htwberlin.lora_multihop_logic.enums.ELoraNodeState;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -112,5 +106,6 @@ public class JoinExchangeHandler extends ExchangeHandler {
     private void handleAckMsg(Message msg) {
         // todo: add the remoteLat, remoteLng (remembered from the JoinMessage) to the map.
         // todo: add to NS and table fragment
+    }
 }
 
