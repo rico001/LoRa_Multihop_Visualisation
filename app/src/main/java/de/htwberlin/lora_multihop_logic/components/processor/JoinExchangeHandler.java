@@ -111,6 +111,10 @@ public class JoinExchangeHandler extends ExchangeHandler {
     private void handleAckMsg(Message msg) {
         // todo: add the remoteLat, remoteLng (remembered from the JoinMessage) to the map.
         // todo: add to NS and table fragment
+
+        /*
+        *   TODO: REPLACE
+        *
         Location gps = new Location("remote-node");
         gps.setLongitude(this.remoteNodeLng);
         gps.setLatitude(this.remoteNodeLat);
@@ -121,6 +125,7 @@ public class JoinExchangeHandler extends ExchangeHandler {
         NeighbourSetDatabase db = nsh.getDb();
         db.neighbourSetDao().clearTable();
         db.neighbourSetDao().saveNeighbourSet(entry);
+        */
     }
 }
 
