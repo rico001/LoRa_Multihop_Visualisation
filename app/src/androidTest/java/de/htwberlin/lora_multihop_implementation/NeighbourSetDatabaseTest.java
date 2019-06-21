@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.List;
 
 import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
@@ -151,13 +150,13 @@ public class NeighbourSetDatabaseTest {
         Location local = new Location("berlin");
         local.setLatitude(52.5200);
         local.setLongitude(13.4050);
-        return new NeighbourSet(0, "AAAA", "AAAB", local, ELoraNodeState.UNKNOWN, new Timestamp(System.currentTimeMillis()));
+        return new NeighbourSet(0, "AAAA", "AAAB", local, ELoraNodeState.UNKNOWN, System.currentTimeMillis());
     }
 
     private NeighbourSet createNeighbourSetUid0001() {
         Location local = new Location("berlin");
         local.setLatitude(52.5200);
         local.setLongitude(13.4050);
-        return new NeighbourSet(1, "AAAB", "AAAC", local, ELoraNodeState.UNKNOWN, new Timestamp(System.currentTimeMillis()));
+        return new NeighbourSet(1, "AAAB", "AAAC", local, ELoraNodeState.UNKNOWN, System.currentTimeMillis());
     }
 }
