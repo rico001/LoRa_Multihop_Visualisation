@@ -6,6 +6,7 @@ import android.util.Log;
 import java.security.InvalidParameterException;
 import java.util.Queue;
 
+import de.htwberlin.lora_multihop_logic.NeighbourSetData;
 import de.htwberlin.lora_multihop_logic.components.messages.AckMessage;
 import de.htwberlin.lora_multihop_logic.components.messages.JoinMessage;
 import de.htwberlin.lora_multihop_logic.components.messages.JoinReplyMessage;
@@ -111,21 +112,5 @@ public class JoinExchangeHandler extends ExchangeHandler {
     private void handleAckMsg(Message msg) {
         // todo: add the remoteLat, remoteLng (remembered from the JoinMessage) to the map.
         // todo: add to NS and table fragment
-
-        /*
-        *   TODO: REPLACE
-        *
-        Location gps = new Location("remote-node");
-        gps.setLongitude(this.remoteNodeLng);
-        gps.setLatitude(this.remoteNodeLat);
-
-        NeighbourSet entry = new NeighbourSet(1, "2222", "1111", gps, ELoraNodeState.UP, null);
-
-        NeighbourSetHandler nsh = new NeighbourSetHandler();
-        NeighbourSetDatabase db = nsh.getDb();
-        db.neighbourSetDao().clearTable();
-        db.neighbourSetDao().saveNeighbourSet(entry);
-        */
-    }
 }
 

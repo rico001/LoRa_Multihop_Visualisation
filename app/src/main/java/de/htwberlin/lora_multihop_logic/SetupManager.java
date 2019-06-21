@@ -1,5 +1,6 @@
 package de.htwberlin.lora_multihop_logic;
 
+import android.content.Context;
 import android.location.Location;
 import android.util.Log;
 
@@ -12,9 +13,11 @@ import de.htwberlin.lora_multihop_visualisation.SingletonDevice;
 import de.htwberlin.lora_multihop_visualisation.fragments.MapFragment;
 import de.htwberlin.lora_multihop_visualisation.fragments.TerminalFragment;
 
-public class SetupManager {
+public class SetupManager   {
 
     private final static String TAG = "lora-setup-manager";
+
+    private Context context;
 
     private TerminalFragment terminalFragment;
     private MapFragment mapFragment;
@@ -23,7 +26,8 @@ public class SetupManager {
     private BluetoothService btService;
     private LoraHandler loraHandler;
 
-    public SetupManager(MapFragment mapFragment, TerminalFragment terminalFragment)   {
+    public SetupManager(Context context, MapFragment mapFragment, TerminalFragment terminalFragment)   {
+        this.context = context;
         this.mapFragment = mapFragment;
         this.terminalFragment = terminalFragment;
 
@@ -59,15 +63,14 @@ public class SetupManager {
     // TODO:    JUST A SKETCH FOR TESTING
     //          also remove method from constructor
     private void initNeighboursetData() {
-        NeighbourSetData nsd = NeighbourSetData.getInstance();
+        NeighbourSetData nsd = new NeighbourSetData(this.context);
 
         // Testing
         Location mapPoint = new Location("NodeOne");
         mapPoint.setLatitude(52.463201);
         mapPoint.setLongitude(13.507464);
 
-        NeighbourSet nsOne = new NeighbourSet(0, "AAAA", "BBBB", mapPoint, ELoraNodeState.UP, System.currentTimeMillis());
-
+        NeighbourSet nsOne = new NeighbourSet(420, "AAAA", "BBBB", mapPoint, ELoraNodeState.UP, System.currentTimeMillis());
 
         nsd.saveNeighbourSet(nsOne);
     }
@@ -123,5 +126,13 @@ public class SetupManager {
 
     public void setIncomingMessageHandler(IncomingMessageHandler incomingMessageHandler) {
         this.incomingMessageHandler = incomingMessageHandler;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 }

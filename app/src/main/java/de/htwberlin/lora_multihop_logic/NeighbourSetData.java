@@ -1,26 +1,17 @@
 package de.htwberlin.lora_multihop_logic;
 
+import android.content.Context;
+
 import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
-import de.htwberlin.lora_multihop_logic.components.ndp.NeighbourSetHandler;
 import de.htwberlin.lora_multihop_logic.components.storage.NeighbourSetDatabase;
 
 public class NeighbourSetData {
-    private static NeighbourSetData instance;
-    private NeighbourSetHandler nsh;
+
     private NeighbourSetDatabase db;
     private INeighbourSetData listener;
 
-    private NeighbourSetData() {
-        this.nsh = new NeighbourSetHandler();
-        this.db = nsh.getDb();
-    }
-
-    public static NeighbourSetData getInstance() {
-        if (instance == null) {
-            instance = new NeighbourSetData();
-        }
-
-        return instance;
+    public NeighbourSetData(Context context) {
+        this.db = NeighbourSetDatabase.getInMemoryDatabase(context);
     }
 
     public void addListener(INeighbourSetData listener) {
@@ -29,7 +20,7 @@ public class NeighbourSetData {
 
     public void saveNeighbourSet(NeighbourSet neighbourSet) {
         this.db.neighbourSetDao().saveNeighbourSet(neighbourSet);
-        this.listener.onSaveNeighbourSet(neighbourSet);
+        //this.listener.onSaveNeighbourSet(neighbourSet);
     }
 
     public void updateNeighbourSet(NeighbourSet neighbourSet) {

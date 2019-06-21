@@ -19,6 +19,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.Map;
 
 import de.htwberlin.lora_multihop_logic.SetupManager;
+import de.htwberlin.lora_multihop_logic.components.storage.NeighbourSetDatabase;
 import de.htwberlin.lora_multihop_logic.interfaces.MessageConstants;
 import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableRow;
 import de.htwberlin.lora_multihop_visualisation.fragments.MainFragmentsAdapter;
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
      * Sets up the connection between android & lora related stuff
      */
     private void initLoraSetup() {
-        this.setupManager = new SetupManager(mapFragment, terminalFragment);
+        this.setupManager = new SetupManager(getBaseContext(), mapFragment, terminalFragment);
     }
 
     /**
