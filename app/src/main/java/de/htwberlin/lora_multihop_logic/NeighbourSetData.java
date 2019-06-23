@@ -4,14 +4,18 @@ import android.content.Context;
 
 import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
 import de.htwberlin.lora_multihop_logic.components.storage.NeighbourSetDatabase;
+import de.htwberlin.lora_multihop_visualisation.fragments.NeighbourSetTableFragment;
 
 public class NeighbourSetData {
 
+    private Context context;
     private NeighbourSetDatabase db;
     private INeighbourSetData listener;
 
-    public NeighbourSetData(Context context) {
-        this.db = NeighbourSetDatabase.getInMemoryDatabase(context);
+    public NeighbourSetData(Context context, NeighbourSetTableFragment nstFragment) {
+        this.context = context;
+        this.db = NeighbourSetDatabase.getInMemoryDatabase(this.context);
+        this.listener = nstFragment;
     }
 
     public void addListener(INeighbourSetData listener) {
@@ -20,7 +24,7 @@ public class NeighbourSetData {
 
     public void saveNeighbourSet(NeighbourSet neighbourSet) {
         this.db.neighbourSetDao().saveNeighbourSet(neighbourSet);
-        //this.listener.onSaveNeighbourSet(neighbourSet);
+        this.listener.onSaveNeighbourSet(neighbourSet);
     }
 
     public void updateNeighbourSet(NeighbourSet neighbourSet) {

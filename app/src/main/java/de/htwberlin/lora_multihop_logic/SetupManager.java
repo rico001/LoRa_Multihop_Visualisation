@@ -11,6 +11,7 @@ import de.htwberlin.lora_multihop_logic.enums.ELoraNodeState;
 import de.htwberlin.lora_multihop_visualisation.BluetoothService;
 import de.htwberlin.lora_multihop_visualisation.SingletonDevice;
 import de.htwberlin.lora_multihop_visualisation.fragments.MapFragment;
+import de.htwberlin.lora_multihop_visualisation.fragments.NeighbourSetTableFragment;
 import de.htwberlin.lora_multihop_visualisation.fragments.TerminalFragment;
 
 public class SetupManager   {
@@ -21,15 +22,17 @@ public class SetupManager   {
 
     private TerminalFragment terminalFragment;
     private MapFragment mapFragment;
+    private NeighbourSetTableFragment nstFragment;
 
     private IncomingMessageHandler incomingMessageHandler;
     private BluetoothService btService;
     private LoraHandler loraHandler;
 
-    public SetupManager(Context context, MapFragment mapFragment, TerminalFragment terminalFragment)   {
+    public SetupManager(Context context, MapFragment mapFragment, TerminalFragment terminalFragment, NeighbourSetTableFragment nstFragment)   {
         this.context = context;
         this.mapFragment = mapFragment;
         this.terminalFragment = terminalFragment;
+        this.nstFragment = nstFragment;
 
         initIncomingMessageHandler();
         initBtService();
@@ -63,14 +66,14 @@ public class SetupManager   {
     // TODO:    JUST A SKETCH FOR TESTING
     //          also remove method from constructor
     private void initNeighboursetData() {
-        NeighbourSetData nsd = new NeighbourSetData(this.context);
+        NeighbourSetData nsd = new NeighbourSetData(this.context, this.nstFragment);
 
         // Testing
         Location mapPoint = new Location("NodeOne");
-        mapPoint.setLatitude(52.463201);
-        mapPoint.setLongitude(13.507464);
+        mapPoint.setLatitude(52.520007);
+        mapPoint.setLongitude(13.404954);
 
-        NeighbourSet nsOne = new NeighbourSet(420, "AAAA", "BBBB", mapPoint, ELoraNodeState.UP, System.currentTimeMillis());
+        NeighbourSet nsOne = new NeighbourSet(420, "AAAB", "BBBA", mapPoint, ELoraNodeState.PENDING, System.currentTimeMillis());
 
         nsd.saveNeighbourSet(nsOne);
     }

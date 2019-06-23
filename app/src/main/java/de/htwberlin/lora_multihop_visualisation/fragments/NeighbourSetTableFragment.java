@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +27,7 @@ public class NeighbourSetTableFragment extends Fragment implements NeighbourSetD
     private TableLayout table;
     private HashMap<String, NeighbourSetTableRow> tableData;
     private ITableListener listener;
+    private Context context;
 
     public NeighbourSetTableFragment() {
         tableData = new HashMap<>();
@@ -70,7 +70,7 @@ public class NeighbourSetTableFragment extends Fragment implements NeighbourSetD
      * @param ns NeighbourSet data to be mapped
      */
     public void addRow(NeighbourSet ns) {
-        NeighbourSetTableRow row = new NeighbourSetTableRow(getContext());
+        NeighbourSetTableRow row = new NeighbourSetTableRow(this.context);
 
         row.setUidText(Integer.toString(ns.getUid()));
         row.setAddressText(ns.getAddress());
@@ -164,6 +164,7 @@ public class NeighbourSetTableFragment extends Fragment implements NeighbourSetD
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
 
         if (context instanceof ITableListener) {
             this.listener = (ITableListener) context;

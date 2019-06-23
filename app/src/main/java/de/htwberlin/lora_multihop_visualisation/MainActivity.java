@@ -1,6 +1,7 @@
 package de.htwberlin.lora_multihop_visualisation;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -66,9 +67,8 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
             requestPermissions(LOCATION_PERMS, 1337);
         } else {
             init();
+            initLoraSetup();
         }
-
-        initLoraSetup();
     }
 
     /**
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
      * Sets up the connection between android & lora related stuff
      */
     private void initLoraSetup() {
-        this.setupManager = new SetupManager(getBaseContext(), mapFragment, terminalFragment);
+        this.setupManager = new SetupManager(getApplicationContext(), mapFragment, terminalFragment, neighbourSetTableFragment);
     }
 
     /**
