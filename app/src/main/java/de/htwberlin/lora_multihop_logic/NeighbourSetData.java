@@ -12,7 +12,7 @@ public class NeighbourSetData {
     private NeighbourSetDatabase db;
     private INeighbourSetData listener;
 
-    public NeighbourSetData(Context context, NeighbourSetTableFragment nstFragment) {
+    public NeighbourSetData(Context context, INeighbourSetData nstFragment) {
         this.context = context;
         this.db = NeighbourSetDatabase.getInMemoryDatabase(this.context);
         this.listener = nstFragment;

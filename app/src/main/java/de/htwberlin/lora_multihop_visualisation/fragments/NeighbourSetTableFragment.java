@@ -176,6 +176,7 @@ public class NeighbourSetTableFragment extends Fragment implements NeighbourSetD
     @Override
     public void onDetach() {
         super.onDetach();
+        this.context = null;
         this.listener = null;
     }
 
