@@ -16,7 +16,7 @@ public abstract class NeighbourSetDatabase extends RoomDatabase {
 
 	public static NeighbourSetDatabase getInMemoryDatabase(Context context) {
 		if (instance == null) {
-			instance = Room.inMemoryDatabaseBuilder(context.getApplicationContext(), NeighbourSetDatabase.class).allowMainThreadQueries().build();
+			instance = Room.inMemoryDatabaseBuilder(LoRaApplication.getAppContext(), NeighbourSetDatabase.class).allowMainThreadQueries().build();
 		}
 		return instance;
 	}

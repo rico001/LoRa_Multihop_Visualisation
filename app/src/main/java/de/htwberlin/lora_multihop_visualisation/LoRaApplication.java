@@ -12,10 +12,13 @@ public class LoRaApplication extends Application {
     private String PREF_CONF_KEY = "config";
 
     private LoRaConfig loRaConfig;
+    private static Context context;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        LoRaApplication.context = getApplicationContext();
 
         if (loRaConfig == null) {
             loRaConfig = loadConfig();
@@ -24,6 +27,10 @@ public class LoRaApplication extends Application {
 
     public LoRaConfig getLoRaConfig() {
         return loRaConfig;
+    }
+
+    public static Context getAppContext() {
+        return LoRaApplication.context;
     }
 
     /**
