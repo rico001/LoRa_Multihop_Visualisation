@@ -1,15 +1,19 @@
 package de.htwberlin.lora_multihop_logic.components.processor;
 
+import android.location.Location;
 import android.util.Log;
 
 import java.security.InvalidParameterException;
 import java.util.Queue;
 
+import de.htwberlin.lora_multihop_logic.NeighbourSetDataHandler;
 import de.htwberlin.lora_multihop_logic.components.messages.AckMessage;
 import de.htwberlin.lora_multihop_logic.components.messages.JoinMessage;
 import de.htwberlin.lora_multihop_logic.components.messages.JoinReplyMessage;
 import de.htwberlin.lora_multihop_logic.components.messages.Message;
 import de.htwberlin.lora_multihop_logic.components.model.LocalHop;
+import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
+import de.htwberlin.lora_multihop_logic.enums.ELoraNodeState;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -25,15 +29,15 @@ public class JoinExchangeHandler extends ExchangeHandler {
      * Generates a new init message and enqueues it.
      * Should be invoked as a result of the user-triggered event "Want to connect" (is it a button? idk).
      */
-    JoinExchangeHandler(Queue<Message> queue, Double lng, Double lat) {
-        super(queue);
+    JoinExchangeHandler(Queue<Message> queue, Double lng, Double lat, NeighbourSetDataHandler neighbourSetDataHandler) {
+        super(queue, neighbourSetDataHandler);
 
         this.localNodeLat = lat;
         this.localNodeLng = lng;
     }
 
-    JoinExchangeHandler(Queue<Message> queue, Message receivedMessage) {
-        super(queue, receivedMessage);
+    JoinExchangeHandler(Queue<Message> queue, Message receivedMessage, NeighbourSetDataHandler neighbourSetDataHandler) {
+        super(queue, receivedMessage, neighbourSetDataHandler);
     }
 
     @Override
@@ -104,8 +108,22 @@ public class JoinExchangeHandler extends ExchangeHandler {
     }
 
     private void handleAckMsg(Message msg) {
-        // todo: add the remoteLat, remoteLng (remembered from the JoinMessage) to the map.
-        // todo: add to NS and table fragment
+        Integer newId = this.getNeighbourSetDataHandler().getAllNeighbourSets().size() + 1;
+
+        String nodeAddress = msg.getSourceAddress();
+        String dahAddress = msg.getRemoteAddress();
+
+        Location mapPoint = new Location("Berlin");
+        mapPoint.setLatitude(this.remoteNodeLat);
+        mapPoint.setLongitude(this.remoteNodeLng);
+
+        ELoraNodeState state = ELoraNodeState.UP;
+
+        long currentTime = System.currentTimeMillis();
+
+        NeighbourSet commitSet = new NeighbourSet(newId, nodeAddress, dahAddress, mapPoint, state, currentTime);
+
+        this.getNeighbourSetDataHandler().saveNeighbourSet(commitSet);
     }
 }
 

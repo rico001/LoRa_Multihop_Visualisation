@@ -5,16 +5,13 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -25,21 +22,18 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import de.htwberlin.lora_multihop_logic.NeighbourSetData;
+import de.htwberlin.lora_multihop_logic.NeighbourSetDataHandler;
 import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
 import de.htwberlin.lora_multihop_logic.enums.EFragments;
 import de.htwberlin.lora_multihop_visualisation.LoRaApplication;
 import de.htwberlin.lora_multihop_visualisation.MainActivity;
 import de.htwberlin.lora_multihop_visualisation.R;
-import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableRow;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, NeighbourSetData.INeighbourSetData {
+public class MapFragment extends Fragment implements OnMapReadyCallback, NeighbourSetDataHandler.INeighbourSetData {
 
     private static final String TAG = "MapFragment";
 

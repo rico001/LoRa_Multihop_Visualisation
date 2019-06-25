@@ -11,7 +11,7 @@ import android.widget.TableLayout;
 
 import java.util.HashMap;
 
-import de.htwberlin.lora_multihop_logic.NeighbourSetData;
+import de.htwberlin.lora_multihop_logic.NeighbourSetDataHandler;
 import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
 import de.htwberlin.lora_multihop_visualisation.LoRaApplication;
 import de.htwberlin.lora_multihop_visualisation.R;
@@ -19,7 +19,7 @@ import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableHead;
 import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableRow;
 
 
-public class NeighbourSetTableFragment extends Fragment implements NeighbourSetData.INeighbourSetData {
+public class NeighbourSetTableFragment extends Fragment implements NeighbourSetDataHandler.INeighbourSetData {
 
     private static final String TAG = "NeighbourSetTableFragment";
 

@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
     @Override
     public void onDestroy() {
         super.onDestroy();
-        this.setupManager.getNeighbourSetData().clear();
+        this.setupManager.getNeighbourSetDataHandler().clear();
     }
 
     /**

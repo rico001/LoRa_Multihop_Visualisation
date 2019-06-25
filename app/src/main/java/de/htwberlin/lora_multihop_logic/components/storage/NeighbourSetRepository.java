@@ -23,6 +23,10 @@ public class NeighbourSetRepository {
         db = Room.inMemoryDatabaseBuilder(context, NeighbourSetDatabase.class).build();
     }
 
+    public List<NeighbourSet> getAllNeighbourSets()  {
+        return db.neighbourSetDao().getAllNeighbourSets();
+    }
+
     public void getAllNeighbourSets(NeighbourSetTableFragment fragment)  {
         FillNeighbourSetTableWithDataTask task = new FillNeighbourSetTableWithDataTask(fragment) {
             @Override

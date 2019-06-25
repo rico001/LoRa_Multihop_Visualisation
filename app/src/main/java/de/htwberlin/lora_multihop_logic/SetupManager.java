@@ -3,8 +3,11 @@ package de.htwberlin.lora_multihop_logic;
 import android.location.Location;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import de.htwberlin.lora_multihop_logic.components.lora.IncomingMessageHandler;
 import de.htwberlin.lora_multihop_logic.components.lora.LoraHandler;
+import de.htwberlin.lora_multihop_logic.components.model.LocalHop;
 import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
 import de.htwberlin.lora_multihop_logic.enums.ELoraNodeState;
 import de.htwberlin.lora_multihop_visualisation.BluetoothService;
@@ -17,11 +20,13 @@ public class SetupManager   {
 
     private final static String TAG = "lora-setup-manager";
 
+    public final  static Integer LOCAL_HOP_ID = 0;
+
     private TerminalFragment terminalFragment;
     private MapFragment mapFragment;
     private NeighbourSetTableFragment nstFragment;
 
-    private NeighbourSetData neighbourSetData;
+    private NeighbourSetDataHandler neighbourSetDataHandler;
 
     private IncomingMessageHandler incomingMessageHandler;
     private BluetoothService btService;
@@ -32,12 +37,12 @@ public class SetupManager   {
         this.terminalFragment = terminalFragment;
         this.nstFragment = nstFragment;
 
+        initNeighboursetData();
+
         initIncomingMessageHandler();
         initBtService();
         initLoraHandler();
         initIncomingMessageHandlerDestinations();
-
-        initNeighboursetData();
     }
 
     private void initIncomingMessageHandler() {
@@ -55,16 +60,15 @@ public class SetupManager   {
 
     private void initLoraHandler() {
         try {
-            this.loraHandler = new LoraHandler(this.btService, this.mapFragment);
+            this.loraHandler = new LoraHandler(this.btService, this.neighbourSetDataHandler);
         } catch (NullPointerException e) {
             Log.e(TAG, "Lora Handler could not be init");
         }
     }
 
     private void initNeighboursetData() {
-        this.neighbourSetData = new NeighbourSetData(this.nstFragment, this.mapFragment);
-
-        this.neighbourSetData.saveNeighbourSet(createTestNeighbourSet());
+        this.neighbourSetDataHandler = new NeighbourSetDataHandler(this.nstFragment, this.mapFragment);
+        this.neighbourSetDataHandler.saveNeighbourSet(createLocalHopNeighbourSet());
     }
 
     private void initIncomingMessageHandlerDestinations()   {
@@ -88,14 +92,36 @@ public class SetupManager   {
         return btService;
     }
 
-    public NeighbourSetData getNeighbourSetData() {
-        return neighbourSetData;
+    public NeighbourSetDataHandler getNeighbourSetDataHandler() {
+        return neighbourSetDataHandler;
     }
 
-    private NeighbourSet createTestNeighbourSet()   {
-        Location mapPoint = new Location("Berlin");
-        mapPoint.setLatitude(52.520007);
-        mapPoint.setLongitude(13.404954);
-        return new NeighbourSet(420, "AAAB", "BBBA", mapPoint, ELoraNodeState.PENDING, System.currentTimeMillis());
+    private NeighbourSet createLocalHopNeighbourSet()   {
+        LocalHop localHop = LocalHop.getInstance();
+
+        localHop.setId(LOCAL_HOP_ID);
+
+        /* TODO commented out for emulator
+        String deviceAddress = SingletonDevice.getBluetoothDevice()
+
+                .getAddress()
+                .replace(":", "")
+                .substring(12 - 4);
+        */
+        String deviceAddress = "AAAA";
+        localHop.setAddress(deviceAddress);
+
+        // TODO map fragment fix .getLocation()
+        //LatLng location = mapFragment.getLocation();
+        //localHop.setLatitude(location.latitude);
+        //localHop.setLongitude(location.longitude);
+        localHop.setLatitude(52.457339);
+        localHop.setLongitude(13.526851);
+
+        Location mapPoint = new Location("LocalHop");
+        mapPoint.setLatitude(localHop.getLatitude());
+        mapPoint.setLongitude(localHop.getLongitude());
+
+        return new NeighbourSet(localHop.getId(), localHop.getAddress(), "ABBA", mapPoint, ELoraNodeState.UP, System.currentTimeMillis());
     }
 }

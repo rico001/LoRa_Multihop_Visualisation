@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import de.htwberlin.lora_multihop_logic.NeighbourSetDataHandler;
 import de.htwberlin.lora_multihop_logic.components.messages.Message;
 import de.htwberlin.lora_multihop_logic.components.queue.IncomingMessageQueue;
 import de.htwberlin.lora_multihop_logic.interfaces.ILoraCommands;
@@ -24,6 +25,7 @@ public class MessageProcessor implements MessageConstants {
 
     private static final String TAG = "MessageProcessor";
 
+    private NeighbourSetDataHandler neighbourSetDataHandler;
     private ILoraCommands executor;
     private IncomingMessageQueue incomingMessageQueue = IncomingMessageQueue.getInstance();
     private BlockingQueue<Message> outMessagesQueue = new LinkedBlockingQueue<>();
@@ -41,8 +43,8 @@ public class MessageProcessor implements MessageConstants {
     // better? --> updated exchange objects (states: JOIN -> JOIN REPLY -> ACK UPDATE)
     private HashMap<String, ExchangeHandler> handlersMap = new HashMap<>();
 
-    public MessageProcessor(ILoraCommands executor) {
-
+    public MessageProcessor(ILoraCommands executor, NeighbourSetDataHandler neighbourSetDataHandler) {
+        this.neighbourSetDataHandler = neighbourSetDataHandler;
         this.executor = executor;
 
         this.outWorker = Executors.newSingleThreadExecutor();
@@ -61,7 +63,7 @@ public class MessageProcessor implements MessageConstants {
             Log.i(TAG, "Creating new handler with exchange id " + id);
 
             // todo: for now just Join handler. need to create mapping between message classes and their corresponding handler classes
-            handler = new JoinExchangeHandler(outMessagesQueue, incomingMessage);
+            handler = new JoinExchangeHandler(outMessagesQueue, incomingMessage, this.neighbourSetDataHandler);
             handlersMap.put(id, handler);
         }
 
