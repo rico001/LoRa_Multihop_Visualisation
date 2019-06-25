@@ -235,6 +235,12 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LoRaApplication.getDbRepo().clearTable();
+    }
+
     /**
      * Starts a new activity
      *

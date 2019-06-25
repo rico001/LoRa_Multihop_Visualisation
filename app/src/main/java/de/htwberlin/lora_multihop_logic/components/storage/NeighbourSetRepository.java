@@ -17,7 +17,18 @@ public class NeighbourSetRepository {
     private NeighbourSetDatabase db;
 
     public NeighbourSetRepository(Context context) {
-        db = Room.databaseBuilder(context, NeighbourSetDatabase.class, DB_NAME).build();
+        db = Room.inMemoryDatabaseBuilder(context, NeighbourSetDatabase.class).build();
+    }
+
+    public void getAllNeighbourSets(Fragment fragment)  {
+        FillNeighbourSetTableWithDataTask task = new FillNeighbourSetTableWithDataTask(fragment) {
+            @Override
+            protected List<NeighbourSet> doInBackground(String... strings) {
+                return db.neighbourSetDao().getAllNeighbourSets();
+            }
+        };
+
+        task.execute();
     }
 
     public void saveNeighbourSet(final NeighbourSet ns)  {
@@ -30,24 +41,25 @@ public class NeighbourSetRepository {
         }.execute();
     }
 
-    public void getAllNeighbourSets(Fragment fragment)  {
-        GetDataTask task = new GetDataTask(fragment) {
+    public void clearTable()  {
+        new AsyncTask<Void, Void, Void>() {
             @Override
-            protected List<NeighbourSet> doInBackground(String... strings) {
-                return db.neighbourSetDao().getAllNeighbourSets();
+            protected Void doInBackground(Void... voids) {
+                db.neighbourSetDao().clearTable();
+                return null;
             }
-        };
-
-        task.execute();
+        }.execute();
     }
 
-    private abstract class GetDataTask extends AsyncTask<String, Void, List<NeighbourSet>> {
+    private abstract class FillNeighbourSetTableWithDataTask extends AsyncTask<String, Void, List<NeighbourSet>> {
 
         private NeighbourSetTableFragment fragment;
 
-        public GetDataTask(Fragment fragment)  {
-            if (fragment.getClass() == NeighbourSetTableFragment.class) {
+        public FillNeighbourSetTableWithDataTask(Fragment fragment)  {
+            try {
                 this.fragment = (NeighbourSetTableFragment) fragment;
+            } catch (ClassCastException e)  {
+                e.getStackTrace();
             }
         }
 
