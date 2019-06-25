@@ -1,7 +1,6 @@
 package de.htwberlin.lora_multihop_visualisation;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -13,14 +12,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
-
-import com.google.android.gms.maps.model.LatLng;
-
-import java.util.Map;
 
 import de.htwberlin.lora_multihop_logic.SetupManager;
-import de.htwberlin.lora_multihop_logic.components.storage.NeighbourSetDatabase;
 import de.htwberlin.lora_multihop_logic.interfaces.MessageConstants;
 import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableRow;
 import de.htwberlin.lora_multihop_visualisation.fragments.MainFragmentsAdapter;
@@ -76,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
      */
     private void init() {
         mainFragmentsAdapter = new MainFragmentsAdapter(getSupportFragmentManager());
-        viewPager = (ViewPager) findViewById(R.id.main_container);
+        viewPager = findViewById(R.id.main_container);
 
         // Sets up the ViewPager with all the fragments
         setUpViewPager(viewPager);
@@ -118,21 +111,16 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
     private void setUpViewPager(ViewPager viewPager) {
         MainFragmentsAdapter adapter = new MainFragmentsAdapter(getSupportFragmentManager());
 
-        MapFragment mapFragment = new MapFragment();
-        TerminalFragment terminalFragment = new TerminalFragment();
-        NeighbourSetTableFragment neighbourSetTableFragment = new NeighbourSetTableFragment();
-        ProtocolFragment protocolFragment = new ProtocolFragment();
-
-        this.mapFragment = mapFragment;
-        this.terminalFragment = terminalFragment;
-        this.neighbourSetTableFragment = neighbourSetTableFragment;
+        this.mapFragment = new MapFragment();
+        this.terminalFragment = new TerminalFragment();
+        this.neighbourSetTableFragment = new NeighbourSetTableFragment();
+        this.protocolFragment = new ProtocolFragment();
 
         // The order in which the fragments are added is very important!
-        adapter.addFragment(mapFragment, "MapFragment");
-        adapter.addFragment(terminalFragment, "TerminalFragment");
-        adapter.addFragment(neighbourSetTableFragment, "NeighbourSetTableFragment");
-        adapter.addFragment(protocolFragment, "LogicFragment");
-
+        adapter.addFragment(this.mapFragment, "MapFragment");
+        adapter.addFragment(this.terminalFragment, "TerminalFragment");
+        adapter.addFragment(this.neighbourSetTableFragment, "NeighbourSetTableFragment");
+        adapter.addFragment(this.protocolFragment, "LogicFragment");
 
         viewPager.setAdapter(adapter);
     }
@@ -146,51 +134,6 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
         viewPager.setCurrentItem(position);
     }
 
-    /**
-     * Sets a marker every time a row is added
-     *
-     * @param row
-     */
-    @Override
-    public void onRowAdded(NeighbourSetTableRow row) {
-        if (row.getAddress().equals("000")) {
-            mapFragment.addHostMarker(mapFragment.getLocation(), row.getUid(), 1000);
-        } else {
-            mapFragment.addNeighbourMarker(new LatLng(row.getLatitude(), row.getLongitude()), row.getUid(), 1000);
-        }
-    }
-
-    /**
-     * Removes a marker when a row is removed
-     *
-     * @param id
-     */
-    @Override
-    public void onRowRemoved(String id) {
-        mapFragment.removeMarker(id);
-    }
-
-    @Override
-    public void onRowUpdated(NeighbourSetTableRow row) {
-
-    }
-
-    @Override
-    public void onRemoveAll() {
-        mapFragment.removeAll();
-    }
-
-    /**
-     * Sets up the map after fragment navigation
-     */
-    @Override
-    public void onSetUpMap() {
-        Map<String, NeighbourSetTableRow> tableData = neighbourSetTableFragment.getTableData();
-
-        for (Map.Entry<String, NeighbourSetTableRow> row : tableData.entrySet()) {
-            onRowAdded(row.getValue());
-        }
-    }
 
     /**
      * Create a menu on actionbar
@@ -238,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
     @Override
     public void onDestroy() {
         super.onDestroy();
-        LoRaApplication.getDbRepo().clearTable();
+        this.setupManager.getNeighbourSetData().clear();
     }
 
     /**
@@ -255,23 +198,32 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
         return setupManager;
     }
 
-    public void setSetupManager(SetupManager setupManager) {
-        this.setupManager = setupManager;
-    }
-
-    public TerminalFragment getTerminalFragment() {
-        return terminalFragment;
-    }
-
-    public void setTerminalFragment(TerminalFragment terminalFragment) {
-        this.terminalFragment = terminalFragment;
-    }
-
     public MapFragment getMapFragment() {
         return mapFragment;
     }
 
-    public void setMapFragment(MapFragment mapFragment) {
-        this.mapFragment = mapFragment;
+    @Override
+    public void onSetUpMap() {
+
+    }
+
+    @Override
+    public void onRowAdded(NeighbourSetTableRow row) {
+
+    }
+
+    @Override
+    public void onRowUpdated(NeighbourSetTableRow row) {
+
+    }
+
+    @Override
+    public void onRowRemoved(String id) {
+
+    }
+
+    @Override
+    public void onRemoveAll() {
+
     }
 }

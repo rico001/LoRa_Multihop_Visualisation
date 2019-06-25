@@ -31,11 +31,15 @@ import com.google.android.gms.tasks.Task;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.htwberlin.lora_multihop_logic.NeighbourSetData;
+import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
 import de.htwberlin.lora_multihop_logic.enums.EFragments;
+import de.htwberlin.lora_multihop_visualisation.LoRaApplication;
 import de.htwberlin.lora_multihop_visualisation.MainActivity;
 import de.htwberlin.lora_multihop_visualisation.R;
+import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableRow;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback, NeighbourSetData.INeighbourSetData {
 
     private static final String TAG = "MapFragment";
 
@@ -254,6 +258,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+
+
     @Override
     public void onDetach() {
         super.onDetach();
@@ -264,6 +270,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onResume() {
         super.onResume();
         mapView.onResume();
+        LoRaApplication.getDbRepo().getAllNeighbourSets(this);
     }
 
     @Override
@@ -284,6 +291,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
+    }
+
+    @Override
+    public void onSaveNeighbourSet(NeighbourSet neighbourSet) {
+        LatLng location = new LatLng(neighbourSet.getLatitude(), neighbourSet.getLongitude());
+        addHostMarker(location, String.valueOf(neighbourSet.getUid()), LoRaApplication.RADIUS);
+    }
+
+    @Override
+    public void onUpdateNeighbourSet(NeighbourSet neighbourSet) {
+
+    }
+
+    @Override
+    public void onDeleteNeighbourSet(int uid) {
+
+    }
+
+    @Override
+    public void onClearTable() {
+        this.markers.clear();
+        this.circles.clear();
     }
 
     /**

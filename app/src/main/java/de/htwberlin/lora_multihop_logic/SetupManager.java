@@ -1,6 +1,5 @@
 package de.htwberlin.lora_multihop_logic;
 
-import android.content.Context;
 import android.location.Location;
 import android.util.Log;
 
@@ -21,6 +20,8 @@ public class SetupManager   {
     private TerminalFragment terminalFragment;
     private MapFragment mapFragment;
     private NeighbourSetTableFragment nstFragment;
+
+    private NeighbourSetData neighbourSetData;
 
     private IncomingMessageHandler incomingMessageHandler;
     private BluetoothService btService;
@@ -60,19 +61,10 @@ public class SetupManager   {
         }
     }
 
-    // TODO:    JUST A SKETCH FOR TESTING
-    //          also remove method from constructor
     private void initNeighboursetData() {
-        NeighbourSetData nsd = new NeighbourSetData(this.nstFragment);
+        this.neighbourSetData = new NeighbourSetData(this.nstFragment, this.mapFragment);
 
-        // Testing
-        Location mapPoint = new Location("NodeOne");
-        mapPoint.setLatitude(52.520007);
-        mapPoint.setLongitude(13.404954);
-
-        NeighbourSet nsOne = new NeighbourSet(420, "AAAB", "BBBA", mapPoint, ELoraNodeState.PENDING, System.currentTimeMillis());
-
-        nsd.saveNeighbourSet(nsOne);
+        this.neighbourSetData.saveNeighbourSet(createTestNeighbourSet());
     }
 
     private void initIncomingMessageHandlerDestinations()   {
@@ -88,43 +80,22 @@ public class SetupManager   {
         this.btService.disconnect();
     }
 
-    public MapFragment getMapFragment() {
-        return mapFragment;
-    }
-
-    public void setMapFragment(MapFragment mapFragment) {
-        this.mapFragment = mapFragment;
-    }
-
-    public TerminalFragment getTerminalFragment() {
-        return terminalFragment;
-    }
-
-    public void setTerminalFragment(TerminalFragment terminalFragment) {
-        this.terminalFragment = terminalFragment;
-    }
-
     public LoraHandler getLoraHandler() {
         return loraHandler;
-    }
-
-    public void setLoraHandler(LoraHandler loraHandler) {
-        this.loraHandler = loraHandler;
     }
 
     public BluetoothService getBtService() {
         return btService;
     }
 
-    public void setBtService(BluetoothService btService) {
-        this.btService = btService;
+    public NeighbourSetData getNeighbourSetData() {
+        return neighbourSetData;
     }
 
-    public IncomingMessageHandler getIncomingMessageHandler() {
-        return incomingMessageHandler;
-    }
-
-    public void setIncomingMessageHandler(IncomingMessageHandler incomingMessageHandler) {
-        this.incomingMessageHandler = incomingMessageHandler;
+    private NeighbourSet createTestNeighbourSet()   {
+        Location mapPoint = new Location("Berlin");
+        mapPoint.setLatitude(52.520007);
+        mapPoint.setLongitude(13.404954);
+        return new NeighbourSet(420, "AAAB", "BBBA", mapPoint, ELoraNodeState.PENDING, System.currentTimeMillis());
     }
 }

@@ -1,52 +1,37 @@
 package de.htwberlin.lora_multihop_logic;
 
-import android.content.Context;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
-import de.htwberlin.lora_multihop_logic.components.storage.NeighbourSetDatabase;
 import de.htwberlin.lora_multihop_logic.components.storage.NeighbourSetRepository;
 import de.htwberlin.lora_multihop_visualisation.LoRaApplication;
-import de.htwberlin.lora_multihop_visualisation.fragments.NeighbourSetTableFragment;
 
 public class NeighbourSetData   {
 
     private NeighbourSetRepository repository;
-    private INeighbourSetData listener;
+    private List<INeighbourSetData> listeners;
 
-    public NeighbourSetData(INeighbourSetData nstFragment) {
+    public NeighbourSetData(INeighbourSetData... neighbourSetData) {
         this.repository = LoRaApplication.getDbRepo();
-        this.listener = nstFragment;
-    }
 
-    public void addListener(INeighbourSetData listener) {
-        this.listener = listener;
+        this.listeners = new ArrayList<>();
+        for(int i = 0; i < neighbourSetData.length; i++)   {
+            this.listeners.add(neighbourSetData[i]);
+        }
     }
 
     public void saveNeighbourSet(NeighbourSet neighbourSet) {
         this.repository.saveNeighbourSet(neighbourSet);
-        this.listener.onSaveNeighbourSet(neighbourSet);
-    }
-/*
-    public void updateNeighbourSet(NeighbourSet neighbourSet) {
-        this.repository.updateNeighbourSet(neighbourSet);
-        this.listener.onUpdateNeighbourSet(neighbourSet);
+        this.listeners.stream()
+                .forEach(l -> l.onSaveNeighbourSet(neighbourSet));
     }
 
-    public void deleteNeighbourSet(NeighbourSet neighbourSet) {
-        this.repository.deleteNeighbourSet(neighbourSet);
-        this.listener.onDeleteNeighbourSet(neighbourSet.getUid());
-    }
-
-    public void deleteNeighbourSetByUid(int uid) {
-        this.repository.deleteNeighbourSetByUid(uid);
-        this.listener.onDeleteNeighbourSet(uid);
-    }
-
-    public void clearTable() {
+    public void clear() {
         this.repository.clearTable();
-        this.listener.onClearTable();
+        this.listeners.stream().forEach(l -> l.onClearTable());
     }
-*/
+
     public interface INeighbourSetData {
         void onSaveNeighbourSet(NeighbourSet neighbourSet);
         void onUpdateNeighbourSet(NeighbourSet neighbourSet);

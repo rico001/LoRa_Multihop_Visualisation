@@ -17,6 +17,8 @@ public class LoRaApplication extends Application {
     private static Context context;
     private static NeighbourSetRepository dbRepo;
 
+    public static final Integer RADIUS = 10000;
+
     @Override
     public void onCreate() {
         super.onCreate();

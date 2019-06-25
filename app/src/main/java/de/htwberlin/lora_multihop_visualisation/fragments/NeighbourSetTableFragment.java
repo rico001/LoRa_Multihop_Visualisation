@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.TableLayout;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import de.htwberlin.lora_multihop_logic.NeighbourSetData;
 import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
@@ -21,15 +20,15 @@ import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableRow;
 
 
 public class NeighbourSetTableFragment extends Fragment implements NeighbourSetData.INeighbourSetData {
-    private static final String TAG = "NeighbourSetTableFragme";
+
+    private static final String TAG = "NeighbourSetTableFragment";
 
     private TableLayout table;
     private HashMap<String, NeighbourSetTableRow> tableData;
     private ITableListener listener;
 
     public NeighbourSetTableFragment() {
-        tableData = new HashMap<>();
-        //NeighbourSetData.getInstance().addListener(this);
+        this.tableData = new HashMap<>();
     }
 
     @Override
@@ -45,8 +44,8 @@ public class NeighbourSetTableFragment extends Fragment implements NeighbourSetD
         View view = inflater.inflate(R.layout.fragment_neighbour_set_table, container, false);
         NeighbourSetTableHead tableHead = new NeighbourSetTableHead(getContext());
 
-        table = (TableLayout) view.findViewById(R.id.neighbour_set_table);
-        table.addView(tableHead);
+        this.table = (TableLayout) view.findViewById(R.id.neighbour_set_table);
+        this.table.addView(tableHead);
 
         return view;
     }
@@ -74,9 +73,9 @@ public class NeighbourSetTableFragment extends Fragment implements NeighbourSetD
             row.setStatusText(ns.getEnumLoraNodeState().toString());
             row.setTimestampText(Long.toString(ns.getTimestamp()));
 
-            tableData.put(Integer.toString(ns.getUid()), row);
+            this.tableData.put(Integer.toString(ns.getUid()), row);
 
-            table.addView(row);
+            this.table.addView(row);
 
             this.listener.onRowAdded(row);
         }
@@ -90,7 +89,7 @@ public class NeighbourSetTableFragment extends Fragment implements NeighbourSetD
      * @return
      */
     public NeighbourSetTableRow getRow(String id) {
-        return tableData.get(id);
+        return this.tableData.get(id);
     }
 
     public void updateRow(NeighbourSet neighbourSet) {
@@ -106,28 +105,19 @@ public class NeighbourSetTableFragment extends Fragment implements NeighbourSetD
     }
 
     /**
-     * Gets the table data
-     *
-     * @return
-     */
-    public Map<String, NeighbourSetTableRow> getTableData() {
-        return this.tableData;
-    }
-
-    /**
      * Removes a row
      *
      * @param id
      */
     public void removeRow(String id) {
-        if (tableData.containsKey(id)) {
-            table.removeView(tableData.get(id));
+        if (this.tableData.containsKey(id)) {
+            this.table.removeView(this.tableData.get(id));
             this.listener.onRowRemoved(id);
         }
     }
 
     public void removeAll() {
-        tableData.clear();
+        this.tableData.clear();
         this.listener.onRemoveAll();
     }
 
