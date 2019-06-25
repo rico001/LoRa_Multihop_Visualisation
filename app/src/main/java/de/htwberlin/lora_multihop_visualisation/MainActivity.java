@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
      * Sets up the connection between android & lora related stuff
      */
     private void initLoraSetup() {
-        this.setupManager = new SetupManager(getApplicationContext(), mapFragment, terminalFragment, neighbourSetTableFragment);
+        this.setupManager = new SetupManager(mapFragment, terminalFragment, neighbourSetTableFragment);
     }
 
     /**

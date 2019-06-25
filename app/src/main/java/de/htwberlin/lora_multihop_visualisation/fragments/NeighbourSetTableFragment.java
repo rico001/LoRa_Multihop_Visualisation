@@ -1,7 +1,6 @@
 package de.htwberlin.lora_multihop_visualisation.fragments;
 
 import android.content.Context;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -15,7 +14,7 @@ import java.util.Map;
 
 import de.htwberlin.lora_multihop_logic.NeighbourSetData;
 import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
-import de.htwberlin.lora_multihop_logic.enums.ELoraNodeState;
+import de.htwberlin.lora_multihop_visualisation.LoRaApplication;
 import de.htwberlin.lora_multihop_visualisation.R;
 import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableHead;
 import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableRow;
@@ -27,7 +26,6 @@ public class NeighbourSetTableFragment extends Fragment implements NeighbourSetD
     private TableLayout table;
     private HashMap<String, NeighbourSetTableRow> tableData;
     private ITableListener listener;
-    private Context context;
 
     public NeighbourSetTableFragment() {
         tableData = new HashMap<>();
@@ -48,20 +46,15 @@ public class NeighbourSetTableFragment extends Fragment implements NeighbourSetD
         NeighbourSetTableHead tableHead = new NeighbourSetTableHead(getContext());
 
         table = (TableLayout) view.findViewById(R.id.neighbour_set_table);
-
         table.addView(tableHead);
 
-        // Testing
-        Location mapPoint = new Location("NodeOne");
-        mapPoint.setLatitude(52.463201);
-        mapPoint.setLongitude(13.507464);
-
-        NeighbourSet nsOne = new NeighbourSet(0, "AAAA", "BBBB", mapPoint, ELoraNodeState.UP, System.currentTimeMillis());
-
-        addRow(nsOne);
-        //getRow(Integer.toString(nsOne.getUid())).setAddressText("AAAB");
-
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LoRaApplication.getDbRepo().getAllNeighbourSets(this);
     }
 
     /**
@@ -70,21 +63,23 @@ public class NeighbourSetTableFragment extends Fragment implements NeighbourSetD
      * @param ns NeighbourSet data to be mapped
      */
     public void addRow(NeighbourSet ns) {
-        NeighbourSetTableRow row = new NeighbourSetTableRow(this.context);
+        if(getContext() != null)    {
+            NeighbourSetTableRow row = new NeighbourSetTableRow(getContext());
 
-        row.setUidText(Integer.toString(ns.getUid()));
-        row.setAddressText(ns.getAddress());
-        row.setDahText(ns.getDah());
-        row.setLatitudeText(ns.getLatitude());
-        row.setLongitudeText(ns.getLongitude());
-        row.setStatusText(ns.getEnumLoraNodeState().toString());
-        row.setTimestampText(Long.toString(ns.getTimestamp()));
+            row.setUidText(Integer.toString(ns.getUid()));
+            row.setAddressText(ns.getAddress());
+            row.setDahText(ns.getDah());
+            row.setLatitudeText(ns.getLatitude());
+            row.setLongitudeText(ns.getLongitude());
+            row.setStatusText(ns.getEnumLoraNodeState().toString());
+            row.setTimestampText(Long.toString(ns.getTimestamp()));
 
-        tableData.put(Integer.toString(ns.getUid()), row);
+            tableData.put(Integer.toString(ns.getUid()), row);
 
-        table.addView(row);
+            table.addView(row);
 
-        this.listener.onRowAdded(row);
+            this.listener.onRowAdded(row);
+        }
     }
 
 
@@ -164,7 +159,6 @@ public class NeighbourSetTableFragment extends Fragment implements NeighbourSetD
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.context = context;
 
         if (context instanceof ITableListener) {
             this.listener = (ITableListener) context;
@@ -176,7 +170,6 @@ public class NeighbourSetTableFragment extends Fragment implements NeighbourSetD
     @Override
     public void onDetach() {
         super.onDetach();
-        this.context = null;
         this.listener = null;
     }
 

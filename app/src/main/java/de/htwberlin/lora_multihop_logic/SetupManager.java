@@ -18,8 +18,6 @@ public class SetupManager   {
 
     private final static String TAG = "lora-setup-manager";
 
-    private Context context;
-
     private TerminalFragment terminalFragment;
     private MapFragment mapFragment;
     private NeighbourSetTableFragment nstFragment;
@@ -28,8 +26,7 @@ public class SetupManager   {
     private BluetoothService btService;
     private LoraHandler loraHandler;
 
-    public SetupManager(Context context, MapFragment mapFragment, TerminalFragment terminalFragment, NeighbourSetTableFragment nstFragment)   {
-        this.context = context;
+    public SetupManager(MapFragment mapFragment, TerminalFragment terminalFragment, NeighbourSetTableFragment nstFragment)   {
         this.mapFragment = mapFragment;
         this.terminalFragment = terminalFragment;
         this.nstFragment = nstFragment;
@@ -66,7 +63,7 @@ public class SetupManager   {
     // TODO:    JUST A SKETCH FOR TESTING
     //          also remove method from constructor
     private void initNeighboursetData() {
-        NeighbourSetData nsd = new NeighbourSetData(this.context, this.nstFragment);
+        NeighbourSetData nsd = new NeighbourSetData(this.nstFragment);
 
         // Testing
         Location mapPoint = new Location("NodeOne");
@@ -129,13 +126,5 @@ public class SetupManager   {
 
     public void setIncomingMessageHandler(IncomingMessageHandler incomingMessageHandler) {
         this.incomingMessageHandler = incomingMessageHandler;
-    }
-
-    public Context getContext() {
-        return context;
-    }
-
-    public void setContext(Context context) {
-        this.context = context;
     }
 }
