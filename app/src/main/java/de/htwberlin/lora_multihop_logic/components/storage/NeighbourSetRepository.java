@@ -20,7 +20,9 @@ public class NeighbourSetRepository {
     private NeighbourSetDatabase db;
 
     public NeighbourSetRepository(Context context) {
-        db = Room.inMemoryDatabaseBuilder(context, NeighbourSetDatabase.class).build();
+        db = Room.inMemoryDatabaseBuilder(context, NeighbourSetDatabase.class)
+                .allowMainThreadQueries()
+                .build();
     }
 
     public List<NeighbourSet> getAllNeighbourSets()  {
