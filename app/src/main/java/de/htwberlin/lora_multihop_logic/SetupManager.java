@@ -111,12 +111,11 @@ public class SetupManager   {
         String deviceAddress = "AAAA";
         localHop.setAddress(deviceAddress);
 
-        // TODO map fragment fix .getLocation()
-        //LatLng location = mapFragment.getLocation();
-        //localHop.setLatitude(location.latitude);
-        //localHop.setLongitude(location.longitude);
-        localHop.setLatitude(52.457339);
-        localHop.setLongitude(13.526851);
+        LatLng location = mapFragment.getLocation();
+        localHop.setLatitude(location.latitude);
+        localHop.setLongitude(location.longitude);
+        //localHop.setLatitude(52.457339);
+        //localHop.setLongitude(13.526851);
 
         Location mapPoint = new Location("LocalHop");
         mapPoint.setLatitude(localHop.getLatitude());

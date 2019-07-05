@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements MessageConstants,
         MainFragmentsAdapter adapter = new MainFragmentsAdapter(getSupportFragmentManager());
 
         this.mapFragment = new MapFragment();
+        this.mapFragment.setContext(this);
         this.terminalFragment = new TerminalFragment();
         this.neighbourSetTableFragment = new NeighbourSetTableFragment();
         this.protocolFragment = new ProtocolFragment();

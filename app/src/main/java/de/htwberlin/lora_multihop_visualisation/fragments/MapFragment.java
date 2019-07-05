@@ -6,6 +6,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Neighbo
     private Map<String, Circle> circles;
 
     private IMapListener listener;
+    private Context context;
 
     public MapFragment() {
         markers = new HashMap<>();
@@ -91,6 +93,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Neighbo
         // mMap.setMyLocationEnabled(true);
     }
 
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
     /*private void getDeviceLocation() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
         Log.d("MapFragment", "Getting the location");
@@ -122,7 +128,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Neighbo
      * @return
      */
     public LatLng getLocation() {
-        LocationManager lm = (LocationManager) getContext().getSystemService(getContext().LOCATION_SERVICE);
+        LocationManager lm = (LocationManager) context.getSystemService(context.LOCATION_SERVICE);
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         /*Log.d("Main", Double.toString(location.getLatitude()));
@@ -155,6 +161,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Neighbo
             mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
             mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
         }
+        Log.d("map", getLocation().latitude+"");
     }
 
     /**
