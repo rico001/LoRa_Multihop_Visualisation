@@ -71,8 +71,8 @@ public class LastCommandsUI_Layout implements LoraCommandsConstants{
      * some default additions
      */
     private void addDefaultCommands(){
-        addCMD(TEST_CMD_MSG);
         addCMD(GET_ADDRESS_CMD_MSG);
-        addCMD(SET_ADDRESS_CMD_MSG);
+        addCMD(GET_TARGET_ADDRESS_CMD_MSG);
+        addCMD(SEND_CMD_MSG);
     }
 }
