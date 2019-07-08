@@ -71,6 +71,10 @@ public class MessageProcessor implements MessageConstants {
         handler.processMessage(incomingMessage);
     }
 
+    public void initHandler() {
+
+    }
+
     /**
      * A worker running in a separate thread that sends queued the messages to the connected LoRa module.
      * There must be just ONE worker simultaneously, as LoRa module can process just one message at a time.
@@ -89,7 +93,6 @@ public class MessageProcessor implements MessageConstants {
 
                     message.executeAtRoutine(executor);
 
-                    Log.i(TAG, "sended " + message.toString() + " to " + message.getRemoteAddress());
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                     break;

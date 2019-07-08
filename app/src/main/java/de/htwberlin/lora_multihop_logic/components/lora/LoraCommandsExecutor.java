@@ -1,5 +1,7 @@
 package de.htwberlin.lora_multihop_logic.components.lora;
 
+import android.util.Log;
+
 import de.htwberlin.lora_multihop_logic.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_logic.interfaces.LoraCommandsConstants;
 import de.htwberlin.lora_multihop_visualisation.BluetoothService;
@@ -9,6 +11,8 @@ import de.htwberlin.lora_multihop_visualisation.BluetoothService;
  * 	*	BluetoothService als Abhängigkeit: Senden der Commands zum LoRa-Modul via Bluetooth-Modul (verbunden auf Breadboard)
  */
 public class LoraCommandsExecutor implements ILoraCommands, LoraCommandsConstants {
+
+	private static final String TAG = "LoraCommandsExecutor";
 
 	private final static String AT_POSTFIX = "\r\n";
 	private BluetoothService btService;
@@ -162,7 +166,8 @@ public class LoraCommandsExecutor implements ILoraCommands, LoraCommandsConstant
 	@Override
 	public void send(String data) {
 		if(btService.isConnected())	{
-			btService.write(data.getBytes());
+			Log.i(TAG, "Sending data: " + data + AT_POSTFIX);
+			btService.write((data + AT_POSTFIX).getBytes());
 		}
 	}
 

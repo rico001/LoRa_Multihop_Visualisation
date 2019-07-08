@@ -19,6 +19,7 @@ import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableRow;
 import de.htwberlin.lora_multihop_visualisation.fragments.MainFragmentsAdapter;
 import de.htwberlin.lora_multihop_visualisation.fragments.MapFragment;
 import de.htwberlin.lora_multihop_visualisation.fragments.NeighbourSetTableFragment;
+import de.htwberlin.lora_multihop_visualisation.fragments.ProtocolFragment;
 import de.htwberlin.lora_multihop_visualisation.fragments.TerminalFragment;
 
 /**

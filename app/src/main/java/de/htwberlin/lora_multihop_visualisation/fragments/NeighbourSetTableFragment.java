@@ -4,12 +4,15 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
 
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 
 import de.htwberlin.lora_multihop_logic.NeighbourSetDataHandler;
 import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
@@ -71,7 +74,7 @@ public class NeighbourSetTableFragment extends Fragment implements NeighbourSetD
             row.setLatitudeText(ns.getLatitude());
             row.setLongitudeText(ns.getLongitude());
             row.setStatusText(ns.getEnumLoraNodeState().toString());
-            row.setTimestampText(Long.toString(ns.getTimestamp()));
+            row.setTimestampText(getDate(ns.getTimestamp()));
 
             this.tableData.put(Integer.toString(ns.getUid()), row);
 
@@ -99,7 +102,7 @@ public class NeighbourSetTableFragment extends Fragment implements NeighbourSetD
         row.setLatitudeText(neighbourSet.getLatitude());
         row.setLongitudeText(neighbourSet.getLongitude());
         row.setStatusText(neighbourSet.getState());
-        row.setTimestampText(Long.toString(neighbourSet.getTimestamp()));
+        row.setTimestampText(getDate(neighbourSet.getTimestamp()));
 
         this.listener.onRowUpdated(row);
     }
@@ -168,5 +171,13 @@ public class NeighbourSetTableFragment extends Fragment implements NeighbourSetD
         void onRowUpdated(NeighbourSetTableRow row);
         void onRowRemoved(String id);
         void onRemoveAll();
+    }
+
+
+    private String getDate(long time) {
+        Calendar cal = Calendar.getInstance(Locale.GERMAN);
+        cal.setTimeInMillis(time * 1000);
+        String date = DateFormat.format("HH:mm:ss dd.MM.yy", cal).toString();
+        return date;
     }
 }

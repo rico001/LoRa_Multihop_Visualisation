@@ -19,10 +19,9 @@ public abstract class Message {
 
     }
 
-    public Message(ILoraCommands executor, String sourceAddress, String remoteAddress) {
+    public Message(ILoraCommands executor, String sourceAddress) {
         this.executor = executor;
         this.sourceAddress = sourceAddress;
-        this.remoteAddress = remoteAddress;
     }
 
     public String getId() {

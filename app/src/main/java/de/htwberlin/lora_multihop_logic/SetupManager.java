@@ -1,9 +1,13 @@
 package de.htwberlin.lora_multihop_logic;
 
 import android.location.Location;
+import android.text.format.DateFormat;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+
+import java.util.Calendar;
+import java.util.Locale;
 
 import de.htwberlin.lora_multihop_logic.components.lora.IncomingMessageHandler;
 import de.htwberlin.lora_multihop_logic.components.lora.LoraHandler;
@@ -98,29 +102,14 @@ public class SetupManager   {
 
     private NeighbourSet createLocalHopNeighbourSet()   {
         LocalHop localHop = LocalHop.getInstance();
-
         localHop.setId(LOCAL_HOP_ID);
-
-        /* TODO commented out for emulator
-        String deviceAddress = SingletonDevice.getBluetoothDevice()
-
-                .getAddress()
-                .replace(":", "")
-                .substring(12 - 4);
-        */
-        String deviceAddress = "AAAA";
-        localHop.setAddress(deviceAddress);
-
         LatLng location = mapFragment.getLocation();
         localHop.setLatitude(location.latitude);
         localHop.setLongitude(location.longitude);
-        //localHop.setLatitude(52.457339);
-        //localHop.setLongitude(13.526851);
-
         Location mapPoint = new Location("LocalHop");
         mapPoint.setLatitude(localHop.getLatitude());
         mapPoint.setLongitude(localHop.getLongitude());
-
-        return new NeighbourSet(localHop.getId(), localHop.getAddress(), "ABBA", mapPoint, ELoraNodeState.UP, System.currentTimeMillis());
+        return new NeighbourSet(localHop.getId(), "0000", "FFFF", mapPoint, ELoraNodeState.UP, System.currentTimeMillis());
     }
+
 }

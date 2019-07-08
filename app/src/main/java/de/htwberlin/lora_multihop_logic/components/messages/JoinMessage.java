@@ -1,5 +1,7 @@
 package de.htwberlin.lora_multihop_logic.components.messages;
 
+import android.util.Log;
+
 import de.htwberlin.lora_multihop_logic.enums.EMessageType;
 import de.htwberlin.lora_multihop_logic.interfaces.ILoraCommands;
 
@@ -21,8 +23,9 @@ import de.htwberlin.lora_multihop_logic.interfaces.ILoraCommands;
  * @author morelly_t1
  */
 public class JoinMessage extends Message {
+
+    private static final String TAG = "JoinMessage";
     private static final String BROADCAST_ADDRESS = "FFFF";
-    private static final Integer MESSAGE_SIZE = 18;
 
     private Double longitude, latitude;
 
@@ -30,10 +33,19 @@ public class JoinMessage extends Message {
         this.id = id;
         this.longitude = lng;
         this.latitude = lat;
+        this.setRemoteAddress(BROADCAST_ADDRESS);
     }
 
-    public JoinMessage(ILoraCommands executor, String sourceAddress, Double longitude, Double latitude) {
-        super(executor, sourceAddress, "FFFF");
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public JoinMessage(ILoraCommands executor, String sourceAddress, Double latitude, Double longitude) {
+        super(executor, sourceAddress);
         this.longitude = longitude;
         this.latitude = latitude;
     }
@@ -45,15 +57,22 @@ public class JoinMessage extends Message {
 
 
     public void executeAtRoutine(ILoraCommands executor) {
-
         /*
         AT+DEST=FFFF
         AT+SEND=18
         JOIN,LAT,LONG
          */
-        ILoraCommands loraCommandsExecutor = getExecutor();
-        loraCommandsExecutor.setTargetAddress(BROADCAST_ADDRESS);
-        loraCommandsExecutor.send(MESSAGE_SIZE);
-        loraCommandsExecutor.send(this.toString());
+        ILoraCommands loraCommandsExecutor = super.getExecutor();
+
+        try {
+            loraCommandsExecutor.setTargetAddress(BROADCAST_ADDRESS);
+            Thread.sleep(1000);
+            loraCommandsExecutor.send(this.toString().length());
+            Thread.sleep(1000);
+            loraCommandsExecutor.send(this.toString());
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Log.e(TAG, "exception in while sending join: " + e.getMessage());
+        }
     }
 }

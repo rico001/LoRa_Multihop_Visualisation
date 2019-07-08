@@ -49,9 +49,9 @@ public class NeighbourSet {
     public NeighbourSet(int uid, String address, String dah, Location location, ELoraNodeState state, Long timestamp) {
 		if(uid < 0 || uid > 9999)
 			throw new IllegalArgumentException("invalid UID for neighbour set");
-		if(Integer.parseInt(address, 16) < 0 || Integer.parseInt(address, 16) > 65534)
+		if (Integer.parseInt(address, 16) < 0 || Integer.parseInt(address, 16) > 65535)
 			throw new IllegalArgumentException("invalid address for neighbour set");
-		if(Integer.parseInt(dah, 16) < 0 || Integer.parseInt(dah, 16) > 65534)
+		if (Integer.parseInt(dah, 16) < 0 || Integer.parseInt(dah, 16) > 65535)
 			throw new IllegalArgumentException("invalid dah for neighbour set");
 
 		this.uid = uid;

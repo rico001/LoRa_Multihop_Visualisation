@@ -6,14 +6,13 @@ import de.htwberlin.lora_multihop_logic.interfaces.ILoraCommands;
 public class AckMessage extends Message {
 
     private static final String TAG = "AckMessage";
-    private static final Integer MESSAGE_SIZE = 3;
 
     public AckMessage(String id) {
         this.id = id;
     }
 
-    public AckMessage(ILoraCommands executor, String sourceAddress, String remoteAddres) {
-        super(executor, sourceAddress, remoteAddres);
+    public AckMessage(ILoraCommands executor, String sourceAddress) {
+        super(executor, sourceAddress);
     }
 
     @Override
@@ -23,17 +22,19 @@ public class AckMessage extends Message {
 
     @Override
     public void executeAtRoutine(ILoraCommands executor) {
+
         /*
         AT+DEST=REMOTE_ADDRESS
-        AT+SEND=18
-        ACK,LAT,LONG
+        AT+SEND=3
+        ACK
          */
+
         ILoraCommands loraCommandsExecutor = super.getExecutor();
 
         try {
-            loraCommandsExecutor.setTargetAddress(super.getRemoteAddress());
+            loraCommandsExecutor.setTargetAddress(getRemoteAddress());
             Thread.sleep(1000);
-            loraCommandsExecutor.send(MESSAGE_SIZE);
+            loraCommandsExecutor.send(this.toString().length());
             Thread.sleep(1000);
             loraCommandsExecutor.send(this.toString());
             Thread.sleep(1000);

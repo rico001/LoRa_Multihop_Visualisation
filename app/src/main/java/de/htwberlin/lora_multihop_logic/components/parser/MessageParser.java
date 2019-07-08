@@ -30,42 +30,32 @@ public class MessageParser {
 
     public void parseInput(String inputString) throws ParserException, IndexOutOfBoundsException, NumberFormatException, NullPointerException {
 
-        // Message = "LR,Source Address, Message length, Message Type, Params...."
-        // inputString = "LR,2222,12,JOIN,52.323,40.121
-
         IncomingMessageQueue queue = IncomingMessageQueue.getInstance();
-
         String[] inputParts = inputString.split(",");
         Message message;
 
-        // TODO: verify latitude / longitude between 0 - 180.00 and 3 decimal digits
+        Log.i(TAG, "Parsing String " + inputParts[3]);
 
-        // ---> maybe not needed... NeighbourSet Entry checks model data & has Exception calling
-
-        //TODO: template pattern maybe can be used here ...
-        switch (inputParts[3]) {
-            case "JOIN":
-                message = parseJoinMessage(inputParts);
-                Log.i(TAG, "successfully parsed JOIN message");
-                queue.add(message);
-                Log.i(TAG, "added " + message.toString() + " to queue");
-                break;
-            case "JORP":
-                message = parseJoinReplyMessage(inputParts);
-                Log.i(TAG, "successfully parsed JOIN_REPLY message");
-                queue.add(message);
-                Log.i(TAG, "added " + message.toString() + " to queue");
-                break;
-            case "ACK":
-                message = parseAckMessage(inputParts);
-                Log.i(TAG, "successfully parsed ACK message");
-                queue.add(message);
-                Log.i(TAG, "added " + message.toString() + " to queue");
-                break;
-            default:
-                Log.e(TAG, "couldnt determine which Message type " + inputString + " is.");
-                throw new ParserException("no message to queue");
+        if (inputParts[3].contains(EMessageType.JOIN.name())) {
+            message = parseJoinMessage(inputParts);
+            Log.i(TAG, "successfully parsed JOIN message");
+            queue.add(message);
+            Log.i(TAG, "added " + message.toString() + " to queue");
+        } else if (inputParts[3].contains(EMessageType.JORP.name())) {
+            message = parseJoinReplyMessage(inputParts);
+            Log.i(TAG, "successfully parsed JOIN_REPLY message");
+            queue.add(message);
+            Log.i(TAG, "added " + message.toString() + " to queue");
+        } else if (inputString.contains(EMessageType.ACK.name())) {
+            message = parseAckMessage(inputParts);
+            Log.i(TAG, "successfully parsed ACK message");
+            queue.add(message);
+            Log.i(TAG, "added " + message.toString() + " to queue");
+        } else {
+            Log.e(TAG, "couldnt determine which Message type " + inputString + " is.");
+            throw new ParserException("no message to queue");
         }
+
     }
 
     private Message parseJoinMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException, NumberFormatException {
@@ -81,26 +71,25 @@ public class MessageParser {
 
     private Message parseJoinReplyMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException, NumberFormatException {
         if (inputParts.length != 6)
-            throw new ParserException("Couldnt Parse Join Reply Message", new Throwable(EMessageType.JORP
-                    .name()));
+            throw new ParserException("Couldnt Parse Join Reply Message", new Throwable(EMessageType.JORP.name()));
 
-        String sourceAddress = LocalHop.getInstance().getAddress();
-        String remoteAddress = inputParts[2];
+        // LR,0001,13,JORP,52.3321,30.313
+
+        String sourceAddress = inputParts[1];
         double latitude = parseDouble(inputParts[4]);
         double longitude = parseDouble(inputParts[5]);
 
-        return new JoinReplyMessage(executor, sourceAddress, remoteAddress, latitude, longitude);
+        return new JoinReplyMessage(executor, sourceAddress, latitude, longitude);
 
     }
 
     private Message parseAckMessage(String[] inputParts) throws ParserException, IndexOutOfBoundsException, NumberFormatException {
-        if (inputParts.length != 5)
+        if (inputParts.length != 4)
             throw new ParserException("Couldnt Parse Ack Reply Message", new Throwable(EMessageType.ACK.name()));
 
-        String sourceAddress = LocalHop.getInstance().getAddress();
-        String remoteAddress = inputParts[2];
+        String sourceAddress = inputParts[1];
 
-        return new AckMessage(executor, sourceAddress, remoteAddress);
+        return new AckMessage(executor, sourceAddress);
 
     }
 }

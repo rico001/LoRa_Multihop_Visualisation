@@ -26,6 +26,7 @@ import java.util.Set;
 
 import de.htwberlin.lora_multihop_logic.enums.EFragments;
 import de.htwberlin.lora_multihop_visualisation.LastCommandsUI_Layout;
+import de.htwberlin.lora_multihop_visualisation.LoRaApplication;
 import de.htwberlin.lora_multihop_visualisation.MainActivity;
 import de.htwberlin.lora_multihop_visualisation.R;
 import de.htwberlin.lora_multihop_visualisation.SingletonDevice;
@@ -123,7 +124,7 @@ public class TerminalFragment extends Fragment {
         String finalMessage;
         String prompt = "";
         String sendPrompt = ">> ";
-        TextView textView = new TextView(getContext());
+        TextView textView = new TextView(LoRaApplication.getAppContext());
 
         try {
             textView.setTextSize(12);

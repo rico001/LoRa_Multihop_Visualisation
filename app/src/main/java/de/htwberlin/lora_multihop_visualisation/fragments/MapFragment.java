@@ -137,7 +137,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Neighbo
         } else {
             return this.location;
         }*/
+
         return new LatLng(location.getLatitude(), location.getLongitude());
+        //return new LatLng(50.2322,12.1201);
     }
 
     private void addMarker(LatLng location, String id, int radius, String title, String description, int markerBitmap, int circleFillColor, int circleStrokeColor) {
