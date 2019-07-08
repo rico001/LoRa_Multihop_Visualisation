@@ -47,7 +47,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name="de.htwberlin.lora_multihop_logic.components.ndp.NeighbourSetHandler" />
 
         <uses-library
             android:name="org.apache.http.legacy"

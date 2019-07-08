@@ -1,38 +1,45 @@
 package de.htwberlin.lora_multihop_visualisation.fragments;
 
 import android.content.Context;
-import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
 
+import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Locale;
 
+import de.htwberlin.lora_multihop_logic.NeighbourSetDataHandler;
 import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
-import de.htwberlin.lora_multihop_logic.enums.ELoraNodeState;
+import de.htwberlin.lora_multihop_visualisation.LoRaApplication;
 import de.htwberlin.lora_multihop_visualisation.R;
 import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableHead;
 import de.htwberlin.lora_multihop_visualisation.custom.NeighbourSetTableRow;
 
 
-public class NeighbourSetTableFragment extends Fragment {
-    private static final String TAG = "NeighbourSetTableFragme";
+public class NeighbourSetTableFragment extends Fragment implements NeighbourSetDataHandler.INeighbourSetData {
+
+    private static final String TAG = "NeighbourSetTableFragment";
 
     private TableLayout table;
-    private Map<String, NeighbourSetTableRow> tableData;
+    private HashMap<String, NeighbourSetTableRow> tableData;
     private ITableListener listener;
 
     public NeighbourSetTableFragment() {
-        tableData = new HashMap<>();
+        this.tableData = new HashMap<>();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+
+        }
     }
 
     @Override
@@ -40,21 +47,16 @@ public class NeighbourSetTableFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_neighbour_set_table, container, false);
         NeighbourSetTableHead tableHead = new NeighbourSetTableHead(getContext());
 
-        table = (TableLayout) view.findViewById(R.id.neighbour_set_table);
-
-        table.addView(tableHead);
-
-        // Testing
-        Location mapPoint = new Location("NodeOne");
-        mapPoint.setLatitude(52.463201);
-        mapPoint.setLongitude(13.507464);
-
-        NeighbourSet nsOne = new NeighbourSet(0, "AAAA", "BBBB", mapPoint, ELoraNodeState.UP, System.currentTimeMillis());
-
-        addRow(nsOne);
-        getRow(Integer.toString(nsOne.getUid())).setAddressText("AAAB");
+        this.table = (TableLayout) view.findViewById(R.id.neighbour_set_table);
+        this.table.addView(tableHead);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LoRaApplication.getDbRepo().getAllNeighbourSets(this);
     }
 
     /**
@@ -63,21 +65,23 @@ public class NeighbourSetTableFragment extends Fragment {
      * @param ns NeighbourSet data to be mapped
      */
     public void addRow(NeighbourSet ns) {
-        NeighbourSetTableRow row = new NeighbourSetTableRow(getContext());
+        if(getContext() != null)    {
+            NeighbourSetTableRow row = new NeighbourSetTableRow(getContext());
 
-        row.setUidText(Integer.toString(ns.getUid()));
-        row.setAddressText(ns.getAddress());
-        row.setDahText(ns.getDah());
-        row.setLatitudeText(ns.getLatitude());
-        row.setLongitudeText(ns.getLongitude());
-        row.setStatusText(ns.getEnumLoraNodeState().toString());
-        row.setTimestampText(Long.toString(ns.getTimestamp()));
+            row.setUidText(Integer.toString(ns.getUid()));
+            row.setAddressText(ns.getAddress());
+            row.setDahText(ns.getDah());
+            row.setLatitudeText(ns.getLatitude());
+            row.setLongitudeText(ns.getLongitude());
+            row.setStatusText(ns.getEnumLoraNodeState().toString());
+            row.setTimestampText(getDate(ns.getTimestamp()));
 
-        tableData.put(Integer.toString(ns.getUid()), row);
+            this.tableData.put(Integer.toString(ns.getUid()), row);
 
-        table.addView(row);
+            this.table.addView(row);
 
-        this.listener.onRowAdded(row);
+            this.listener.onRowAdded(row);
+        }
     }
 
 
@@ -88,16 +92,19 @@ public class NeighbourSetTableFragment extends Fragment {
      * @return
      */
     public NeighbourSetTableRow getRow(String id) {
-        return tableData.get(id);
+        return this.tableData.get(id);
     }
 
-    /**
-     * Gets the table data
-     *
-     * @return
-     */
-    public Map<String, NeighbourSetTableRow> getTableData() {
-        return this.tableData;
+    public void updateRow(NeighbourSet neighbourSet) {
+        NeighbourSetTableRow row = getRow(Integer.toString(neighbourSet.getUid()));
+        row.setAddressText(neighbourSet.getAddress());
+        row.setDahText(neighbourSet.getDah());
+        row.setLatitudeText(neighbourSet.getLatitude());
+        row.setLongitudeText(neighbourSet.getLongitude());
+        row.setStatusText(neighbourSet.getState());
+        row.setTimestampText(getDate(neighbourSet.getTimestamp()));
+
+        this.listener.onRowUpdated(row);
     }
 
     /**
@@ -106,10 +113,40 @@ public class NeighbourSetTableFragment extends Fragment {
      * @param id
      */
     public void removeRow(String id) {
-        if (tableData.containsKey(id)) {
-            table.removeView(tableData.get(id));
+        if (this.tableData.containsKey(id)) {
+            this.table.removeView(this.tableData.get(id));
             this.listener.onRowRemoved(id);
         }
+    }
+
+    public void removeAll() {
+        this.tableData.clear();
+        this.listener.onRemoveAll();
+    }
+
+    @Override
+    public void onSaveNeighbourSet(NeighbourSet neighbourSet) {
+        addRow(neighbourSet);
+    }
+
+    @Override
+    public void onUpdateNeighbourSet(NeighbourSet neighbourSet) {
+        updateRow(neighbourSet);
+    }
+
+    @Override
+    public void onDeleteNeighbourSet(int uid) {
+        removeRow(Integer.toString(uid));
+    }
+
+    @Override
+    public void onClearTable() {
+
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -131,6 +168,16 @@ public class NeighbourSetTableFragment extends Fragment {
 
     public interface ITableListener {
         void onRowAdded(NeighbourSetTableRow row);
+        void onRowUpdated(NeighbourSetTableRow row);
         void onRowRemoved(String id);
+        void onRemoveAll();
+    }
+
+
+    private String getDate(long time) {
+        Calendar cal = Calendar.getInstance(Locale.GERMAN);
+        cal.setTimeInMillis(time * 1000);
+        String date = DateFormat.format("HH:mm:ss dd.MM.yy", cal).toString();
+        return date;
     }
 }

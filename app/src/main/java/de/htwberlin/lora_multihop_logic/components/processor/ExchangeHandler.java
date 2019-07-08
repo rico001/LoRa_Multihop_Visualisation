@@ -3,16 +3,22 @@ package de.htwberlin.lora_multihop_logic.components.processor;
 import java.util.Queue;
 import java.util.UUID;
 
+import de.htwberlin.lora_multihop_logic.NeighbourSetDataHandler;
 import de.htwberlin.lora_multihop_logic.components.messages.AckMessage;
 import de.htwberlin.lora_multihop_logic.components.messages.Message;
 
 abstract public class ExchangeHandler {
+
     protected String id;
+
     private String remoteAddress;
     private String sourceAddress;
 
     private Message initMessage;
     private Message replyMessage;
+
+    private NeighbourSetDataHandler neighbourSetDataHandler;
+
     /**
      * Does the current device reply to a message? False if current device initialized a new exchange.
      */
@@ -29,20 +35,24 @@ abstract public class ExchangeHandler {
 
     private Queue<Message> queue;
 
-    ExchangeHandler(Queue<Message> queue) {
+    ExchangeHandler(Queue<Message> queue, NeighbourSetDataHandler neighbourSetDataHandler) {
         this.queue = queue;
         this.id = generateId();
         this.startedTimestamp = System.currentTimeMillis();
         this.isReplier = false;
 
+        this.neighbourSetDataHandler = neighbourSetDataHandler;
+
         sendInitMessage();
     }
 
-    ExchangeHandler(Queue<Message> queue, Message receivedMessage) {
+    ExchangeHandler(Queue<Message> queue, Message receivedMessage, NeighbourSetDataHandler neighbourSetDataHandler) {
         this.queue = queue;
         this.id = receivedMessage.getId();
         this.startedTimestamp = System.currentTimeMillis();
         this.isReplier = true;
+
+        this.neighbourSetDataHandler = neighbourSetDataHandler;
 
         this.initMessage = receivedMessage;
     }
@@ -105,6 +115,29 @@ abstract public class ExchangeHandler {
 
     abstract protected Message getReplyMessage();
 
+    public void setRemoteAddress(String remoteAddress) {
+        this.remoteAddress = remoteAddress;
+    }
+
+    public void setSourceAddress(String sourceAddress) {
+        this.sourceAddress = sourceAddress;
+    }
+
+    public String getRemoteAddress() {
+        return remoteAddress;
+    }
+
+    public String getSourceAddress() {
+        return sourceAddress;
+    }
+
+    public NeighbourSetDataHandler getNeighbourSetDataHandler() {
+        return neighbourSetDataHandler;
+    }
+
+    public void setNeighbourSetDataHandler(NeighbourSetDataHandler neighbourSetDataHandler) {
+        this.neighbourSetDataHandler = neighbourSetDataHandler;
+    }
 
     /**
      * When a new message is received, process it to do the corresponding job.

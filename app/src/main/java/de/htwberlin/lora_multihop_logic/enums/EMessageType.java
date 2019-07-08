@@ -15,5 +15,5 @@ public enum EMessageType {
 
     LEAVE,
 
-    ACK
+    ACK;
 }

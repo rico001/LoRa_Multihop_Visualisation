@@ -6,15 +6,15 @@ import android.util.Log;
 import java.security.InvalidParameterException;
 import java.util.Queue;
 
+import de.htwberlin.lora_multihop_logic.NeighbourSetDataHandler;
 import de.htwberlin.lora_multihop_logic.components.messages.AckMessage;
 import de.htwberlin.lora_multihop_logic.components.messages.JoinMessage;
 import de.htwberlin.lora_multihop_logic.components.messages.JoinReplyMessage;
 import de.htwberlin.lora_multihop_logic.components.messages.Message;
 import de.htwberlin.lora_multihop_logic.components.model.LocalHop;
 import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
-import de.htwberlin.lora_multihop_logic.components.ndp.NeighbourSetHandler;
-import de.htwberlin.lora_multihop_logic.components.storage.NeighbourSetDatabase;
 import de.htwberlin.lora_multihop_logic.enums.ELoraNodeState;
+import de.htwberlin.lora_multihop_visualisation.SingletonDevice;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -30,15 +30,15 @@ public class JoinExchangeHandler extends ExchangeHandler {
      * Generates a new init message and enqueues it.
      * Should be invoked as a result of the user-triggered event "Want to connect" (is it a button? idk).
      */
-    JoinExchangeHandler(Queue<Message> queue, Double lng, Double lat) {
-        super(queue);
+    JoinExchangeHandler(Queue<Message> queue, Double lng, Double lat, NeighbourSetDataHandler neighbourSetDataHandler) {
+        super(queue, neighbourSetDataHandler);
 
         this.localNodeLat = lat;
         this.localNodeLng = lng;
     }
 
-    JoinExchangeHandler(Queue<Message> queue, Message receivedMessage) {
-        super(queue, receivedMessage);
+    JoinExchangeHandler(Queue<Message> queue, Message receivedMessage, NeighbourSetDataHandler neighbourSetDataHandler) {
+        super(queue, receivedMessage, neighbourSetDataHandler);
     }
 
     @Override
@@ -60,18 +60,15 @@ public class JoinExchangeHandler extends ExchangeHandler {
             if (!this.isReplier()) {
                 throw new InvalidParameterException("The current handler IS NOT replier, but invalid init JoinMessage received.");
             }
-            handleJoinMsg(message);
+            handleJoinMsg((JoinMessage) message);
+
         }
 
         if (message instanceof JoinReplyMessage) {
             if (this.isReplier()) {
-                throw new InvalidParameterException("The current handler IS replier, but invalid reply JoinReplyMessage received.");
+                //throw new InvalidParameterException("The current handler IS replier, but invalid reply JoinReplyMessage received.");
             }
-            // todo: In reply message we immediately add the point to the map.
-            this.remoteNodeLat = ((JoinReplyMessage) message).getLatitude();
-            this.remoteNodeLng = ((JoinReplyMessage) message).getLongitude();
-
-            handleJoinReplyMsg(message);
+            handleJoinReplyMsg((JoinReplyMessage) message);
         }
 
         // ACK message should be received only by replier (basically the central server).
@@ -90,17 +87,19 @@ public class JoinExchangeHandler extends ExchangeHandler {
         return true;
     }
 
-    private void handleJoinMsg(Message msg) {
-        // todo: In JoinMessage we remember the coordinates and add them to the map after receiving the ACK message.
+    private void handleJoinMsg(JoinMessage msg) {
         JoinReplyMessage joinReplyMessage = new JoinReplyMessage(id, LocalHop.getInstance().getLongitude(), LocalHop.getInstance().getLatitude());
         joinReplyMessage.setRemoteAddress(msg.getSourceAddress());
+
+        remoteNodeLng = msg.getLongitude();
+        remoteNodeLat = msg.getLatitude();
+
         Log.i(TAG, "preparing join reply msg " + joinReplyMessage.toString());
         getQueue().add(joinReplyMessage);
         Log.i(TAG, "added to queue");
     }
 
-    private void handleJoinReplyMsg(Message msg) {
-        //todo: send ack
+    private void handleJoinReplyMsg(JoinReplyMessage msg) {
         AckMessage ackMessage = new AckMessage(id);
         ackMessage.setRemoteAddress(msg.getSourceAddress());
         Log.i(TAG, "preparing ack msg " + ackMessage.toString());
@@ -109,18 +108,21 @@ public class JoinExchangeHandler extends ExchangeHandler {
     }
 
     private void handleAckMsg(Message msg) {
-        // todo: add the remoteLat, remoteLng (remembered from the JoinMessage) to the map.
-        // todo: add to NS and table fragment
-        Location gps = new Location("remote-node");
-        gps.setLongitude(this.remoteNodeLng);
-        gps.setLatitude(this.remoteNodeLat);
+        Integer newId = this.getNeighbourSetDataHandler().getAllNeighbourSets().size();
 
-        NeighbourSet entry = new NeighbourSet(1, "2222", "1111", gps, ELoraNodeState.UP, null);
+        String nodeAddress = msg.getSourceAddress();
+        String dahAddress = SingletonDevice.getBluetoothDevice().getAddress().replace(":", "").substring(12 - 4);
 
-        NeighbourSetHandler nsh = new NeighbourSetHandler();
-        NeighbourSetDatabase db = nsh.getDb();
-        db.neighbourSetDao().clearTable();
-        db.neighbourSetDao().saveNeighbourSet(entry);
+
+        Location mapPoint = new Location("Berlin");
+
+        mapPoint.setLatitude(remoteNodeLat);
+        mapPoint.setLongitude(remoteNodeLng);
+
+        NeighbourSet commitSet = new NeighbourSet(newId, nodeAddress, dahAddress, mapPoint, ELoraNodeState.UP, System.currentTimeMillis());
+
+        Log.i(TAG, "adding " + commitSet.toString() + " to Neighbour Set");
+        this.getNeighbourSetDataHandler().saveNeighbourSet(commitSet);
     }
 }
 

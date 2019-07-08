@@ -46,7 +46,6 @@ public class BluetoothService implements MessageConstants {
     public synchronized void write(byte[] out) {
 
         ConnectedThread r;
-
         synchronized (this) {
             if (connectThread != null && !connectThread.isAlive()) return;
 

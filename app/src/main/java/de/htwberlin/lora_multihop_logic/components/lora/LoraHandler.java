@@ -1,16 +1,23 @@
 package de.htwberlin.lora_multihop_logic.components.lora;
 
+import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import de.htwberlin.lora_multihop_logic.NeighbourSetDataHandler;
 import de.htwberlin.lora_multihop_logic.components.model.LocalHop;
+import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
 import de.htwberlin.lora_multihop_logic.components.parser.MessageParser;
 import de.htwberlin.lora_multihop_logic.components.parser.ParserException;
 import de.htwberlin.lora_multihop_logic.components.processor.MessageProcessor;
+import de.htwberlin.lora_multihop_logic.enums.ELoraNodeState;
 import de.htwberlin.lora_multihop_logic.interfaces.ILoraCommands;
 import de.htwberlin.lora_multihop_logic.interfaces.MessageConstants;
 import de.htwberlin.lora_multihop_visualisation.BluetoothService;
 import de.htwberlin.lora_multihop_visualisation.SingletonDevice;
+import de.htwberlin.lora_multihop_visualisation.fragments.MapFragment;
 
 public class LoraHandler extends AppCompatActivity implements MessageConstants {
 
@@ -22,14 +29,15 @@ public class LoraHandler extends AppCompatActivity implements MessageConstants {
     private MessageParser parser;
     private MessageProcessor processor;
 
-    public static LoraHandler instance = null;
+    private NeighbourSetDataHandler neighbourSetDataHandler;
 
-    public LoraHandler(BluetoothService btService) {
+    public LoraHandler(BluetoothService btService, NeighbourSetDataHandler neighbourSetDataHandler) {
         this.btService = btService;
+        this.neighbourSetDataHandler = neighbourSetDataHandler;
 
         this.executor = new LoraCommandsExecutor(this.btService);
         this.parser = new MessageParser(this.executor);
-        this.processor = new MessageProcessor(this.executor);
+        this.processor = new MessageProcessor(this.executor, this.neighbourSetDataHandler);
     }
 
     public void processLoraResponse(String responseMsg) {
@@ -38,7 +46,6 @@ public class LoraHandler extends AppCompatActivity implements MessageConstants {
 
     private boolean parseMessage(String message) {
         try {
-            initLocalHop(); //TODO: not the best place, but works
             Log.i(TAG, "parsing message " + message);
             if (message.startsWith("LR,")) {
                 parser.parseInput(message);
@@ -56,26 +63,6 @@ public class LoraHandler extends AppCompatActivity implements MessageConstants {
 
     private void processMessage() {
         processor.processMessage();
-    }
-
-    private void initLocalHop() {
-        LocalHop localHop = LocalHop.getInstance();
-        String deviceAddress = SingletonDevice.getBluetoothDevice()
-                .getAddress()
-                .replace(":", "")
-                .substring(12 - 4);
-        localHop.setAddress(deviceAddress);
-        localHop.setLatitude(50.123);
-        localHop.setLongitude(40.123);
-    }
-
-    public static LoraHandler getInstance() {
-        return instance;
-    }
-
-    public static LoraHandler getInstance(BluetoothService btService) {
-        if (instance == null) instance = new LoraHandler(btService);
-        return instance;
     }
 
     public MessageParser getParser() {

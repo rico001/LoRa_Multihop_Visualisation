@@ -3,8 +3,8 @@ package de.htwberlin.lora_multihop_visualisation.fragments;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -24,17 +23,18 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import de.htwberlin.lora_multihop_logic.NeighbourSetDataHandler;
+import de.htwberlin.lora_multihop_logic.components.model.NeighbourSet;
 import de.htwberlin.lora_multihop_logic.enums.EFragments;
+import de.htwberlin.lora_multihop_visualisation.LoRaApplication;
 import de.htwberlin.lora_multihop_visualisation.MainActivity;
 import de.htwberlin.lora_multihop_visualisation.R;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback, NeighbourSetDataHandler.INeighbourSetData {
 
     private static final String TAG = "MapFragment";
 
@@ -49,6 +49,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private Map<String, Circle> circles;
 
     private IMapListener listener;
+    private Context context;
 
     public MapFragment() {
         markers = new HashMap<>();
@@ -79,7 +80,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        getDeviceLocation();
+        // getDeviceLocation();
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(getLocation()));
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
 
         // onMapReady() is called after onResume() therefore the mMap variable is
         // overwritten with a new map. We have to call the onSetUpMap() here so that
@@ -90,9 +93,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         // mMap.setMyLocationEnabled(true);
     }
 
-    private void getDeviceLocation() {
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    /*private void getDeviceLocation() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
         Log.d("MapFragment", "Getting the location");
+
         try {
             final Task locationTask = fusedLocationProviderClient.getLastLocation();
 
@@ -112,7 +120,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         } catch (SecurityException e) {
             Log.d("MapFragment", "Getting the location failed");
         }
-    }
+    }*/
 
     /**
      * Returns the actual location, default 50.000 - 50.000
@@ -120,20 +128,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      * @return
      */
     public LatLng getLocation() {
+        LocationManager lm = (LocationManager) context.getSystemService(context.LOCATION_SERVICE);
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        /*Log.d("Main", Double.toString(location.getLatitude()));
         if (this.location == null) {
             getDeviceLocation();
         } else {
             return this.location;
-        }
-        return new LatLng(50.000, 50.000);
-    }
+        }*/
 
-    /**
-     * Helper method to set the current location
-     * @param latLng
-     */
-    private void setCurrentLocation(LatLng latLng) {
-        this.location = latLng;
+        return new LatLng(location.getLatitude(), location.getLongitude());
+        //return new LatLng(50.2322,12.1201);
     }
 
     private void addMarker(LatLng location, String id, int radius, String title, String description, int markerBitmap, int circleFillColor, int circleStrokeColor) {
@@ -157,6 +163,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
             mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
         }
+        Log.d("map", getLocation().latitude+"");
     }
 
     /**
@@ -223,6 +230,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    public void removeAll() {
+        this.markers.clear();
+        this.circles.clear();
+    }
+
     /**
      * Returns all the markers on the map
      *
@@ -249,6 +261,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+
+
     @Override
     public void onDetach() {
         super.onDetach();
@@ -259,6 +273,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onResume() {
         super.onResume();
         mapView.onResume();
+        LoRaApplication.getDbRepo().getAllNeighbourSets(this);
     }
 
     @Override
@@ -279,6 +294,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
+    }
+
+    @Override
+    public void onSaveNeighbourSet(NeighbourSet neighbourSet) {
+        LatLng location = new LatLng(neighbourSet.getLatitude(), neighbourSet.getLongitude());
+        addHostMarker(location, String.valueOf(neighbourSet.getUid()), LoRaApplication.RADIUS);
+    }
+
+    @Override
+    public void onUpdateNeighbourSet(NeighbourSet neighbourSet) {
+
+    }
+
+    @Override
+    public void onDeleteNeighbourSet(int uid) {
+
+    }
+
+    @Override
+    public void onClearTable() {
+        this.markers.clear();
+        this.circles.clear();
     }
 
     /**

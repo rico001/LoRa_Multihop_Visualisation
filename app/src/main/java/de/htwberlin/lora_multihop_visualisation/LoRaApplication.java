@@ -7,15 +7,24 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 
 import de.htwberlin.lora_multihop_logic.components.lora.LoRaConfig;
+import de.htwberlin.lora_multihop_logic.components.storage.NeighbourSetRepository;
 
 public class LoRaApplication extends Application {
     private String PREF_CONF_KEY = "config";
 
     private LoRaConfig loRaConfig;
 
+    private static Context context;
+    private static NeighbourSetRepository dbRepo;
+
+    public static final Integer RADIUS = 10000;
+
     @Override
     public void onCreate() {
         super.onCreate();
+
+        LoRaApplication.context = getApplicationContext();
+        LoRaApplication.dbRepo = new NeighbourSetRepository(getApplicationContext());
 
         if (loRaConfig == null) {
             loRaConfig = loadConfig();
@@ -24,6 +33,14 @@ public class LoRaApplication extends Application {
 
     public LoRaConfig getLoRaConfig() {
         return loRaConfig;
+    }
+
+    public static Context getAppContext() {
+        return LoRaApplication.context;
+    }
+
+    public static NeighbourSetRepository getDbRepo()    {
+        return LoRaApplication.dbRepo;
     }
 
     /**
