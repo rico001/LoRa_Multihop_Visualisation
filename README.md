@@ -6,7 +6,6 @@
   * [Built With](#built-with)
 * [Getting Started](#getting-started)
   * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
 * [Usage](#usage)
 * [Contributing](#contributing)
 * [License](#license)
@@ -32,7 +31,4 @@ It was developed as part of a course at the [HTW Berlin](https://www.htw-berlin.
 ### Prerequisites
 For a working circuit diagram, ...
 
-### Screenshots
-
-### Neighbour Discovery Alogrithm
-
+## Usage
