@@ -1,4 +1,4 @@
-# Android Neighbour Discovery for Ad-hoc Multi-hop Networks with LoRa
+# Neighbour Discovery for Ad-hoc Multi-hop Networks with LoRa and Android
 > Screenshots
 
 ![Map_1](screenshots/map_2_points.png)
@@ -22,6 +22,8 @@ This project contains a prototype for a neighbour discovery algorithm based on L
 The application communnicates via bluetooth transmitted AT-commands to the lora modules.
 It was developed as part of a course at the [HTW Berlin](https://www.htw-berlin.de/) ([Applied Computing](https://ai-bachelor.htw-berlin.de/))
 
+See [docs](https://github.com/rico001/LoRa_Multihop_Visualisation/tree/master/docs) for more information about the algorithm.
+
 ## Getting Started
 *Follow these instructions to build and run the Lora_Multihop_Visualisation*
 1. ```git clone https://github.com/rico001/LoRa_Multihop_Visualisation```
@@ -35,6 +37,8 @@ It was developed as part of a course at the [HTW Berlin](https://www.htw-berlin.
 ## How To Use
 In order to use this application you will need at least two lora modules connected with a bluetooth transmitter to send and receive AT-commands.
 Each Lora-Node has to be connected to a smartphone that will process the received neighbour discovery protocol messages.
+
+tbd...
 
 
 ## Functions implemented
